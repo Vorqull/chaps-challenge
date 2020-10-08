@@ -6,4 +6,5 @@ package RecordAndReplay;
  * When successful, should be able to report an arraylist of arraylists of actions.
  */
 public class Reader {
+
 }
