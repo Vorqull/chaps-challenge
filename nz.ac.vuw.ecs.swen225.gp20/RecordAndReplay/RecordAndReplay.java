@@ -5,6 +5,7 @@ import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.Key;
 import Maze.Game;
 import Maze.Game.DIRECTION;
+import Maze.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ public class RecordAndReplay<E> {
     private Board board; //The board (level) that this record is associated with.//Change later...
     private Recorder recorder;
     private Writer writer;
+    private boolean recordingSwitch;
 
     /**
      * Creates a RecordAndReplay object associated with a board.
@@ -62,6 +64,7 @@ public class RecordAndReplay<E> {
     public RecordAndReplay(Board board) {
         this.board = board;
         this.recorder = new Recorder();
+        recordingSwitch = false;
     }
 
     /**
@@ -70,11 +73,23 @@ public class RecordAndReplay<E> {
     public RecordAndReplay() {
         recorder = new Recorder();
         this.writer = new Writer();
+        recordingSwitch = false;
     }
 
     //=====RECORDER=====//
-    //Effectively relays all the recorder's functions here. Doing this to save me from headache.
+    //returns the current state of the switch, and also flips it.
+    public boolean triggerRecordingSwitch() {
+        recordingSwitch = !recordingSwitch;
+        System.out.println("currently: " + recordingSwitch);
+        System.out.println("returned: " + !recordingSwitch);
+        return !recordingSwitch;
+    }
+    //set the starting position. I COULD have put it in the above method, but I dont wanna seem like a sociopath.
+    public void setStartingPosition(Position pos) {
+        recorder.setStartingPosition(pos);
+    }
 
+    //Effectively relays all the recorder's functions here. Doing this to save me from headache.
     public void capturePlayerMove(Game.DIRECTION direction) {
         recorder.capturePlayerMove(direction);
     }
@@ -84,14 +99,16 @@ public class RecordAndReplay<E> {
     }
 
     //DO THIS AT THE END OF ALL CAPTURES
-    public void storeRecorderBuffer() {
-        recorder.storeBuffer();
+    public void clearRecorderBuffer() {
+        //deletes the recording buffer if it shouldnt be recording.
+        if(recordingSwitch) recorder.storeBuffer();
+        else recorder.deleteBuffer();
     }
 
     //=====SAVING=====//  AKA WRITING
     //All functions to do with creating a save via JSON is here.
     public void saveGameplay() {
-        writer.writeRecording(recorder.getRecordedChanges());
+        writer.writeRecording(recorder.getRecordedChanges(), recorder.getStartingPosition());
     }
 
     //=====LOADING=====//
@@ -106,5 +123,6 @@ public class RecordAndReplay<E> {
     public void setBoard(Board board) {
         this.board = board;
     }
+
 
 }

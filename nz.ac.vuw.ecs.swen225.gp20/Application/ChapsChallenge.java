@@ -97,24 +97,37 @@ public class ChapsChallenge extends JFrame {
      */
     public void createMenuBar(){
         JMenuBar menuBar = new JMenuBar();
+        //=====Game Menu=====//
         JMenu gameMenu = new JMenu("Game");
 
         //selections
         JMenuItem restartItem = new JMenuItem("Restart");
         //restartItem.addActionListener((e) -> System.exit(0)); //TODO: add functionality
 
-        JMenuItem saveItem = new JMenuItem("Save");
-        saveItem.addActionListener((e) -> recordAndReplayer.saveGameplay());
-
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener((e) -> System.exit(0));
 
-        //adding menu selections to the menu
+        //adding menu selections to the gameMenu
         gameMenu.add(restartItem);
-        gameMenu.add(saveItem);
         gameMenu.add(exitItem);
+
+        //Add gameMenu to menuBar.
         menuBar.add(gameMenu);
 
+        //=====Record And Replay=====//
+        JMenu recordAndReplay = new JMenu("Record And Replay");
+
+        //Selections
+        JMenuItem RecordTrigger = new JMenuItem("Start Recording");
+        RecordTrigger.addActionListener((e) -> recordTriggerHelper(RecordTrigger));
+
+        //Add selections to RecordAndReplay Menu.
+        recordAndReplay.add(RecordTrigger);
+
+        //Add RecordAndReplay to MenuBar
+        menuBar.add(recordAndReplay);
+
+        //=====Setting the menu bar=====//
         setJMenuBar(menuBar);
     }
 
@@ -164,7 +177,7 @@ public class ChapsChallenge extends JFrame {
 //                        System.out.println("Key Pressed");
                         break;
                 }
-                recordAndReplayer.storeRecorderBuffer();
+                recordAndReplayer.clearRecorderBuffer();
                 renderer.revalidate();
                 renderer.repaint();
             }
@@ -229,6 +242,22 @@ public class ChapsChallenge extends JFrame {
         recordAndReplayer.capturePlayerMove(direction);
         Position newPos = new Position(game.getPlayer().getPos(), direction);
         recordAndReplayer.captureTileInteraction(game.getBoard().getMap()[newPos.getX()][newPos.getY()]);
+    }
 
+    /**
+     *
+     */
+    public void recordTriggerHelper(JMenuItem menuItem) {
+        if(recordAndReplayer.triggerRecordingSwitch()) {
+            //if it's true right now. Save gameplay, and switch it to false.
+            recordAndReplayer.saveGameplay();
+
+            menuItem.setText("Start Recording");
+        } else {
+            //if it's false right now. Switch it to true. gameplay should start being recorded
+            //also, change the menu text
+            recordAndReplayer.setStartingPosition(game.getPlayer().getPos());
+            menuItem.setText("Stop Recording");
+        }
     }
 }

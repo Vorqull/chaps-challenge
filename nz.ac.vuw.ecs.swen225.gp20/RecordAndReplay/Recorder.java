@@ -3,6 +3,7 @@ package RecordAndReplay;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.Key;
 import Maze.Game;
+import Maze.Position;
 import RecordAndReplay.Actions.*;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
 public class Recorder {
     private List<ArrayList<Action>> recordedChanges; //ArrayList chosen instead of stack, so you can go back and fourth n shit. ORDER IS IMPORTANT!!!
     private ArrayList<Action> changeBuffer;
+    private Position startingPosition;
 
     public Recorder() {
         recordedChanges = new ArrayList<ArrayList<Action>>();
@@ -57,6 +59,11 @@ public class Recorder {
         changeBuffer = new ArrayList<Action>();
     }
 
+    /** Clears the buffer, does NOT add it into the recordedChanges array. */
+    public void deleteBuffer() {
+        changeBuffer = new ArrayList<Action>();
+    }
+
     /**
      * Record a singular change. Ideally done if it's only ONE actor moving.
      * eh, delete this later when you're certain...
@@ -78,6 +85,13 @@ public class Recorder {
         addThis.add(a);
         recordedChanges.add(addThis);
     }*/
+
+    public void setStartingPosition(Position pos) {
+        startingPosition = pos;
+    }
+    public Position getStartingPosition() {
+        return startingPosition;
+    }
 
     public List<ArrayList<Action>> getRecordedChanges() { return recordedChanges; }
 }

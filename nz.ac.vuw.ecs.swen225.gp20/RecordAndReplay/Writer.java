@@ -1,5 +1,6 @@
 package RecordAndReplay;
 
+import Maze.Position;
 import RecordAndReplay.Actions.Action;
 import RecordAndReplay.Actions.PlayerMove;
 import RecordAndReplay.Actions.PlayerTileInteraction;
@@ -22,9 +23,15 @@ public class Writer {
     /**
      * WRITES EVERYTHING IN JSON
      */
-    public void writeRecording(List<ArrayList<Action>> gameplay) {
+    public void writeRecording(List<ArrayList<Action>> gameplay, Position pos) {
         //All actions that take place, in Json.
         JsonArrayBuilder gameplayInJson = Json.createArrayBuilder();
+        //FIRST: Note down the positions of Player
+        JsonObjectBuilder playerPos = Json.createObjectBuilder();
+        playerPos.add("startX", pos.getX());
+        playerPos.add("startY", pos.getY());
+
+        gameplayInJson.add(playerPos);
 
         for(ArrayList<Action> change : gameplay) {
             //'Changes' is all the actions that take place at this one singular moment of the game.
