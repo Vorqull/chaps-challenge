@@ -1,7 +1,9 @@
 package Application;
 
 import Maze.Board;
+import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.Player;
+import Maze.BoardObjects.Actors.stalker_enemy.StalkerEnemy;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.Game;
 import Maze.Position;
@@ -13,6 +15,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.*;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -43,7 +47,14 @@ public class ChapsChallenge extends JFrame {
      */
     public ChapsChallenge(){
         initUI();
-        game = new Game(new Board(Renderer.level1()), new Player(new Position(4, 4)), null); //FIXME: placeholder replace later
+
+        /////// TEST CODE
+        StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10));
+        Set<AbstractActor> test = new HashSet<>();
+        test.add(enemy);
+        //////
+
+        game = new Game(new Board(Renderer.level1()), new Player(new Position(4, 4)), test); //FIXME: placeholder replace later
         recordAndReplayer = new RecordAndReplay();
 
         JPanel basePanel = new JPanel();

@@ -15,7 +15,6 @@ public class ExitLock extends AbstractTile {
 
     /**
      * .
-     * @param position .
      */
     public ExitLock(boolean setVertical) {
         super(setVertical);

@@ -1,5 +1,6 @@
 package Maze.BoardObjects.Actors;
 
+import Maze.Board;
 import Maze.Position;
 
 /**
@@ -15,7 +16,7 @@ public class PatternEnemy extends AbstractActor{
     }
 
     @Override
-    public void move(Player player){
+    public void move(Player player, Board board){
 
     }
 

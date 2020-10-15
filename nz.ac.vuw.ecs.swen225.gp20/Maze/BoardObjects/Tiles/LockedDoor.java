@@ -50,4 +50,8 @@ public class LockedDoor extends AbstractTile {
     public String getDoorColour() {
         return colour;
     }
+
+    public boolean isLocked() {
+        return locked;
+    }
 }

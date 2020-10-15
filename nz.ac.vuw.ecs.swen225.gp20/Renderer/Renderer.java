@@ -1,6 +1,7 @@
 package Renderer;
 
 import Application.ChapsChallenge;
+import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.*;
 import Maze.Position;

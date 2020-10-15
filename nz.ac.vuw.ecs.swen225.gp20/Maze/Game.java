@@ -26,7 +26,7 @@ public class Game {
 
     public void moveEnemyCheckWin() {
         for(AbstractActor c : computerPlayers) {
-            c.move(player);
+            c.move(player, board);
         }
     }
 
@@ -37,6 +37,20 @@ public class Game {
      *                 current position is interacting with/moving towards.
      */
     public void movePlayer(DIRECTION direction) {
+
+        ////////TEST CODE
+        for(AbstractActor a : computerPlayers) {
+            System.out.println("Enemy: ");
+            a.move(player, board);
+            System.out.println(a.getPos());
+            a.move(player, board);
+            System.out.println(a.getPos());
+            a.move(player, board);
+            System.out.println(a.getPos());
+        }
+        //////
+
+
         Position newPos;
         switch (direction) {
             case UP:
@@ -82,6 +96,10 @@ public class Game {
             player.getPos().move(direction);    //Move the player
         }
 
+        ////////// TEST CODE
+        System.out.println("Player: ");
+        System.out.println(player.getPos());
+        ////////////////
     }
 
     private void unlockExitLock() {
@@ -114,5 +132,9 @@ public class Game {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Set<AbstractActor> getComputerPlayers() {
+        return computerPlayers;
     }
 }

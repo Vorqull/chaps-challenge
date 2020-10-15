@@ -52,6 +52,7 @@ public class JSONReader {
 	int rowIndex = 0;
 	int colIndex = 0;
 	InputStream levelInputStream;
+	 System.out.println("Working Directory = " + System.getProperty("user.dir"));
 	try {
 		levelInputStream = new FileInputStream(jsonName);
 	} catch (FileNotFoundException e) {

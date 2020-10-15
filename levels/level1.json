@@ -1,0 +1,113 @@
+
+{
+    "Tiles": {
+        "rows": [
+            {
+                "objects": [
+                    {
+                        "row": 0,
+                        "column": 0,
+                        "Tile Type": "Key",
+                        "Rotation": "Vertical",
+                        "Colour": "green"
+                    },
+                    {
+                        "row": 0,
+                        "column": 1,
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 0,
+                        "column": 2,
+                        "Tile Type": "ExitPortal",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 0,
+                        "column": 3,
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 0,
+                        "column": 4,
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
+                    }
+                ]
+            },
+            {
+                "objects": [
+                    {
+                        "row": 1,
+                        "column": 0,
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 1,
+                        "column": 1,
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 1,
+                        "column": 2,
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 1,
+                        "column": 3,
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 1,
+                        "column": 4,
+                        "Tile Type": "Wall",
+                        "Rotation": "Horizontal"
+                    }
+                ]
+            },
+            {
+                "objects": [
+                    {
+                        "row": 2,
+                        "column": 0,
+                        "Tile Type": "Wall",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 2,
+                        "column": 1,
+                        "Tile Type": "Wall",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 2,
+                        "column": 2,
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
+                    },
+                    {
+                        "row": 2,
+                        "column": 3,
+                        "Tile Type": "InfoField",
+                        "Rotation": "Horizontal",
+                        "InfoText": "Placeholder text"
+                    },
+                    {
+                        "row": 2,
+                        "column": 4,
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
+                    }
+                ]
+            }
+        ]
+    },
+    "rowCount": 3,
+    "columnCount": 5
+}

@@ -1,14 +1,14 @@
 package Maze.BoardObjects.Actors;
 
-import Maze.BoardObjects.BoardObject;
+import Maze.Board;
 import Maze.Position;
 
 /**
  * A abstract class that represents any movable objects on the board.
  */
-public abstract class AbstractActor implements BoardObject {
+public abstract class AbstractActor {
 
-    private final Position position;
+    protected Position position;    //Could be final...?
 
     /**
      * Basic constructor for any actors
@@ -18,7 +18,7 @@ public abstract class AbstractActor implements BoardObject {
         this.position = position;
     }
 
-    public abstract void move(Player player);
+    public abstract void move(Player player, Board board);
 
     public abstract void interact(Player player);
 

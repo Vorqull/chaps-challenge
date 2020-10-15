@@ -1,23 +1,17 @@
 package Maze.BoardObjects.Tiles;
 
-import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.Player;
-import Maze.BoardObjects.BoardObject;
-import Maze.Position;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * An implementation of the Tile interface,
  * all other tiles object will use the methods
  * within this abstract class.
  */
-public abstract class AbstractTile implements BoardObject {
+public abstract class AbstractTile {
 
     protected boolean rotated = false;
     protected Map<String, Image> images = new HashMap<>();
