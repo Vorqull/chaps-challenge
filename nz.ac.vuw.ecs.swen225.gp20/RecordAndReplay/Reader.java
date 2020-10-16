@@ -19,8 +19,10 @@ import java.util.ArrayList;
  * All this class does is return "recordedChanges" however.
  *
  * In "Replayer" (recordedChanges should be loaded in RecordAndReplay) the player may use arrow keys to go left or right in the recording.
+ * (should also reveal a "controls" menu item. displays a window that lists the controls for the replayer)
  * If there is no more recording, an alert should display "END OF RECORDING".
  * If the player rewinds too far, an alert shouldn't display but the Replayer shouldn't allow it to rewind.
+ * Player should also allow an "auto replay" feature. (every action now requires a time stamp which actually requires a game clock to be implemented...)
  */
 public class Reader {
     ArrayList<ArrayList<Action>> recordedChanges = new ArrayList<ArrayList<Action>>();
