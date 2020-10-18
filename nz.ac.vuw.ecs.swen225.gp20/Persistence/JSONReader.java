@@ -1,31 +1,14 @@
 package Persistence;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Iterator;
 
 import javax.json.Json;
 import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
-import javax.json.JsonStructure;
 import javax.json.JsonValue;
-import javax.json.JsonWriter;
-import javax.json.JsonWriterFactory;
-import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParser.Event;
 
 import Maze.Position;
 import Maze.BoardObjects.Tiles.AbstractTile;
@@ -38,19 +21,13 @@ import Maze.BoardObjects.Tiles.LockedDoor;
 import Maze.BoardObjects.Tiles.Treasure;
 import Maze.BoardObjects.Tiles.Wall;
 
-import javax.json.JsonReader;
-import javax.json.JsonStructure;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParser.Event;
-
 public class JSONReader {
 
   /**
    * @param jsonName -  The name of the JSON file to use.
    */
-  public AbstractTile[][] readJSON(String jsonName) {
-	int rowIndex = 0;
-	int colIndex = 0;
+  public Level readJSON(String jsonName) {
+	Level returnLevel;
 	InputStream levelInputStream;
 	 System.out.println("Working Directory = " + System.getProperty("user.dir"));
 	try {
@@ -63,12 +40,19 @@ public class JSONReader {
 	JsonReader levelReader = Json.createReader(levelInputStream);
 	
 	JsonObject fileObject = levelReader.readObject();
+	JsonObject levelInfo = fileObject.getJsonObject("Level Info");
 	JsonObject tiles = fileObject.getJsonObject("Tiles");
 	JsonArray rows = (JsonArray) tiles.get("rows");
-	int rowCount = fileObject.getInt("rowCount");
-	int colCount = fileObject.getInt("columnCount");
+	
+	int rowCount = levelInfo.getInt("rowCount");
+	int colCount = levelInfo.getInt("columnCount");
+	int maxTime = levelInfo.getInt("timeLimit");
+	Position playerStart = new Position(levelInfo.getInt("playerX"), levelInfo.getInt("playerY"));
+	
 	AbstractTile[][] tileArray = new AbstractTile[colCount][rowCount];
+	
 	Iterator<JsonValue> rowsIterator = rows.iterator();
+	
 	while(rowsIterator.hasNext()) {
 		//Convert from jsonValue to jsonObject, then get the array of tiles
 		JsonObject currentRowObject = (JsonObject) rowsIterator.next();
@@ -90,16 +74,13 @@ public class JSONReader {
 				isRotated = true;
 			}
 			String tileName = type.toString();
-			int tileRow = row.toString().charAt(0);
-			int tileColumn = column.toString().charAt(0);
-			tileRow = tileRow - '0';
-			tileColumn = tileColumn - '0';
-			Position tilePos = new Position(tileColumn, tileRow);
-			System.out.println(tilePos.getX() + " " + tilePos.getY());
+			int tileRow = StringToInt(row.toString());
+			int tileColumn = StringToInt(column.toString());
 			AbstractTile tileObject;
 			if(tileName.equals("\"Key\"")) {
 				JsonValue colour = currentTile.get("Colour");
 				String tileColour = colour.toString();
+				tileColour = tileColour.substring(1, tileColour.length()-1);
 				tileObject = new Key(tileColour);
 			}
 			else if(tileName.equals("\"ExitPortal\"")) {
@@ -116,6 +97,7 @@ public class JSONReader {
 			else if(tileName.equals("\"LockedDoor\"")) {
 				JsonValue colour = currentTile.get("Colour");
 				String tileColour = colour.toString();
+				tileColour = tileColour.substring(1, tileColour.length()-1);
 				tileObject = new LockedDoor(isRotated, tileColour);
 			}
 			else if(tileName.equals("\"Treasure\"")) {
@@ -131,9 +113,18 @@ public class JSONReader {
 			tileArray[tileColumn][tileRow] = tileObject;
 		}
 	}
-	
-	return tileArray;
+	returnLevel = new Level(maxTime, playerStart, tileArray);
+	return returnLevel;
 	
   
+  }
+
+  private int StringToInt(String intString) {
+	  int charInt = 0;
+	  for(int i = 0; i < intString.length(); i++) {
+		  charInt = charInt*10;
+		  charInt += intString.charAt(i) - '0';
+	  }
+	  return charInt;
   }
 }

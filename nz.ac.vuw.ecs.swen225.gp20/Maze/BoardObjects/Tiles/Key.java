@@ -13,7 +13,6 @@ public class Key extends AbstractTile {
 
     /**
      * .
-     * @param position .
      */
     public Key(String colour) {
         super(false);

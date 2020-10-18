@@ -18,8 +18,6 @@ public class InfoField extends AbstractTile {
 
     @Override
     public boolean interact(Player player) {
-        //Display text - NEED TO CHANGE
-        System.out.println(infoText);
         return true;
     }
 

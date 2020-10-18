@@ -2,7 +2,7 @@ package MonkeyTest;
 
 import javax.swing.JOptionPane;
 import Renderer.*;
-
+import org.junit.*;
 
 
 import Maze.Board;
@@ -14,39 +14,41 @@ import Maze.Board;
  *
  */
 
+
 public class MonkeyTest {
 	static int i;
 	static int k = 0;
 	static String l;
 	static Board board;
+	static TestSuite test;
 
-
+@BeforeClass
 	/**
 	 * @param args .
 	 */
-	public static void main(String[] args) {
+	public static void initialize() {
 
 
-		runDialog();
-		runLevelChooser();
-		TestSuite test = new TestSuite(board);
-		while(k < i) {test.randomMovement(); k++;}
+		//runDialog();
+		//runLevelChooser();
+	board = new Board(Renderer.level1());
+	i = 100000;
+		
 
 
 		System.out.println(i);
 	}
 
-
-	private static void runLevelChooser() {
+	/** private static void runLevelChooser() {
 		Object[] levels = {"Level 1", "Level 2"};
 		l = (String)JOptionPane.showInputDialog(null,"Choose a level to test","Level Chooser",JOptionPane.PLAIN_MESSAGE,null,levels,"Level 1");
 		if(l.equals("Level 1")) {board = new Board(Renderer.level1());}
-		else {}
+		else {} 
 
-	}
+	} **/
 
 
-	private static void runDialog() {
+	/**private static void runDialog() {
 
 		Object[] options = {"Yes","No"};
 		int n = JOptionPane.showOptionDialog(null,
@@ -56,9 +58,16 @@ public class MonkeyTest {
 				i = Integer.parseInt(JOptionPane.showInputDialog(null, "How many random commands to send?\n"));
 			} catch(Exception e) { JOptionPane.showMessageDialog(null, "You must input an integer");}
 		}
-		else { i = 100000;}
+		else { i = 100000;} **/
 
-	}
+	
+	@Test
+	public void testSuite() { test = new TestSuite(board);}
+	
+	@Test
+	
+	public void runTests() {while(k < i) {test.randomMovement(); k++;}}
+	
 
 }
 

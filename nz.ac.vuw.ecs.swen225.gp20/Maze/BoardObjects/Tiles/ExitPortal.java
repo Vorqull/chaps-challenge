@@ -17,5 +17,4 @@ public class ExitPortal extends AbstractTile {
         return true;
     }
 
-
 }

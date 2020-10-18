@@ -32,6 +32,11 @@ public class ExitLock extends AbstractTile {
      */
     @Override
     public boolean interact(Player player) {
-        return false;
+        return !locked;
+    }
+
+    public void unlock(){
+        locked = false;
+        currentImage = images.get("FloorTile");
     }
 }

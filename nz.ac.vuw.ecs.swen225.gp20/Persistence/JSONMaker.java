@@ -41,6 +41,9 @@ public class JSONMaker {
   public void makeJSON(ArrayList<ArrayList<String>> ArrayFormat, String jsonName) {
 	int rowIndex = 0;
 	int colIndex = 0;
+	int playerX = 0;
+	int playerY = 0;
+	boolean playerSet = false;
 	JsonArrayBuilder colBuilder = Json.createArrayBuilder();
 	for(ArrayList<String> aL : ArrayFormat) {
 		colIndex = 0;
@@ -53,16 +56,16 @@ public class JSONMaker {
 			//Set the colour of the tile if a colour was designated.
 			if(tileInfo.length > 2) {
 				if(tileInfo[2].equals("r")) {
-					tileColour = "red";
+					tileColour = "Red";
 				}
 				else if(tileInfo[2].equals("g")) {
-					tileColour = "green";
+					tileColour = "Green";
 				}
 				else if(tileInfo[2].equals("y")) {
-					tileColour = "yellow";
+					tileColour = "Yellow";
 				}
 				else if(tileInfo[2].equals("b")) {
-					tileColour = "blue";
+					tileColour = "Blue";
 				}
 				else {
 					arrayObjectBuilder.add("Rotation", "ERROR! value " 
@@ -97,6 +100,11 @@ public class JSONMaker {
 			}
 			else if(tileInfo[0].equals("ep")) {
 				tileName = "ExitPortal";
+			}
+			else if(tileInfo[0].equals("p") && playerSet == false) {
+				tileName = "FreeTile";
+				playerX = colIndex;
+				playerY = rowIndex;
 			}
 			else {
 				arrayObjectBuilder.add("Rotation", "ERROR! value " 
@@ -144,8 +152,20 @@ public class JSONMaker {
 		rowIndex++;
 	}
 	
-	JsonObject arrayCol = Json.createObjectBuilder().add("rows", colBuilder).build();
-	JsonObject mapObject = Json.createObjectBuilder().add("Tiles", arrayCol).add("rowCount", rowIndex).add("columnCount", colIndex).build();
+	JsonObject arrayCol = Json.createObjectBuilder()
+			.add("rows", colBuilder)
+			.build();
+	JsonObject levelInfo = Json.createObjectBuilder()
+			.add("rowCount", rowIndex)
+			.add("columnCount", colIndex)
+			.add("playerX", playerX)
+			.add("playerY", playerY)
+			.add("timeLimit", 100)
+			.build();
+	JsonObject mapObject = Json.createObjectBuilder()
+			.add("Tiles", arrayCol)
+			.add("Level Info", levelInfo)
+			.build();
 	
 	String formattedString = prettyPrint(mapObject);
 	//System.out.println(formattedString);

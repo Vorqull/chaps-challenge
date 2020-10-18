@@ -1,7 +1,5 @@
 package Renderer;
 
-import Maze.Game;
-
 import java.awt.*;
 
 /**
