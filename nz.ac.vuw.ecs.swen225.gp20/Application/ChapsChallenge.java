@@ -8,6 +8,7 @@ import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.Game;
 import Maze.Position;
 import RecordAndReplay.RecordAndReplay;
+import RecordAndReplay.Reader;
 import Renderer.Renderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -128,9 +129,13 @@ public class ChapsChallenge extends JFrame {
         //=====Record And Replay=====//
         JMenu recordAndReplay = new JMenu("Record And Replay");
 
-        //Selections
+        //SELECTIONS
+        //1: Recording
         JMenuItem RecordTrigger = new JMenuItem("Start Recording");
-        RecordTrigger.addActionListener((e) -> recordTriggerHelper(RecordTrigger));
+        RecordTrigger.addActionListener((e) -> recordTrigger(RecordTrigger));
+        //2: Replaying
+        JMenuItem Replay = new JMenuItem("Replay");
+        //RecordTrigger.addActionListener((e) -> )
 
         //Add selections to RecordAndReplay Menu.
         recordAndReplay.add(RecordTrigger);
@@ -256,19 +261,37 @@ public class ChapsChallenge extends JFrame {
     }
 
     /**
-     *
+     * Helper for recording.
+     * Has an activated and deactivated state, which the menu item can switch on and off.
+     * During it's activated state, it records all movement into the recordbuffer.
+     * During it's deactivated state, it saves everything on the recordbuffer and stops recording.
      */
-    public void recordTriggerHelper(JMenuItem menuItem) {
-        if(recordAndReplayer.triggerRecordingSwitch()) {
+    public void recordTrigger(JMenuItem menuItem) {
+        if(recordAndReplayer.getRecordingBoolean()) {
             //if it's true right now. Save gameplay, and switch it to false.
             recordAndReplayer.saveGameplay();
 
+            recordAndReplayer.setRecordingBoolean(false);
             menuItem.setText("Start Recording");
         } else {
             //if it's false right now. Switch it to true. gameplay should start being recorded
             //also, change the menu text
             recordAndReplayer.setStartingPosition(game.getPlayer().getPos());
+
+            recordAndReplayer.setRecordingBoolean(true);
             menuItem.setText("Stop Recording");
+        }
+    }
+
+    /**
+     * Helper for replaying.
+     *
+     */
+    public void replayTrigger(JMenuItem menuItem) {
+        //
+        if(recordAndReplayer.getRecordingBoolean()) {
+            System.out.println("Display alert here");
+            //Cannot begin replaying while game is recording.
         }
     }
 }

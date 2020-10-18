@@ -2,7 +2,15 @@ package RecordAndReplay;
 
 import RecordAndReplay.Actions.Action;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Should be able to read a json file.
@@ -11,7 +19,7 @@ import java.util.ArrayList;
  *
  * Reminder to self:
  * So Essentially, the player should select when they wanna start a replay.
- * Warn the player about how their current game session will end.
+ * Warn the player: their current game session will end.
  * They proceed, All the created saves should be presented in the next alert box. (gives an error if there is none and returns to their game)
  * They select a save, The json save should be loaded, via this reader, into the recorded changes. (gives an error on bad formatting and returns to their game)
  * Immediately resets the game, and loads the player in their beginning spot OF said recording (NOTE: you'll also need to deploy creatures
@@ -32,9 +40,22 @@ public class Reader {
 
     //goes through all the objects in "saves" and
     //ANOTHER REMINDER TO SELF: players should be able to name their saves
-    public ArrayList<String> findSaves() {
-        return null;
+    /**
+     * This helps find all the save jsons in the package and presents them.
+     */
+    public File[] findSaves() {
+        ArrayList<File> returnThis = new ArrayList<File>();
+        File directory = new File(System.getProperty("user.dir") + "/nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves");
+        File[] files = directory.listFiles(new FilenameFilter() {
+            public boolean accept(File directory, String name) {
+                return name.toLowerCase().endsWith(".json");
+            }
+        });
+
+        return files;
     }
 
     //read json
+
+    /** HELPER METHODS **/
 }

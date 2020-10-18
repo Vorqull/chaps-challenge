@@ -16,6 +16,8 @@ import javax.json.*;
  * Should be able to create and write a json file recording of the game.
  *
  * Every list of actions is an entity on its own.
+ *
+ * ONE DAY.... I MUST ADD THE TIME STAMPAARUUUUUU
  */
 public class Writer {
     public Writer() {}
@@ -61,14 +63,14 @@ public class Writer {
                 else if(a instanceof PlayerTileInteraction) {
                     action.add("PlayerTileInteract", ((PlayerTileInteraction) a).getTileName());
                 }
-                changes.add(a.getType().getString() + ": " + action.build().toString()); //might wanna to change this later...
+                changes.add(a.getType().getString() + ": " + action.build().toString());
             }
             gameplayInJson.add(changes);
         }
 
         //Write to file
         try {
-            OutputStream os = new FileOutputStream("nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/save.json");
+            OutputStream os = new FileOutputStream("nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves/save.json");
             JsonWriter jsonWriter = Json.createWriter(os);
             jsonWriter.writeArray(gameplayInJson.build());
             jsonWriter.close();

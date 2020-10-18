@@ -78,10 +78,13 @@ public class RecordAndReplay<E> {
 
     //=====RECORDER=====//
     //returns the current state of the switch, and also flips it.
-    public boolean triggerRecordingSwitch() {
-        recordingSwitch = !recordingSwitch;
-        return !recordingSwitch;
+    public boolean getRecordingBoolean() {
+        return recordingSwitch;
     }
+    public void setRecordingBoolean(Boolean s) {
+        recordingSwitch = s;
+    }
+
     //set the starting position. I COULD have put it in the above method, but I dont wanna seem like a sociopath.
     public void setStartingPosition(Position pos) {
         recorder.setStartingPosition(pos);
