@@ -8,6 +8,7 @@ import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.Game;
 import Maze.Position;
 import RecordAndReplay.RecordAndReplay;
+import RecordAndReplay.Reader;
 import Renderer.Renderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -49,7 +50,7 @@ public class ChapsChallenge extends JFrame {
         initUI();
 
         /////// TEST CODE
-        StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10));
+        StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10), 1);
         Set<AbstractActor> test = new HashSet<>();
         test.add(enemy);
         //////
@@ -68,7 +69,7 @@ public class ChapsChallenge extends JFrame {
 
         //PANELS
         // Gameplay panel
-        JPanel gameplay = createGamePanel(new Renderer(this));
+        JPanel gameplay = createGamePanel(new Renderer(game));
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
@@ -108,24 +109,41 @@ public class ChapsChallenge extends JFrame {
      */
     public void createMenuBar(){
         JMenuBar menuBar = new JMenuBar();
+        //=====Game Menu=====//
         JMenu gameMenu = new JMenu("Game");
 
         //selections
         JMenuItem restartItem = new JMenuItem("Restart");
         //restartItem.addActionListener((e) -> System.exit(0)); //TODO: add functionality
 
-        JMenuItem saveItem = new JMenuItem("Save");
-        saveItem.addActionListener((e) -> recordAndReplayer.saveGameplay());
-
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener((e) -> System.exit(0));
 
-        //adding menu selections to the menu
+        //adding menu selections to the gameMenu
         gameMenu.add(restartItem);
-        gameMenu.add(saveItem);
         gameMenu.add(exitItem);
+
+        //Add gameMenu to menuBar.
         menuBar.add(gameMenu);
 
+        //=====Record And Replay=====//
+        JMenu recordAndReplay = new JMenu("Record And Replay");
+
+        //SELECTIONS
+        //1: Recording
+        JMenuItem RecordTrigger = new JMenuItem("Start Recording");
+        RecordTrigger.addActionListener((e) -> recordTrigger(RecordTrigger));
+        //2: Replaying
+        JMenuItem Replay = new JMenuItem("Replay");
+        //RecordTrigger.addActionListener((e) -> )
+
+        //Add selections to RecordAndReplay Menu.
+        recordAndReplay.add(RecordTrigger);
+
+        //Add RecordAndReplay to MenuBar
+        menuBar.add(recordAndReplay);
+
+        //=====Setting the menu bar=====//
         setJMenuBar(menuBar);
     }
 
@@ -240,6 +258,41 @@ public class ChapsChallenge extends JFrame {
         recordAndReplayer.capturePlayerMove(direction);
         Position newPos = new Position(game.getPlayer().getPos(), direction);
         recordAndReplayer.captureTileInteraction(game.getBoard().getMap()[newPos.getX()][newPos.getY()]);
+    }
 
+    /**
+     * Helper for recording.
+     * Has an activated and deactivated state, which the menu item can switch on and off.
+     * During it's activated state, it records all movement into the recordbuffer.
+     * During it's deactivated state, it saves everything on the recordbuffer and stops recording.
+     */
+    public void recordTrigger(JMenuItem menuItem) {
+        if(recordAndReplayer.getRecordingBoolean()) {
+            //if it's true right now. Save gameplay, and switch it to false.
+            recordAndReplayer.saveGameplay();
+
+            recordAndReplayer.setRecordingBoolean(false);
+            menuItem.setText("Start Recording");
+        } else {
+            //if it's false right now. Switch it to true. gameplay should start being recorded
+            //also, change the menu text
+            recordAndReplayer.setStartingPosition(game.getPlayer().getPos());
+
+            recordAndReplayer.setRecordingBoolean(true);
+            menuItem.setText("Stop Recording");
+        }
+    }
+
+    /**
+     * Helper for replaying.
+     *
+     */
+    public void replayTrigger(JMenuItem menuItem) {
+        //
+        if(recordAndReplayer.getRecordingBoolean()) {
+            System.out.println("Display alert here");
+            //Cannot begin replaying while game is recording.
+        }
     }
 }
+
