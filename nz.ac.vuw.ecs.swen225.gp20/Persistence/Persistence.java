@@ -17,11 +17,13 @@ public class Persistence {
 	public boolean saveGame(int remainingTime, Player player, ArrayList<AbstractActor> enemies, int levelNumber, AbstractTile[][] tiles) {
 		String saveString = "saves/level"+levelNumber+".JSON";
 		SaveJSONMaker.makeJSON(remainingTime, player, enemies, saveString, tiles);
-		return false;
+		return true;
 	}
 	
-	public boolean loadGame(String fileName) {
-		
-		return false;
+	public static Level loadGame(int levelNumber) {
+		String saveString = "saves/level"+levelNumber+".JSON";
+		Level levelUnchanged = getLevel(levelNumber);
+		Level levelLoaded = SaveJSONReader.readJSON(saveString, levelUnchanged);
+		return levelLoaded;
 	}
 }

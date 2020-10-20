@@ -60,7 +60,8 @@ public class SaveJSONMaker {
 			}
 			else if(currentTile instanceof Treasure) {
 				Treasure castTile = (Treasure) currentTile;
-				isActivated = castTile.isPickedUp();
+				//temp!!!!!
+				isActivated = !castTile.isPickedUp();
 			}
 			else if(currentTile instanceof LockedDoor) {
 				LockedDoor castTile = (LockedDoor) currentTile;

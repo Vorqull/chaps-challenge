@@ -6,6 +6,8 @@ import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.AbstractTile;
+import Maze.BoardObjects.Tiles.Key;
+import Maze.BoardObjects.Tiles.Treasure;
 
 public class PersistenceTest {
 	public static void main(String[] args) {
@@ -24,5 +26,9 @@ public class PersistenceTest {
 	    
 	    
 	    getJson.saveGame(91, new Player(new Position(3, 4)), actorArray, 1, tileTest);
+	    
+	   Level savedLevelLoad = getJson.loadGame(1);
+	   Treasure testTile = (Treasure) savedLevelLoad.getTileArray()[3][6];
+	   System.out.println(testTile.isPickedUp());
 	}
 }

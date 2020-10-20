@@ -12,6 +12,7 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 
 import Maze.Position;
+import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.ExitLock;
 import Maze.BoardObjects.Tiles.ExitPortal;
@@ -27,96 +28,79 @@ public class SaveJSONReader {
   /**
    * @param jsonName -  The name of the JSON file to use.
    */
-  public Level readJSON(String jsonName) {
+  public static Level readJSON(String jsonName, Level loadedLevel) {
+	ArrayList<EnemyBlueprint> enemyBlueprintsNew = new ArrayList<EnemyBlueprint>();
+	
+	AbstractTile[][] tileArray = loadedLevel.getTileArray();
 	Level returnLevel;
+	
 	InputStream levelInputStream;
 	 System.out.println("Working Directory = " + System.getProperty("user.dir"));
 	try {
 		levelInputStream = new FileInputStream(jsonName);
 	} catch (FileNotFoundException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 		return null;
 	}
-	JsonReader levelReader = Json.createReader(levelInputStream);
+	JsonReader saveReader = Json.createReader(levelInputStream);
 	
-	JsonObject fileObject = levelReader.readObject();
-	JsonObject levelInfo = fileObject.getJsonObject("Level Info");
-	JsonObject tiles = fileObject.getJsonObject("Tiles");
-	JsonArray rows = (JsonArray) tiles.get("rows");
+	JsonObject fileObject = saveReader.readObject();
+	JsonObject gameplayVariables = fileObject.getJsonObject("Gameplay variables");
+	JsonArray changedTiles = (JsonArray) fileObject.get("Changed Tiles");
+	JsonArray enemyLocations = (JsonArray) gameplayVariables.get("Enemy locations");
 	
-	int rowCount = levelInfo.getInt("rowCount");
-	int colCount = levelInfo.getInt("columnCount");
-	int maxTime = levelInfo.getInt("timeLimit");
-	Position playerStart = new Position(levelInfo.getInt("playerX"), levelInfo.getInt("playerY"));
+	int startingTime = gameplayVariables.getInt("time remaining");
+	Position playerStart = new Position(gameplayVariables.getInt("playerX"), gameplayVariables.getInt("playerY"));
 	
-	AbstractTile[][] tileArray = new AbstractTile[colCount][rowCount];
 	
-	Iterator<JsonValue> rowsIterator = rows.iterator();
 	
-	while(rowsIterator.hasNext()) {
-		//Convert from jsonValue to jsonObject, then get the array of tiles
-		JsonObject currentRowObject = (JsonObject) rowsIterator.next();
-		JsonArray currentRow = (JsonArray) currentRowObject.get("objects");
+	Iterator<JsonValue> tilesIterator = changedTiles.iterator();
+	
+	//Utility player object with all keys for unlocking doors
+	Player utilityPlayer = new Player(new Position(0,0));
+	
+	while(tilesIterator.hasNext()) {
 		
-		//Iterate through each row of tiles
-		Iterator<JsonValue> currentRowIterator = currentRow.iterator();
-		while(currentRowIterator.hasNext()) {
-			JsonObject currentTile = (JsonObject) currentRowIterator.next();
-			JsonValue type = currentTile.get("Tile Type");
-			JsonValue row = currentTile.get("row");
-			JsonValue column = currentTile.get("column");
-			JsonValue rotated = currentTile.get("Rotation");
-			boolean isRotated = false;
-			if(rotated.toString().equals("Horizontal")) {
-				isRotated = false;
-			}
-			else if(rotated.toString().equals("Vertical")) {
-				isRotated = true;
-			}
-			String tileName = type.toString();
-			int tileRow = StringToInt(row.toString());
-			int tileColumn = StringToInt(column.toString());
-			AbstractTile tileObject;
-			if(tileName.equals("\"Key\"")) {
-				JsonValue colour = currentTile.get("Colour");
-				String tileColour = colour.toString();
-				tileColour = tileColour.substring(1, tileColour.length()-1);
-				tileObject = new Key(tileColour);
-			}
-			else if(tileName.equals("\"ExitPortal\"")) {
-				tileObject = new ExitPortal();
-			}
-			else if(tileName.equals("\"ExitLock\"")) {
-				tileObject = new ExitLock(isRotated);
-			}
-			else if(tileName.equals("\"InfoField\"")) {
-				JsonValue infoText = currentTile.get("InfoText");
-				String tileInfoText = infoText.toString();
-				tileObject = new InfoField(tileInfoText);
-			}
-			else if(tileName.equals("\"LockedDoor\"")) {
-				JsonValue colour = currentTile.get("Colour");
-				String tileColour = colour.toString();
-				tileColour = tileColour.substring(1, tileColour.length()-1);
-				tileObject = new LockedDoor(isRotated, tileColour);
-			}
-			else if(tileName.equals("\"Treasure\"")) {
-				tileObject = new Treasure();
-			}
-			else if(tileName.equals("\"Wall\"")) {
-				tileObject = new Wall();
-			}
-			//Free tile
-			else{
-				tileObject = new FreeTile();
-			}
-			tileArray[tileColumn][tileRow] = tileObject;
+		JsonObject currentTileJSON = (JsonObject) tilesIterator.next();
+		int tileX = currentTileJSON.getInt("xPos");
+		int tileY = currentTileJSON.getInt("yPos");
+		AbstractTile currentTileObject;
+		currentTileObject = tileArray[tileX][tileY];
+		if(currentTileObject instanceof ExitLock) {
+			ExitLock castTile = (ExitLock) currentTileObject;
+			castTile.unlock();
 		}
+		else if(currentTileObject instanceof Treasure) {
+			Treasure castTile = (Treasure) currentTileObject;
+			castTile.interact(utilityPlayer);
+		}
+		else if(currentTileObject instanceof LockedDoor) {
+			LockedDoor castTile = (LockedDoor) currentTileObject;
+			castTile.interact(utilityPlayer);
+		}
+		else if(currentTileObject instanceof Key) {
+			Key castTile = (Key) currentTileObject;
+			castTile.interact(utilityPlayer);
+		}
+		
 	}
-	returnLevel = new Level(maxTime, playerStart, tileArray, new ArrayList<EnemyBlueprint>());
-	return returnLevel;
 	
+	//Iterate through all the enemies
+	Iterator<JsonValue> enemiesIterator = enemyLocations.iterator();
+	//With each enemy, get its new position and retrieve the AI type to ensure it is the same type of enemy as when saved
+	while(enemiesIterator.hasNext()) {	
+		JsonObject currentEnemyJSON = (JsonObject) enemiesIterator.next();
+		int enemyX = currentEnemyJSON.getInt("startingX");
+		int enemyY = currentEnemyJSON.getInt("startingY");
+		String enemyAI = currentEnemyJSON.getString("AI Type");
+		EnemyBlueprint currentEnemyBlueprint = new EnemyBlueprint(new Position(enemyX, enemyY), enemyAI);
+		enemyBlueprintsNew.add(currentEnemyBlueprint);
+	}
+	
+	//Make a revised level object that accounts for new enemy and player positions
+	//as well as changed tile state.
+	returnLevel = new Level(startingTime, playerStart, tileArray, enemyBlueprintsNew);
+	return returnLevel;
   
   }
 
