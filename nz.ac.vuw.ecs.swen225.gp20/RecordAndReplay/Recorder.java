@@ -19,12 +19,12 @@ import java.util.List;
  *
  */
 public class Recorder {
-    private List<ArrayList<Action>> recordedChanges; //ArrayList chosen instead of stack, so you can go back and fourth n shit. ORDER IS IMPORTANT!!!
+    private List<Change> recordedChanges;
     private ArrayList<Action> changeBuffer;
     private Position startingPosition;
 
     public Recorder() {
-        recordedChanges = new ArrayList<ArrayList<Action>>();
+        recordedChanges = new ArrayList<Change>();
         changeBuffer = new ArrayList<Action>();
     }
 
@@ -52,10 +52,13 @@ public class Recorder {
     /**public void captureTileChange() {
         //derp
     }*/
-    //Add move as needed
+
+    //Add moves as needed
     /** Clears the buffer, stores it into the recordedChanges array. */
-    public void storeBuffer() {
-        recordedChanges.add(changeBuffer);
+    public void storeBuffer(int timestamp) {
+        Change c = new Change(changeBuffer, timestamp);
+
+        recordedChanges.add(c);
         changeBuffer = new ArrayList<Action>();
     }
 
@@ -64,28 +67,6 @@ public class Recorder {
         changeBuffer = new ArrayList<Action>();
     }
 
-    /**
-     * Record a singular change. Ideally done if it's only ONE actor moving.
-     * eh, delete this later when you're certain...
-     */
-    /*public <E> void recordChange(E action) {
-        //FIRST, find out what kinda move it is (REMINDER: you may need to create a method for every kinda move if the others refuse
-        //to implement an interface into their design.
-        Action a = new Action();
-        //Eugh, brute force...
-        if(action instanceof Maze.Game.DIRECTION) {
-            //SECOND, create an Action object using the input
-
-            Maze.Game.DIRECTION direction = (Game.DIRECTION) action;
-
-        }
-
-        //THIRD, add the singular action to it's own array
-        ArrayList<Action> addThis = new ArrayList<Action>();
-        addThis.add(a);
-        recordedChanges.add(addThis);
-    }*/
-
     public void setStartingPosition(Position pos) {
         startingPosition = pos;
     }
@@ -93,5 +74,19 @@ public class Recorder {
         return startingPosition;
     }
 
-    public List<ArrayList<Action>> getRecordedChanges() { return recordedChanges; }
+    public List<Change> getRecordedChanges() { return recordedChanges; }
+
+    /**
+     * Private nested class object stores both the list of actions
+     * AND a time stamp to associate itself with.
+     */
+    public class Change {
+        public final ArrayList<Action> actions;
+        public final int timestamp;
+
+        public Change(ArrayList<Action> actions, int timestamp) {
+            this.actions = actions;
+            this.timestamp = timestamp;
+        }
+    }
 }

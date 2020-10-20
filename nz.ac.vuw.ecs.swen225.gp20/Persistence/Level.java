@@ -17,6 +17,7 @@ public class Level {
 		levelArray = pArray;
 		playerStartPos = pPos;
 	}
+
 	public int getTime() {
 		return time;
 	}

@@ -6,6 +6,7 @@ import Maze.BoardObjects.Tiles.Key;
 import Maze.Game;
 import Maze.Game.DIRECTION;
 import Maze.Position;
+import Persistence.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,19 +26,12 @@ import java.util.List;
  * + (ASSUMPTION) Player CANNOT undo or redo.
  *
  * ////////////////////////////////////////////////////////////////
- * Player can move using arrow keys only.
- * Then it checks if the player used item.
- * Then it checks if the player has interacted with any creatures or items.
- *
  * On a completely separate tick cycle, enemies will move on their own.
  * Every move, it checks if they have interacted with player.
  *
  * Multiple moves (aka changes) can happen at once.
  * Every change should be an array of changes.
  * The recording should be an array, of the array of changes.
- *
- * NOTE: each playermovement has a "direction" enum... might have to use.
- *       I don't think a creature can move yet...
  * ////////////////////////////////////////////////////////////////
  *
  * INDEX:
@@ -48,23 +42,21 @@ import java.util.List;
  * > GETTERS/SETTERS
  */
 public class RecordAndReplay<E> {
-    private Board board; //The board (level) that this record is associated with.//Change later...
+    private int level; //the Level the game is associated with. It's a string because that's how persistence works.
     private Recorder recorder;
     private Writer writer;
     private boolean recordingSwitch;
+    private int startedRecording;
 
     /**
-     * Creates a RecordAndReplay object associated with a board.
-     * Ideally created whenever a new level is loaded.
-     *
-     * NOTE: might have to delete later.
-     *
-     * @param board The Board object which this level is associated with
+     * Constructor with level parameter
+     * @param level The level which
      */
-    public RecordAndReplay(Board board) {
-        this.board = board;
-        this.recorder = new Recorder();
+    public RecordAndReplay(int level) {
+        recorder = new Recorder();
+        this.writer = new Writer();
         recordingSwitch = false;
+        this.level = level;
     }
 
     /**
@@ -77,7 +69,7 @@ public class RecordAndReplay<E> {
     }
 
     //=====RECORDER=====//
-    //returns the current state of the switch, and also flips it.
+    //Returns the current state of the switch, and also flips it.
     public boolean getRecordingBoolean() {
         return recordingSwitch;
     }
@@ -85,7 +77,7 @@ public class RecordAndReplay<E> {
         recordingSwitch = s;
     }
 
-    //set the starting position. I COULD have put it in the above method, but I dont wanna seem like a sociopath.
+    //Set the starting position. I COULD have put it in the above method, but I dont wanna seem like a sociopath.
     public void setStartingPosition(Position pos) {
         recorder.setStartingPosition(pos);
     }
@@ -94,22 +86,26 @@ public class RecordAndReplay<E> {
     public void capturePlayerMove(Game.DIRECTION direction) {
         recorder.capturePlayerMove(direction);
     }
-
     public void captureTileInteraction(AbstractTile tile) {
         recorder.captureTileInteraction(tile);
     }
 
+    //Note when recording started
+    public void setStartedRecording(int timestamp) {
+        startedRecording = timestamp;
+    }
+
     //DO THIS AT THE END OF ALL CAPTURES
-    public void clearRecorderBuffer() {
+    public void clearRecorderBuffer(int timestamp) {
         //deletes the recording buffer if it shouldnt be recording.
-        if(recordingSwitch) recorder.storeBuffer();
+        if(recordingSwitch) recorder.storeBuffer(timestamp);
         else recorder.deleteBuffer();
     }
 
     //=====SAVING=====//  AKA WRITING
     //All functions to do with creating a save via JSON is here.
     public void saveGameplay() {
-        writer.writeRecording(recorder.getRecordedChanges(), recorder.getStartingPosition());
+        writer.writeRecording(recorder.getRecordedChanges(), recorder.getStartingPosition(), level, startedRecording);
     }
 
     //=====LOADING=====//
@@ -118,12 +114,12 @@ public class RecordAndReplay<E> {
     //All functions to do with replaying, forward or backwards.
 
     //=====GETTERS/SETTERS=====//
-    public Board getBoard() {
-        return board;
-    }
-    public void setBoard(Board board) {
-        this.board = board;
-    }
 
-
+    /**
+     * Set the name of the json file this recorded session will be associated with.
+     * @param level
+     */
+    public void setLevelName(int level) {
+        this.level = level;
+    }
 }
