@@ -243,6 +243,9 @@ public class ChapsChallenge extends JFrame {
                         break;
                 }
                 recordAndReplayer.clearRecorderBuffer(timeRemaining);
+                if(game.isLevelCompleted()) {
+                    haltRecording();
+                }
             }
         });
 
@@ -410,14 +413,26 @@ public class ChapsChallenge extends JFrame {
     }
 
     /**
-     * Helper for replaying.
-     *
+     * TEMP change later after negotiations
+     * FORCE the recording to stop.
+     * WARNING: doesn't change the menu text back to normal. The menuItem must be a class variable inorder to do so.
+     */
+    public void haltRecording() {
+        recordAndReplayer.saveGameplay();
+
+        recordAndReplayer.setRecordingBoolean(false);
+    }
+    /**
+     * Initiate replay mode
      */
     public void replayTrigger(JMenuItem menuItem) {
         if(recordAndReplayer.getRecordingBoolean()) {
             JOptionPane.showMessageDialog(this, "ERROR: Cannot load replay while recording", "ERROR", JOptionPane.ERROR_MESSAGE);
         } else {
-            recordAndReplayer.loadConfirmation(this);
+            if(!recordAndReplayer.loadConfirmation(this)) {
+                return;
+            }
+            recordAndReplayer.selectSaveFile(this);
         }
     }
 }

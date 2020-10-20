@@ -10,6 +10,7 @@ import Persistence.EnemyBlueprint;
 import Persistence.Level;
 
 import javax.swing.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,8 +119,18 @@ public class RecordAndReplay<E> {
     public boolean loadConfirmation(JFrame frame) {
         int selection = JOptionPane.showConfirmDialog(frame, "WARNING: Loading a replay will quit out of your current game.\n" +
                 "Proceed?", "Load Replay Confirmation", JOptionPane.YES_NO_OPTION);
-        if(selection == 1) return true;
+        if(selection == 0) return true;
         else return false;
+    }
+
+    public void selectSaveFile(JFrame frame) {
+        JFileChooser jfc = new JFileChooser(System.getProperty("user.dir") + "/nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves");
+
+        int returnValue = jfc.showOpenDialog(frame);
+        if(returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedSaveFile = jfc.getSelectedFile();
+            System.out.println(selectedSaveFile.getAbsolutePath());
+        }
     }
 
     //=====PLAYING=====//

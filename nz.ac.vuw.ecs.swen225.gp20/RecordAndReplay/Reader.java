@@ -2,9 +2,9 @@ package RecordAndReplay;
 
 import RecordAndReplay.Actions.Action;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import javax.json.Json;
+import javax.json.JsonReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,29 +33,22 @@ import java.util.stream.Collectors;
  * Player should also allow an "auto replay" feature. (every action now requires a time stamp which actually requires a game clock to be implemented...)
  */
 public class Reader {
-    ArrayList<ArrayList<Action>> recordedChanges = new ArrayList<ArrayList<Action>>();
+    ArrayList<Recorder.Change> recordedChanges = new ArrayList<Recorder.Change>();
+
     public Reader() {
         //empty constructor
     }
 
-    //goes through all the objects in "saves" and
-    //ANOTHER REMINDER TO SELF: players should be able to name their saves
-    /**
-     * This helps find all the save jsons in the package and presents them.
-     */
-    public File[] findSaves() {
-        ArrayList<File> returnThis = new ArrayList<File>();
-        File directory = new File(System.getProperty("user.dir") + "/nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves");
-        File[] files = directory.listFiles(new FilenameFilter() {
-            public boolean accept(File directory, String name) {
-                return name.toLowerCase().endsWith(".json");
-            }
-        });
-
-        return files;
+    public void readJson(File file) {
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: " + e);
+        }
+        JsonReader reader = Json.createReader(inputStream);
+        //reader.
     }
-
-    //read json
 
     /** HELPER METHODS **/
 }

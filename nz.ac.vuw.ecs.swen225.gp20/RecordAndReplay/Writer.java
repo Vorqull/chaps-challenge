@@ -30,21 +30,18 @@ public class Writer {
      */
     public void writeRecording(List<Recorder.Change> gameplay, Position pos, int level, int startRecordingTimeStamp, EnemyBlueprint[] enemies) {
         //All actions that take place, in Json.
-        JsonArrayBuilder gameplayInJson = Json.createArrayBuilder();
+        JsonObjectBuilder gameplayInJson = Json.createObjectBuilder();
 
         //FIRST: Note down the level and begin recording timestamp
-        JsonObjectBuilder header = Json.createObjectBuilder();
-        header.add("Level", "levels/level" + level + ".JSON");
-        header.add("startRecordTime", startRecordingTimeStamp);
-
-        gameplayInJson.add(header);
+        gameplayInJson.add("Level", "levels/level" + level + ".JSON");
+        gameplayInJson.add("startRecordingTimeStamp", startRecordingTimeStamp);
 
         //SECOND: Note down the positions of Player
         JsonObjectBuilder playerPos = Json.createObjectBuilder();
         playerPos.add("startX", pos.getX());
         playerPos.add("startY", pos.getY());
 
-        gameplayInJson.add(playerPos);
+        gameplayInJson.add("playerPos", playerPos);
 
         //THIRD: Note down all the posistions of any enemies inside the level.
         int enemyCounter = 0;
@@ -59,8 +56,9 @@ public class Writer {
             arrayOfEnemies.add(hostile);
         }
 
-        gameplayInJson.add(arrayOfEnemies);
+        gameplayInJson.add("enemies", arrayOfEnemies);
 
+        int changesCounter = 0;
         for(Recorder.Change c : gameplay) {
             ArrayList<Action> actions = c.actions;
 
@@ -111,20 +109,20 @@ public class Writer {
                             break;
                     }
                 }
-                changes.add(a.getType().getString() + ": " + action.build().toString());
+                changes.add(a.getType().getString() + ": " + action.build());
             }
-            gameplayInJson.add(changes);
+            gameplayInJson.add("change" + changesCounter, changes);
         }
 
         //Write to file
         try {
             Date date = Calendar.getInstance().getTime();
             DateFormat dtf = new SimpleDateFormat("yyyyMMddHHmmss");
-            String saveFileName = dtf.format(date) + "save.JSON";
+            String saveFileName = dtf.format(date) + "savedReplay.JSON";
 
             OutputStream os = new FileOutputStream("nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves/" + saveFileName);
             JsonWriter jsonWriter = Json.createWriter(os);
-            jsonWriter.writeArray(gameplayInJson.build());
+            jsonWriter.writeObject(gameplayInJson.build());
             jsonWriter.close();
 
         } catch (FileNotFoundException e) {
