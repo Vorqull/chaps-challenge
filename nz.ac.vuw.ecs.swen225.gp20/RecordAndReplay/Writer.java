@@ -1,13 +1,20 @@
 package RecordAndReplay;
 
 import Maze.Position;
+import Persistence.EnemyBlueprint;
 import Persistence.Level;
 import RecordAndReplay.Actions.Action;
+import RecordAndReplay.Actions.EnemyMove;
 import RecordAndReplay.Actions.PlayerMove;
 import RecordAndReplay.Actions.PlayerTileInteraction;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.json.*;
@@ -20,9 +27,8 @@ public class Writer {
 
     /**
      * WRITES EVERYTHING IN JSON
-     *
      */
-    public void writeRecording(List<Recorder.Change> gameplay, Position pos, int level, int startRecordingTimeStamp) {
+    public void writeRecording(List<Recorder.Change> gameplay, Position pos, int level, int startRecordingTimeStamp, EnemyBlueprint[] enemies) {
         //All actions that take place, in Json.
         JsonArrayBuilder gameplayInJson = Json.createArrayBuilder();
 
@@ -39,6 +45,21 @@ public class Writer {
         playerPos.add("startY", pos.getY());
 
         gameplayInJson.add(playerPos);
+
+        //THIRD: Note down all the posistions of any enemies inside the level.
+        int enemyCounter = 0;
+        JsonArrayBuilder arrayOfEnemies = Json.createArrayBuilder();
+        for(EnemyBlueprint e : enemies) {
+            if(e == null) continue;
+            JsonObjectBuilder hostile = Json.createObjectBuilder();
+            hostile.add("EnemyNo", enemyCounter++);
+            hostile.add("startX", e.getPos().getX());
+            hostile.add("startY", e.getPos().getY());
+
+            arrayOfEnemies.add(hostile);
+        }
+
+        gameplayInJson.add(arrayOfEnemies);
 
         for(Recorder.Change c : gameplay) {
             ArrayList<Action> actions = c.actions;
@@ -73,6 +94,23 @@ public class Writer {
                 else if(a instanceof PlayerTileInteraction) {
                     action.add("PlayerTileInteract", ((PlayerTileInteraction) a).getTileName());
                 }
+                //ENEMY MOVE
+                else if(a instanceof EnemyMove) {
+                    switch (((EnemyMove) a).getDirection()) {
+                        case UP:
+                            action.add("EnemyMove", ((EnemyMove) a).getX() + ":" + ((EnemyMove) a).getY() + "UP");
+                            break;
+                        case DOWN:
+                            action.add("EnemyMove", ((EnemyMove) a).getX() + ":" + ((EnemyMove) a).getY() + "DOWN");
+                            break;
+                        case LEFT:
+                            action.add("EnemyMove", ((EnemyMove) a).getX() + ":" + ((EnemyMove) a).getY() + "LEFT");
+                            break;
+                        case RIGHT:
+                            action.add("EnemyMove", ((EnemyMove) a).getX() + ":" + ((EnemyMove) a).getY() + "RIGHT");
+                            break;
+                    }
+                }
                 changes.add(a.getType().getString() + ": " + action.build().toString());
             }
             gameplayInJson.add(changes);
@@ -80,7 +118,11 @@ public class Writer {
 
         //Write to file
         try {
-            OutputStream os = new FileOutputStream("nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves/save.JSON");
+            Date date = Calendar.getInstance().getTime();
+            DateFormat dtf = new SimpleDateFormat("yyyyMMddHHmmss");
+            String saveFileName = dtf.format(date) + "save.JSON";
+
+            OutputStream os = new FileOutputStream("nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves/" + saveFileName);
             JsonWriter jsonWriter = Json.createWriter(os);
             jsonWriter.writeArray(gameplayInJson.build());
             jsonWriter.close();

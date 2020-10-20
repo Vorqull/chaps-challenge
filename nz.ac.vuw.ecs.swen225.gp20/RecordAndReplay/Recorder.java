@@ -43,15 +43,12 @@ public class Recorder {
     }
 
     /** Records a creature movement and stores it in the buffer. */
-    /**public void captureCreatureMove() {
-        //FIRST, create
+    public void captureEnemyMove(Position enemyPos) {
+        //FIRST, Find the creature's position
+
 
         //Find's the creature at (x, y) and moves it in a direction.
     }
-    /** Record a tile's state changing. */
-    /**public void captureTileChange() {
-        //derp
-    }*/
 
     //Add moves as needed
     /** Clears the buffer, stores it into the recordedChanges array. */

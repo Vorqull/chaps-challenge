@@ -6,8 +6,10 @@ import Maze.BoardObjects.Tiles.Key;
 import Maze.Game;
 import Maze.Game.DIRECTION;
 import Maze.Position;
+import Persistence.EnemyBlueprint;
 import Persistence.Level;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,16 +49,19 @@ public class RecordAndReplay<E> {
     private Writer writer;
     private boolean recordingSwitch;
     private int startedRecording;
+    private EnemyBlueprint[] enemies;
 
     /**
      * Constructor with level parameter
-     * @param level The level which
+     * @param level The level number which is associated with the RecordAndReplayer
+     * @param enemies The list of enemies in this level
      */
-    public RecordAndReplay(int level) {
+    public RecordAndReplay(int level, EnemyBlueprint[] enemies) {
         recorder = new Recorder();
         this.writer = new Writer();
         recordingSwitch = false;
         this.level = level;
+        this.enemies = enemies;
     }
 
     /**
@@ -105,10 +110,17 @@ public class RecordAndReplay<E> {
     //=====SAVING=====//  AKA WRITING
     //All functions to do with creating a save via JSON is here.
     public void saveGameplay() {
-        writer.writeRecording(recorder.getRecordedChanges(), recorder.getStartingPosition(), level, startedRecording);
+        writer.writeRecording(recorder.getRecordedChanges(), recorder.getStartingPosition(), level, startedRecording, enemies);
     }
 
     //=====LOADING=====//
+    //All functions to do with loading the game
+    public boolean loadConfirmation(JFrame frame) {
+        int selection = JOptionPane.showConfirmDialog(frame, "WARNING: Loading a replay will quit out of your current game.\n" +
+                "Proceed?", "Load Replay Confirmation", JOptionPane.YES_NO_OPTION);
+        if(selection == 1) return true;
+        else return false;
+    }
 
     //=====PLAYING=====//
     //All functions to do with replaying, forward or backwards.

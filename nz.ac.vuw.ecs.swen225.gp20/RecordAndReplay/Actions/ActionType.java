@@ -11,11 +11,8 @@ import RecordAndReplay.RecordAndReplay;
  *
  */
 public enum ActionType {
-    PLAYERACTION("playeraction"), CREATUREACTION("creatureaction"), MAPACTION("mapaction");
+    PLAYERACTION("playeraction"), ENEMYACTION("enemyaction"), MAPACTION("mapaction");
 
-    //NOTE TO SELF: an action type will have a list of variables on what happens.
-    //              We will decide this later, depending on how the game will control and feel.
-    //              ATM, focus on recording, writing, reading, replaying.
     private String asString;
     ActionType(String asString) {
         this.asString = asString; //to make it easier to write n stuff

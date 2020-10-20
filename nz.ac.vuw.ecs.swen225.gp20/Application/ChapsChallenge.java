@@ -82,7 +82,7 @@ public class ChapsChallenge extends JFrame {
         inventoryView = new InventoryView(game.getPlayer());
 
         //Record & Replay
-        recordAndReplayer = new RecordAndReplay(1);
+        recordAndReplayer = new RecordAndReplay(1, currentLevel.getEnemies());
 
         //GUI
         JPanel basePanel = new JPanel();
@@ -162,11 +162,12 @@ public class ChapsChallenge extends JFrame {
         JMenuItem RecordTrigger = new JMenuItem("Start Recording");
         RecordTrigger.addActionListener((e) -> recordTrigger(RecordTrigger));
         //2: Replaying
-        JMenuItem Replay = new JMenuItem("Replay");
-        //RecordTrigger.addActionListener((e) -> )
+        JMenuItem ReplayTrigger = new JMenuItem("Replay");
+        ReplayTrigger.addActionListener((e) -> replayTrigger(ReplayTrigger));
 
         //Add selections to RecordAndReplay Menu.
         recordAndReplay.add(RecordTrigger);
+        recordAndReplay.add(ReplayTrigger);
 
         //Add RecordAndReplay to MenuBar
         menuBar.add(recordAndReplay);
@@ -372,6 +373,9 @@ public class ChapsChallenge extends JFrame {
         return infoPanel;
     }
 
+    // ===========================================
+    // RecordAndReplay Helpers
+    // ===========================================
     /**
      * Activated whenever a player moves in a direction.
      * Also helps check tiles they are about to move into in case of anything
@@ -381,7 +385,6 @@ public class ChapsChallenge extends JFrame {
         recordAndReplayer.capturePlayerMove(direction);
         Position newPos = new Position(game.getPlayer().getPos(), direction);
         recordAndReplayer.captureTileInteraction(game.getBoard().getMap()[newPos.getX()][newPos.getY()]);
-
     }
 
     /**
@@ -411,10 +414,10 @@ public class ChapsChallenge extends JFrame {
      *
      */
     public void replayTrigger(JMenuItem menuItem) {
-        //
         if(recordAndReplayer.getRecordingBoolean()) {
-            System.out.println("Display alert here");
-            //Cannot begin replaying while game is recording.
+            JOptionPane.showMessageDialog(this, "ERROR: Cannot load replay while recording", "ERROR", JOptionPane.ERROR_MESSAGE);
+        } else {
+            recordAndReplayer.loadConfirmation(this);
         }
     }
 }

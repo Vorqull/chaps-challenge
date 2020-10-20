@@ -1,14 +1,14 @@
 
 {
-    "Tiles": {
-        "rows": [
+    "Tiles":{
+        "rows":[
         ]
     },
-    "Level Info": {
-        "rowCount": 0,
-        "columnCount": 0,
-        "playerX": 0,
-        "playerY": 0,
-        "timeLimit": 100
+    "Level Info":{
+        "rowCount":0,
+        "columnCount":0,
+        "playerX":0,
+        "playerY":0,
+        "timeLimit":100
     }
 }
