@@ -113,7 +113,7 @@ public class JSONReader {
 			tileArray[tileColumn][tileRow] = tileObject;
 		}
 	}
-	returnLevel = new Level(maxTime, playerStart, tileArray);
+	returnLevel = new Level(maxTime, playerStart, tileArray, new EnemyBlueprint[10]);
 	return returnLevel;
 	
   

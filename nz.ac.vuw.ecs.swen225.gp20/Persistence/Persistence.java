@@ -1,5 +1,7 @@
 package Persistence;
 
+import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.AbstractTile;
 
 public class Persistence {
@@ -10,5 +12,8 @@ public class Persistence {
 		return returnLevel;
 	}
 	
-	//public boolean saveGame(int remainingTime, )
+	public boolean saveGame(int remainingTime, Player player, AbstractActor[] enemies) {
+		
+		return false;
+	}
 }

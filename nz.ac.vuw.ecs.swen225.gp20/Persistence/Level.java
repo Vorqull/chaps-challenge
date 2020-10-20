@@ -11,11 +11,13 @@ public class Level {
 	private AbstractTile[][] levelArray;
 	private Position playerStartPos;
 	private int time;
+	private EnemyBlueprint[] enemies;
 	
-	public Level(int pTime, Position pPos, AbstractTile[][] pArray) {
+	public Level(int pTime, Position pPos, AbstractTile[][] pArray, EnemyBlueprint[] pEnemies) {
 		time = pTime;
 		levelArray = pArray;
 		playerStartPos = pPos;
+		enemies = pEnemies;
 	}
 
 	public int getTime() {
@@ -28,5 +30,9 @@ public class Level {
 	
 	public AbstractTile[][] getTileArray(){
 		return levelArray;
+	}
+	
+	public EnemyBlueprint[] getEnemies() {
+		return enemies;
 	}
 }
