@@ -1,5 +1,6 @@
 package MonkeyTest;
 
+import java.util.HashSet;
 import java.util.Random;
 
 import org.junit.*;
@@ -28,7 +29,7 @@ public class TestSuite {
 		// t = new ChapsChallenge();
 		// tester = t.getGame();
 		
-		tester =  new Game(board, new Player(new Position(4, 4)), null); //PLACEHOLDER, need to implement level loader
+		tester =  new Game(board, new Player(new Position(4, 4)), new HashSet<>()); //PLACEHOLDER, need to implement level loader
 		
 	}
 	

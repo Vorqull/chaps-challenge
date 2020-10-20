@@ -2,11 +2,14 @@ package Application;
 
 import Maze.Board;
 import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Actors.stalker_enemy.StalkerEnemy;
-import Maze.BoardObjects.Tiles.AbstractTile;
+import Maze.BoardObjects.Tiles.Key;
 import Maze.Game;
 import Maze.Position;
+import Persistence.Persistence;
+import Persistence.Level;
 import RecordAndReplay.RecordAndReplay;
 import RecordAndReplay.Reader;
 import Renderer.Renderer;
@@ -14,6 +17,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.*;
 import java.util.HashSet;
@@ -25,7 +31,9 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -35,11 +43,17 @@ import javax.swing.border.EmptyBorder;
  */
 public class ChapsChallenge extends JFrame {
 
-    //info panel
-    private final int INFO_WIDTH = 240;
-    private final int INFO_HEIGHT = 540;
+    //Panels
+    private JPanel gameplayPanel;
+    private JPanel infoPanel;
 
     private Game game;
+
+    //Informating stored for info panel
+    private Timer timer;
+    private int timeRemaining;
+    private InventoryView inventoryView;
+
 
     private RecordAndReplay recordAndReplayer;
 
@@ -50,14 +64,27 @@ public class ChapsChallenge extends JFrame {
         initUI();
 
         /////// TEST CODE
-        StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10), 1);
         Set<AbstractActor> test = new HashSet<>();
+
+        StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10), 1);
         test.add(enemy);
+
+        PatternEnemy enemy1 = new PatternEnemy(new Position(2, 9), 1, "dddsssaaawww");
+        test.add(enemy1);
         //////
 
-        game = new Game(new Board(Renderer.level1()), new Player(new Position(4, 4)), test); //FIXME: placeholder replace later
+        //Persistence and Levels
+        Persistence persistence = new Persistence();
+        Level currentLevel =  persistence.getLevel(1);
+        timeRemaining = currentLevel.getTime();
+
+        game = new Game(new Board(currentLevel.getTileArray()), new Player(currentLevel.getPlayerPos()), new HashSet<>()); //FIXME: placeholder replace later
+        inventoryView = new InventoryView(game.getPlayer());
+
+        //Record & Replay
         recordAndReplayer = new RecordAndReplay();
 
+        //GUI
         JPanel basePanel = new JPanel();
         basePanel.setBackground(Color.BLACK);
 
@@ -69,20 +96,20 @@ public class ChapsChallenge extends JFrame {
 
         //PANELS
         // Gameplay panel
-        JPanel gameplay = createGamePanel(new Renderer(game));
+        gameplayPanel = createGamePanel(new Renderer(game));
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
                 requestFocus();
-                gameplay.requestFocus();
+                gameplayPanel.requestFocus();
             }
         });
-        basePanel.add(gameplay);
+        basePanel.add(gameplayPanel);
         basePanel.add(Box.createRigidArea(new Dimension(50, 0))); // Small gap between game and info panel
 
         // Info panel
-        JPanel info = createInfoPanel();
-        basePanel.add(info);
+        infoPanel = createInfoPanel();
+        basePanel.add(infoPanel);
 
         add(basePanel);
 
@@ -99,6 +126,7 @@ public class ChapsChallenge extends JFrame {
     public void initUI(){
         setTitle("Chap's Challenge: Among Us Edition");
         createMenuBar();
+        //test commit
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -147,6 +175,7 @@ public class ChapsChallenge extends JFrame {
         setJMenuBar(menuBar);
     }
 
+
     // ===========================================
     // JPanels
     // ===========================================
@@ -162,6 +191,25 @@ public class ChapsChallenge extends JFrame {
         gamePanel.setFocusable(true);
         gamePanel.requestFocusInWindow();
         gamePanel.requestFocus();
+
+        //Star background on own thread
+        Runnable clockThread = new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    try {
+                        Thread.sleep(1000/30); //30FPS
+                        renderer.revalidate();
+                        renderer.repaint();
+                        inventoryView.revalidate();
+                        inventoryView.repaint();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        new Thread(clockThread).start();
 
         //KeyListeners
         gamePanel.addKeyListener(new KeyAdapter() {
@@ -193,9 +241,7 @@ public class ChapsChallenge extends JFrame {
 //                        System.out.println("Key Pressed");
                         break;
                 }
-                recordAndReplayer.clearRecorderBuffer();
-                renderer.revalidate();
-                renderer.repaint();
+                recordAndReplayer.storeRecorderBuffer();
             }
         });
 
@@ -211,35 +257,97 @@ public class ChapsChallenge extends JFrame {
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBackground(Color.WHITE);
 
-        //level
-        JLabel levelLabel = new JLabel("Level X: placeholder");
+        int fontSize = 16;
+
+        //Current level label
+        JLabel levelLabel = new JLabel("LEVEL X");
+        levelLabel.setFont(new Font(levelLabel.getName(), Font.PLAIN, fontSize));
         levelLabel.setForeground(Color.RED);
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        //time remaining
-        JLabel timeLabel = new JLabel("Time Remaining: ");
-        timeLabel.setForeground(Color.RED);
-        timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        //Timer thread
+        JLabel timeLabel = new JLabel();
+        JLabel chipsLabel = new JLabel();
+        JLabel inventoryLabel = new JLabel("INVENTORY");
+        inventoryLabel.setFont(new Font(timeLabel.getName(), Font.PLAIN, fontSize));
+        inventoryLabel.setForeground(Color.RED);
+        inventoryLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        //chips remaining
-        JLabel chipsLabel = new JLabel("Chips Remaining: ");
-        chipsLabel.setForeground(Color.RED);
-        chipsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //Time remaining
+                timeLabel.setFont(new Font(timeLabel.getName(), Font.PLAIN, fontSize));
+                timeLabel.setText("TIME REMAINING: \n" + timeRemaining);
+                timeLabel.setForeground(Color.RED);
+                timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                //Chips Remaining
+                chipsLabel.setFont(new Font(chipsLabel.getName(), Font.PLAIN, fontSize));
+                chipsLabel.setText("CHIPS REMAINING: " + game.treasuresLeft());
+                chipsLabel.setForeground(Color.RED);
+//                if (game.treasuresLeft() == 0){
+//                    chipsLabel.setForeground(Color.GREEN);
+//                }
+                chipsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                //Inventory view
 
 
-        //TODO: inventory view
+                //Stopping the timer once it runs out of time
+                if (timeRemaining == 0) {
+                    timer.stop();
+                    outOfTime();
+                }
+                timeRemaining--;
+            }
+        });
+        timer.start();
 
-        infoPanel.add(Box.createRigidArea(new Dimension(INFO_WIDTH, 150)));
+
+
+        //info panel
+        int INFO_WIDTH = 240;
+        infoPanel.add(Box.createRigidArea(new Dimension(INFO_WIDTH, 100)));
         infoPanel.add(levelLabel);
-        infoPanel.add(Box.createRigidArea(new Dimension(INFO_WIDTH, 100)));
+        infoPanel.add(Box.createRigidArea(new Dimension(INFO_WIDTH, 66)));
         infoPanel.add(timeLabel);
-        infoPanel.add(Box.createRigidArea(new Dimension(INFO_WIDTH, 100)));
+        infoPanel.add(Box.createRigidArea(new Dimension(INFO_WIDTH, 66)));
         infoPanel.add(chipsLabel);
-        infoPanel.add(Box.createRigidArea(new Dimension(INFO_WIDTH, 150)));
-
+        infoPanel.add(Box.createRigidArea(new Dimension(INFO_WIDTH, 66)));
+        infoPanel.add(inventoryLabel);
+        infoPanel.add(inventoryView);
+        infoPanel.add(Box.createRigidArea(new Dimension(INFO_WIDTH, 75)));
 
         return infoPanel;
     }
+
+
+    // ===========================================
+    // Controlling Game Status
+    // ===========================================
+
+    /**
+     * Ends the game when the game clock runs out of time.
+     */
+    public void outOfTime(){
+        JOptionPane.showMessageDialog(null, "You ran out of time!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
+    }
+
+    public void nextLevel(){
+        int options = JOptionPane.showConfirmDialog(null, "Level 1 Completed!", "Continue to next level?",
+                JOptionPane.YES_NO_OPTION);
+        if(options == 0) {
+            System.out.println("Level 2 called...");
+        } else {
+            System.exit(0);
+        }
+    }
+
+    // ===========================================
+    // Getters
+    // ===========================================
 
     /**
      * Getter for game.
@@ -250,49 +358,30 @@ public class ChapsChallenge extends JFrame {
     }
 
     /**
+     * Getter for gameplay panel
+     * @return gameplayPanel
+     */
+    public JPanel getGameplayPanel() {
+        return gameplayPanel;
+    }
+
+    /**
+     * Getter for info panel
+     * @return infoPanel
+     */
+    public JPanel getInfoPanel() {
+        return infoPanel;
+    }
+
+    /**
      * Activated whenever a player moves in a direction.
-     * Also helps check tiles they are about to move into incase of anything
+     * Also helps check tiles they are about to move into in case of anything
      * being on said tile.
      */
     public void movementRecordHelper(Game.DIRECTION direction) {
         recordAndReplayer.capturePlayerMove(direction);
         Position newPos = new Position(game.getPlayer().getPos(), direction);
         recordAndReplayer.captureTileInteraction(game.getBoard().getMap()[newPos.getX()][newPos.getY()]);
-    }
 
-    /**
-     * Helper for recording.
-     * Has an activated and deactivated state, which the menu item can switch on and off.
-     * During it's activated state, it records all movement into the recordbuffer.
-     * During it's deactivated state, it saves everything on the recordbuffer and stops recording.
-     */
-    public void recordTrigger(JMenuItem menuItem) {
-        if(recordAndReplayer.getRecordingBoolean()) {
-            //if it's true right now. Save gameplay, and switch it to false.
-            recordAndReplayer.saveGameplay();
-
-            recordAndReplayer.setRecordingBoolean(false);
-            menuItem.setText("Start Recording");
-        } else {
-            //if it's false right now. Switch it to true. gameplay should start being recorded
-            //also, change the menu text
-            recordAndReplayer.setStartingPosition(game.getPlayer().getPos());
-
-            recordAndReplayer.setRecordingBoolean(true);
-            menuItem.setText("Stop Recording");
-        }
-    }
-
-    /**
-     * Helper for replaying.
-     *
-     */
-    public void replayTrigger(JMenuItem menuItem) {
-        //
-        if(recordAndReplayer.getRecordingBoolean()) {
-            System.out.println("Display alert here");
-            //Cannot begin replaying while game is recording.
-        }
     }
 }
-

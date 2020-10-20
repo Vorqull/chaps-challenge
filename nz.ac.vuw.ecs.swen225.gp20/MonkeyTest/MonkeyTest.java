@@ -6,6 +6,8 @@ import org.junit.*;
 
 
 import Maze.Board;
+import Persistence.Level;
+import Persistence.Persistence;
 
 /**
  * Loads a level and plays it using randomly generated input
@@ -21,6 +23,7 @@ public class MonkeyTest {
 	static String l;
 	static Board board;
 	static TestSuite test;
+	static Level level;
 
 @BeforeClass
 	/**
@@ -31,7 +34,8 @@ public class MonkeyTest {
 
 		//runDialog();
 		//runLevelChooser();
-	board = new Board(Renderer.level1());
+	level = Persistence.getLevel(1);
+	board = new Board(level.getTileArray());
 	i = 100000;
 		
 
@@ -60,7 +64,7 @@ public class MonkeyTest {
 		}
 		else { i = 100000;} **/
 
-	
+	//}
 	@Test
 	public void testSuite() { test = new TestSuite(board);}
 	
