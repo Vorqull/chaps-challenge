@@ -11,7 +11,7 @@ import RecordAndReplay.RecordAndReplay;
  *
  */
 public enum ActionType {
-    PLAYERACTION("playeraction"), ENEMYACTION("enemyaction"), MAPACTION("mapaction");
+    PLAYERACTION("playerAction"), ENEMYACTION("enemyAction"), MAPACTION("mapAction");
 
     private String asString;
     ActionType(String asString) {

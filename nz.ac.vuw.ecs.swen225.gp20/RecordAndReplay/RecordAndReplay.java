@@ -48,6 +48,8 @@ public class RecordAndReplay<E> {
     private int level; //the Level the game is associated with. It's a string because that's how persistence works.
     private Recorder recorder;
     private Writer writer;
+    private Replayer replayer;
+    private Reader reader;
     private boolean recordingSwitch;
     private int startedRecording;
     private EnemyBlueprint[] enemies;
@@ -59,7 +61,9 @@ public class RecordAndReplay<E> {
      */
     public RecordAndReplay(int level, EnemyBlueprint[] enemies) {
         recorder = new Recorder();
-        this.writer = new Writer();
+        writer = new Writer();
+        replayer = new Replayer();
+        reader = new Reader();
         recordingSwitch = false;
         this.level = level;
         this.enemies = enemies;
@@ -70,7 +74,7 @@ public class RecordAndReplay<E> {
      */
     public RecordAndReplay() {
         recorder = new Recorder();
-        this.writer = new Writer();
+        writer = new Writer();
         recordingSwitch = false;
     }
 
@@ -130,6 +134,7 @@ public class RecordAndReplay<E> {
         if(returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedSaveFile = jfc.getSelectedFile();
             System.out.println(selectedSaveFile.getAbsolutePath());
+            reader.readJson(selectedSaveFile);
         }
     }
 

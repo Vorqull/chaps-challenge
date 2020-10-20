@@ -13,13 +13,13 @@ import java.util.ArrayList;
  *
  */
 public class Replayer {
-    ArrayList<ArrayList<Action>> listOfMoves;
+    ArrayList<Recorder.Change> listOfMoves;
 
     /**
      * Used by Record and Replay.
      * The complicated stuff should be done in Reader.
      */
-    public void fillListOfMoves (ArrayList<ArrayList<Action>> listOfMoves) {
+    public void fillListOfMoves (ArrayList<Recorder.Change> listOfMoves) {
         this.listOfMoves = listOfMoves;
     }
 }

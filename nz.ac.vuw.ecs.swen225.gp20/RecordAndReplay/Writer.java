@@ -33,7 +33,7 @@ public class Writer {
         JsonObjectBuilder gameplayInJson = Json.createObjectBuilder();
 
         //FIRST: Note down the level and begin recording timestamp
-        gameplayInJson.add("Level", "levels/level" + level + ".JSON");
+        gameplayInJson.add("Level", level);
         gameplayInJson.add("startRecordingTimeStamp", startRecordingTimeStamp);
 
         //SECOND: Note down the positions of Player
@@ -45,7 +45,7 @@ public class Writer {
 
         //THIRD: Note down all the posistions of any enemies inside the level.
         int enemyCounter = 0;
-        JsonArrayBuilder arrayOfEnemies = Json.createArrayBuilder();
+        JsonObjectBuilder arrayOfEnemies = Json.createObjectBuilder();
         for(EnemyBlueprint e : enemies) {
             if(e == null) continue;
             JsonObjectBuilder hostile = Json.createObjectBuilder();
@@ -53,7 +53,7 @@ public class Writer {
             hostile.add("startX", e.getPos().getX());
             hostile.add("startY", e.getPos().getY());
 
-            arrayOfEnemies.add(hostile);
+            arrayOfEnemies.add("" + enemyCounter, hostile);
         }
 
         gameplayInJson.add("enemies", arrayOfEnemies);
@@ -63,12 +63,14 @@ public class Writer {
             ArrayList<Action> actions = c.actions;
 
             //'Changes' is all the actions that take place at this one singular moment of the game.
-            JsonArrayBuilder changes = Json.createArrayBuilder();
+            JsonObjectBuilder changes = Json.createObjectBuilder();
 
             //Mark down the timestamp first
-            changes.add("Timestamp: " + c.timestamp);
+            JsonObjectBuilder timeStamp = Json.createObjectBuilder();
+            changes.add("Timestamp", c.timestamp);
 
             //turn all actions into json objects
+            int actionCounter = 0;
             for(Action a : actions) {
                 JsonObjectBuilder action = Json.createObjectBuilder();
                 //PLAYER MOVEMENT
@@ -109,10 +111,13 @@ public class Writer {
                             break;
                     }
                 }
-                changes.add(a.getType().getString() + ": " + action.build());
+                changes.add("" + actionCounter++, action.build());
             }
+            changesCounter++;
             gameplayInJson.add("change" + changesCounter, changes);
         }
+        System.out.println("Changes: " + changesCounter);
+        gameplayInJson.add("noChanges", changesCounter);
 
         //Write to file
         try {
@@ -124,7 +129,6 @@ public class Writer {
             JsonWriter jsonWriter = Json.createWriter(os);
             jsonWriter.writeObject(gameplayInJson.build());
             jsonWriter.close();
-
         } catch (FileNotFoundException e) {
             System.out.println("ERROR SAVING GAMEPLAY: " + e);
         }
