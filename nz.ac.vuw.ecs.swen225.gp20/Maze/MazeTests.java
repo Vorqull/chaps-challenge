@@ -11,7 +11,7 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Tests {
+public class MazeTests {
 
 
     /**
@@ -26,7 +26,7 @@ public class Tests {
     @Test
     public void test1(){
         AbstractTile[][] map = makeMap();
-        map[3][2] = new InfoField("test");
+        map[3][1] = new InfoField("test");
 
         Player player = new Player(new Position(1, 1));
         Set<AbstractActor> enemies = new HashSet<>();
@@ -34,11 +34,37 @@ public class Tests {
 
         game.movePlayer(Game.DIRECTION.UP);
         game.movePlayer(Game.DIRECTION.LEFT);
+        assert player.getPos().equals(new Position(1, 1));
+
         game.movePlayer(Game.DIRECTION.RIGHT);
         game.movePlayer(Game.DIRECTION.RIGHT);
         game.movePlayer(Game.DIRECTION.RIGHT);
+        assert player.getPos().equals(new Position(3, 1));
     }
 
+    /**
+     * Testing Keys and doors 1
+     */
+    @Test
+    public void test2(){
+        AbstractTile[][] map = makeMap();
+        map[3][1] = new LockedDoor(true, "Red");
+        map[3][2] = new Key("Red");
+
+        Player player = new Player(new Position(1, 1));
+        Set<AbstractActor> enemies = new HashSet<>();
+        Game game = new Game(new Board(map), player, enemies);
+
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        assert player.getPos().equals(new Position(2, 1));
+
+        game.movePlayer(Game.DIRECTION.DOWN);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        game.movePlayer(Game.DIRECTION.UP);
+        assert player.getPos().equals(new Position(3, 1));
+    }
 
 
 

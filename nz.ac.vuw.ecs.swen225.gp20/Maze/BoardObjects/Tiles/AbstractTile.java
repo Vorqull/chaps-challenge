@@ -48,6 +48,10 @@ public abstract class AbstractTile {
         changed = false;
     }
 
+    public boolean isChanged() {
+        return changed;
+    }
+
     public boolean isRotated() {
         return rotated;
     }

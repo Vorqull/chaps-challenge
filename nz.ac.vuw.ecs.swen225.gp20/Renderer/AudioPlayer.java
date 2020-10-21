@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class AudioPlayer {
     private final Map<String, Clip> sounds;
-    private Set<AbstractTile> usedTiles; //This assumes all tiles can only make sounds once
+    private final Set<AbstractTile> usedTiles; //This assumes all tiles can only make sounds once
 
     /**
      * Creates an audio player, loads audio files from
@@ -29,6 +29,7 @@ public class AudioPlayer {
 
         //Iterates through the audio directory and loads all the clips
         File[] files = new File(System.getProperty("user.dir") + "/Resources/audio").listFiles();
+        assert files != null;
         for (File file : files){
             try {
                 //Creates the audio clip and stores it in the map to be played later

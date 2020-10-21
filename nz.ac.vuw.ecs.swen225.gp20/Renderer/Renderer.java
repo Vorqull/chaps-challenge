@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * This is responsible for displaying the Maze on the screen
- * including all it's tiles, animations and sound effects
+ * including all it's tiles, animations and sound effects.
  * @author Chris (ID: 300498017)
  */
 public class Renderer extends JComponent {
@@ -23,26 +23,23 @@ public class Renderer extends JComponent {
     public static final int CANVAS_SIZE = 540; //Size in pixels, 9 x 60px images
 
     private final Set<Star> stars;
-    private final Map<String, Image> images;
 
-    private AudioPlayer audioPlayer;
+    private final Game game;
+    private final AudioPlayer audioPlayer;
 
     private int tick = 0;
-    private boolean playerFlipped = false;
     private Position playerPrevPos;
-
-    private Game game;
 
     public enum DIRECTION {
         UP, DOWN, LEFT, RIGHT, NULL
     }
 
     /**
-     * Creates a new renderer canvas
+     * Creates a new renderer canvas.
+     * @param game The game (Maze module)
      */
     public Renderer(Game game){
         stars = new HashSet<>();
-        images = new HashMap<>();
         audioPlayer = new AudioPlayer();
         this.game = game;
         playerPrevPos = game.getPlayer().getPos();
@@ -53,12 +50,6 @@ public class Renderer extends JComponent {
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("Resources/fonts/VCR_OSD_MONO_1.001.ttf")));
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
-        }
-
-        File[] files = new File(System.getProperty("user.dir") + "/Resources/tiles").listFiles();
-        for (File file : files){
-            String name = file.getName().substring(0,file.getName().length()-5); //removes .jpeg extension
-            images.put(name, Toolkit.getDefaultToolkit().getImage("Resources/tiles/" + file.getName()));
         }
     }
 
@@ -81,7 +72,8 @@ public class Renderer extends JComponent {
 
         //Add a star
         if (tick % 5 == 0) {
-            stars.add(new Star(0, (int) (Math.random() * CANVAS_SIZE), (int) (Math.random() * 5 + 5), (int) (Math.random() * 5 + 5)));
+            Random random = new Random(); //Spotbugs told me this was more efficient that Math.random() then converting to int
+            stars.add(new Star(0, random.nextInt(CANVAS_SIZE), random.nextInt(5) + 5, random.nextInt(5) + 5));
         }
 
         //Play audio
@@ -93,7 +85,7 @@ public class Renderer extends JComponent {
         //Draw stuff
         drawStars(g2, orientation);
         drawFocusArea(playerX, playerY, board, g2);
-        drawPlayer(player, g2);
+        g2.drawImage(player.getCurrentImage(), 4 * IMAGE_SIZE, 4 * IMAGE_SIZE, this); //Draw player
         drawEnemies(playerX, playerY, game, g2);
         drawInfoText(playerX, playerY, board, g2);
 
@@ -103,8 +95,9 @@ public class Renderer extends JComponent {
     }
 
     /**
-     * Draws all the stars on the screen
+     * Draws all the stars on the screen.
      * @param g2 Paint graphic
+     * @param direction Direction that the player has moved this frame
      */
     private void drawStars(Graphics2D g2, DIRECTION direction){
         List<Star> toRemove = new ArrayList<>();
@@ -122,7 +115,7 @@ public class Renderer extends JComponent {
 
     /**
      * Compared the players last position with it's current position
-     * to figure out with direction it moved
+     * to figure out with direction it moved.
      * @param playerX Player x position
      * @param playerY Player y position
      * @return The direction the player has moved
@@ -130,11 +123,9 @@ public class Renderer extends JComponent {
     private DIRECTION getPlayerOrientation(int playerX, int playerY){
         DIRECTION direction = DIRECTION.NULL;
         if (playerX < playerPrevPos.getX()){
-            playerFlipped = true;
             direction = DIRECTION.LEFT;
         }
         if (playerX > playerPrevPos.getX()){
-            playerFlipped = false;
             direction = DIRECTION.RIGHT;
         }
         if (playerY < playerPrevPos.getY()){
@@ -147,7 +138,7 @@ public class Renderer extends JComponent {
     }
 
     /**
-     * Draws all the tiles on the focus area
+     * Draws all the tiles on the focus area.
      * @param playerX Player x position
      * @param playerY Player y position
      * @param board The game board
@@ -166,20 +157,7 @@ public class Renderer extends JComponent {
     }
 
     /**
-     * Draws the player in the centre of the focus area
-     * @param player The player
-     * @param g2 Graphic from paintComponent
-     */
-    private void drawPlayer(Player player, Graphics2D g2){
-        if (playerFlipped) {
-            g2.drawImage(player.getCurrentImage(), 4 * IMAGE_SIZE, 4 * IMAGE_SIZE, this);
-        } else {
-            g2.drawImage(player.getCurrentImage(), 4 * IMAGE_SIZE, 4 * IMAGE_SIZE, this);
-        }
-    }
-
-    /**
-     * Draws all the enemies on the focus area
+     * Draws all the enemies on the focus area.
      * @param playerX Player x position
      * @param playerY Player y position
      * @param game The game
@@ -197,7 +175,7 @@ public class Renderer extends JComponent {
     }
 
     /**
-     * Draws the info text on an info field if the player is on one
+     * Draws the info text on an info field if the player is on one.
      * @param playerX Player x position
      * @param playerY Player y position
      * @param board The game board
@@ -213,7 +191,7 @@ public class Renderer extends JComponent {
     }
 
     /**
-     * Draws wrapped text within a certain box width
+     * Draws wrapped text within a certain box width.
      * @param text Text to be displayed
      * @param g2 Paint graphic
      * @param startX Left pos of the text box
@@ -243,7 +221,7 @@ public class Renderer extends JComponent {
     }
 
     /**
-     * Returns a test board which is 9x9 and has every tile image that exists on it
+     * Returns a test board which is 9x9 and has every tile image that exists on it.
      * @return the board (AbstractTile 2D array)
      */
     public static AbstractTile[][] testBoard(){
@@ -275,7 +253,7 @@ public class Renderer extends JComponent {
     }
 
     /**
-     * Level 1 in code form, may not be final
+     * Level 1 in code form, may not be final.
      * @return the 15x15 board (AbstractTile 2D array)
      */
     public static AbstractTile[][] level1(){
