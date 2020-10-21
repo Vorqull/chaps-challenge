@@ -22,7 +22,7 @@ public class PersistenceTest {
 	    System.out.println("Enemies " + testLevel.getEnemies().get(0).getPos());
 	    
 	    ArrayList<AbstractActor> actorArray = new ArrayList<AbstractActor>();
-	    actorArray.add(new PatternEnemy(new Position(2, 6), "GRIMBA"));
+	    //actorArray.add(new PatternEnemy(new Position(2, 6), "GRIMBA"));
 	    
 	    
 	    getJson.saveGame(91, new Player(new Position(3, 4)), actorArray, 1, tileTest);
@@ -30,5 +30,9 @@ public class PersistenceTest {
 	   Level savedLevelLoad = getJson.loadGame(1);
 	   Treasure testTile = (Treasure) savedLevelLoad.getTileArray()[3][6];
 	   System.out.println(testTile.isPickedUp());
+	   
+	   PatternEnemy actorMake;
+	   Position tempPos = new Position(6, 7);
+	   new PatternEnemy(tempPos, "yes");
 	}
 }
