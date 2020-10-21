@@ -41,6 +41,10 @@ public abstract class AbstractActor {
         return position;
     }
 
+    public void setPos(Position pos){
+        this.position = pos;
+    }
+
     public Image getCurrentImage() {
         return currentImage;
     }

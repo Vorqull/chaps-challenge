@@ -113,6 +113,7 @@ public class LevelJSONMaker {
 				tileName = "FreeTile";
 				playerX = colIndex;
 				playerY = rowIndex;
+				playerSet = true;
 			}
 			else {
 				arrayObjectBuilder.add("Rotation", "ERROR! value " 
@@ -122,8 +123,8 @@ public class LevelJSONMaker {
 										+ " COL: "
 										+ colIndex);
 			}
-			arrayObjectBuilder.add("row", rowIndex);
 			arrayObjectBuilder.add("column", colIndex);
+			arrayObjectBuilder.add("row", rowIndex);
 			arrayObjectBuilder.add("Tile Type", tileName);
 			if(tileInfo.length > 1) {
 				if(tileInfo[1].equals("0")) {
@@ -169,7 +170,9 @@ public class LevelJSONMaker {
 		Position currentLoc = enemyLocations.get(i);
 		enemyArrayObject.add("startingX", currentLoc.getX());
 		enemyArrayObject.add("startingY", currentLoc.getY());
-		enemyArrayObject.add("AI Type", "PLACEHOLDER");
+		enemyArrayObject.add("AI Type", "PLACEHOLDER - INSERT AI TYPE (EG: PatternEnemy, StalkerEnemy) INSERT RATE OF MOVEMENT BELOW");
+		enemyArrayObject.add("Tick Speed", 1);
+		enemyArrayObject.add("Movement String", "PLACEHOLDER - USED FOR MOVEMENT OF PATTERNENEMY. FORMAT IS wasd eg: wassawdws");
 		enemyArrayBuilder.add(enemyArrayObject);
 	}
 	

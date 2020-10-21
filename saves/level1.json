@@ -3,15 +3,14 @@
     "Changed Tiles": [
     ],
     "Gameplay variables": {
-        "playerX": 3,
-        "playerY": 4,
+        "playerX": 8,
+        "playerY": 7,
+        "Keys on hand": [
+        ],
+        "Treasure on hand": [
+        ],
         "time remaining": 91,
         "Enemy locations": [
-            {
-                "startingX": 2,
-                "startingY": 6,
-                "AI Type": "PLACEHOLDER"
-            }
         ]
     }
 }

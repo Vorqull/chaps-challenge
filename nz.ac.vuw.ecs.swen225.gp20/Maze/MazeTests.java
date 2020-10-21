@@ -31,11 +31,11 @@ public class MazeTests {
         Player player = new Player(new Position(1, 1));
         Set<AbstractActor> enemies = new HashSet<>();
         Game game = new Game(new Board(map), player, enemies);
-
+        //Testing wall blocking
         game.movePlayer(Game.DIRECTION.UP);
         game.movePlayer(Game.DIRECTION.LEFT);
         assert player.getPos().equals(new Position(1, 1));
-
+        //Testing free moving on free tile and infotile
         game.movePlayer(Game.DIRECTION.RIGHT);
         game.movePlayer(Game.DIRECTION.RIGHT);
         game.movePlayer(Game.DIRECTION.RIGHT);
@@ -54,7 +54,7 @@ public class MazeTests {
         Player player = new Player(new Position(1, 1));
         Set<AbstractActor> enemies = new HashSet<>();
         Game game = new Game(new Board(map), player, enemies);
-
+        //Testing
         game.movePlayer(Game.DIRECTION.RIGHT);
         game.movePlayer(Game.DIRECTION.RIGHT);
         game.movePlayer(Game.DIRECTION.RIGHT);
@@ -135,22 +135,38 @@ public class MazeTests {
     @Test
     public void test5(){
         AbstractTile[][] map = makeMap();
-        map[3][1] = new LockedDoor(true, "Blue");
-        map[2][1] = new Key("Blue");
-        map[3][2] = new LockedDoor(true, "Blue");
-        map[2][2] = new Key("Blue");
+        map[2][1] = new ExitLock(true);
+        map[3][2] = new ExitLock(false);
+        map[2][2] = new Wall();
+        map[3][1] = new ExitPortal();
+        map[1][3] = new Treasure();
+        map[1][2] = new Treasure();
 
         Player player = new Player(new Position(1, 1));
         Set<AbstractActor> enemies = new HashSet<>();
         Game game = new Game(new Board(map), player, enemies);
 
         game.movePlayer(Game.DIRECTION.RIGHT);
-        game.movePlayer(Game.DIRECTION.RIGHT);
-        assert player.getPos().equals(new Position(3, 1));
+        assert player.getPos().equals(new Position(1, 1));
+        assert !map[2][1].isChanged();
 
         game.movePlayer(Game.DIRECTION.DOWN);
-        assert player.getPos().equals(new Position(3, 1));
-        assert !map[3][2].isChanged();
+        game.movePlayer(Game.DIRECTION.UP);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        assert player.getPos().equals(new Position(1, 1));
+        assert !map[2][1].isChanged();
+
+        game.movePlayer(Game.DIRECTION.DOWN);
+        game.movePlayer(Game.DIRECTION.DOWN);
+        assert map[3][2].isChanged();
+        assert map[2][1].isChanged();
+
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        game.movePlayer(Game.DIRECTION.UP);
+        game.movePlayer(Game.DIRECTION.UP);
+        game.movePlayer(Game.DIRECTION.LEFT);
+        assert player.getPos().equals(new Position(2, 1));
 
         game.movePlayer(Game.DIRECTION.LEFT);
         game.movePlayer(Game.DIRECTION.DOWN);

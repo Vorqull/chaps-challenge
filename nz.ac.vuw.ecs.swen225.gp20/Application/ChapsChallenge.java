@@ -71,19 +71,21 @@ public class ChapsChallenge extends JFrame {
         /////// TEST CODE
         Set<AbstractActor> test = new HashSet<>();
 
-        StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10), 1);
+        StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10), 30);
         test.add(enemy);
 
-        PatternEnemy enemy1 = new PatternEnemy(new Position(2, 9), 1, "dddsssaaawww");
+        PatternEnemy enemy1 = new PatternEnemy(new Position(2, 9), 30, "dddsssaaawww");
         test.add(enemy1);
         //////
 
         //Persistence and Levels
         Persistence persistence = new Persistence();
-        Level currentLevel =  persistence.getLevel(1);
-        timeRemaining = currentLevel.getTime();
+        //Level currentLevel =  persistence.getLevel(1);
+        //timeRemaining = currentLevel.getTime();
+        timeRemaining = 300;
 
-        game = new Game(new Board(currentLevel.getTileArray()), new Player(currentLevel.getPlayerPos()), new HashSet<>()); //FIXME: placeholder replace later
+        //game = new Game(new Board(currentLevel.getTileArray()), new Player(currentLevel.getPlayerPos()), new HashSet<>()); //FIXME: placeholder replace later
+        game = new Game(new Board(Renderer.level1()), new Player(new Position(2, 2)), test); //FIXME: placeholder replace later
         inventoryView = new InventoryView(game.getPlayer());
 
         //Record & Replay

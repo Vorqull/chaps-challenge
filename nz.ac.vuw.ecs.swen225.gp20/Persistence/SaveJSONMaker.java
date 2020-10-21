@@ -25,7 +25,9 @@ import javax.json.stream.JsonParser.Event;
 
 import Maze.Position;
 import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.BoardObjects.Actors.Player;
+import Maze.BoardObjects.Actors.stalker_enemy.StalkerEnemy;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.ExitLock;
 import Maze.BoardObjects.Tiles.ExitPortal;
@@ -45,7 +47,10 @@ public class SaveJSONMaker {
    * @param ArrayFormat - The csv file converted to an ArrayList of ArrayLists.
    * @param jsonName -  The name of the JSON file to use.
    */
-  public static void makeJSON(int remainingTime, Player player, ArrayList<AbstractActor> enemies, String jsonName, AbstractTile[][] tiles) {
+  public static boolean makeJSON(int remainingTime, Player player, ArrayList<AbstractActor> enemies, String jsonName, AbstractTile[][] tiles) {
+	JsonArrayBuilder keyArrayBuilder = Json.createArrayBuilder();
+	JsonArrayBuilder treasureArrayBuilder = Json.createArrayBuilder();
+	  
 	JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 	boolean isActivated = false;
 	for(int i = 0; i < tiles.length; i++) {
@@ -53,30 +58,28 @@ public class SaveJSONMaker {
 		for(int j = 0; j < tiles[i].length; j++) {
 			isActivated = false;
 			AbstractTile currentTile = tiles[i][j];
-			if(currentTile instanceof ExitLock) {
-				ExitLock castTile = (ExitLock) currentTile;
-				//Truen if lock has been opened.
-				isActivated = castTile.interact(new Player(new Position(0, 0)));
-			}
-			else if(currentTile instanceof Treasure) {
-				Treasure castTile = (Treasure) currentTile;
-				isActivated = castTile.isPickedUp();
-			}
-			else if(currentTile instanceof LockedDoor) {
-				LockedDoor castTile = (LockedDoor) currentTile;
-				isActivated = !castTile.isLocked();
-			}
-			else if(currentTile instanceof Key) {
-				Key castTile = (Key) currentTile;
-				//TO DO!!! TILE NEEDS TO BE ACCESIBLE
-				isActivated = false;
-			}
-			
-			if(isActivated == true) {
+			//Set the tile as changed
+			if(currentTile.isChanged()) {
+				currentTile.setChangedTile();
 				arrayObjectBuilder.add("xPos", i);
 				arrayObjectBuilder.add("yPos", j);
 				arrayBuilder.add(arrayObjectBuilder);
+				
+				//If the object was a key, and is currently held by the player, save it to their hand
+				if(currentTile instanceof Key && player.getKeys().contains(currentTile)) {
+					JsonObjectBuilder keyArrayObjectBuilder = Json.createObjectBuilder();
+					keyArrayObjectBuilder.add("xPos", i);
+					keyArrayObjectBuilder.add("yPos", j);
+					keyArrayBuilder.add(keyArrayObjectBuilder);
+				}
+				else if(currentTile instanceof Treasure) {
+					JsonObjectBuilder treasureArrayObjectBuilder = Json.createObjectBuilder();
+					treasureArrayObjectBuilder.add("xPos", i);
+					treasureArrayObjectBuilder.add("yPos", j);
+					keyArrayBuilder.add(treasureArrayObjectBuilder);
+				}
 			}
+
 		}
 	}
 	
@@ -87,15 +90,21 @@ public class SaveJSONMaker {
 	for(int i = 0; i < enemies.size(); i++) {
 		enemyArrayObject = Json.createObjectBuilder();
 		Position currentLoc = enemies.get(i).getPos();
-		enemyArrayObject.add("startingX", currentLoc.getX());
-		enemyArrayObject.add("startingY", currentLoc.getY());
-		enemyArrayObject.add("AI Type", "PLACEHOLDER");
+		Position startingLoc = enemies.get(i).getStartingPos();
+		enemyArrayObject.add("startingX", startingLoc.getX());
+		enemyArrayObject.add("startingY", startingLoc.getY());
+		enemyArrayObject.add("currentX", currentLoc.getX());
+		enemyArrayObject.add("currentY", currentLoc.getY());
 		enemyArrayBuilder.add(enemyArrayObject);
 	}
+	
+
 	
 	JsonObject levelInfo = Json.createObjectBuilder()
 			.add("playerX", player.getPos().getX())
 			.add("playerY", player.getPos().getY())
+			.add("Keys on hand", keyArrayBuilder.build())
+			.add("Treasure on hand", treasureArrayBuilder.build())
 			.add("time remaining", remainingTime)
 			.add("Enemy locations", enemyArrayBuilder.build())
 			.build();
@@ -110,13 +119,12 @@ public class SaveJSONMaker {
 	try {
 	      File jsonFile = new File(jsonName);
 	      if (jsonFile.createNewFile()) {
-	        System.out.println("File created: " + jsonFile.getName());
-	      } else {
-	        System.out.println("File already exists.");
+	        jsonFile.getName();
 	      }
 	    } catch (IOException e) {
 	      System.out.println("An error occurred.");
 	      e.printStackTrace();
+	      return false;
 	    }
     //Write JSON file
     try (FileWriter file = new FileWriter(jsonName)) {
@@ -124,9 +132,10 @@ public class SaveJSONMaker {
         file.write(formattedString);
         file.flush();
         file.close();
+        return true;
 
     } catch (IOException e) {
-        e.printStackTrace();
+        return false;
     }
   }
   

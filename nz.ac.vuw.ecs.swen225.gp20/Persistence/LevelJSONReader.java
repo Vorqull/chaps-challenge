@@ -12,6 +12,10 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 
 import Maze.Position;
+import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.BoardObjects.Actors.PatternEnemy;
+import Maze.BoardObjects.Actors.Player;
+import Maze.BoardObjects.Actors.stalker_enemy.StalkerEnemy;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.ExitLock;
 import Maze.BoardObjects.Tiles.ExitPortal;
@@ -115,29 +119,41 @@ public class LevelJSONReader {
 		}
 	}
 	
-	ArrayList<EnemyBlueprint> enemiesArrayList = new ArrayList<EnemyBlueprint>();
+	ArrayList<AbstractActor> enemiesArrayList = new ArrayList<AbstractActor>();
 	
 	Iterator<JsonValue> enemiesIterator = enemies.iterator();
-	EnemyBlueprint currentEnemyBlueprint;
 	JsonObject currentEnemyObject;
 	
 	while(enemiesIterator.hasNext()) {
+		AbstractActor currentEnemy;
 		currentEnemyObject = (JsonObject) enemiesIterator.next();
-		JsonValue xStartPos = currentEnemyObject.get("startingX");
-		JsonValue yStartPos = currentEnemyObject.get("startingY");
+		int xStartPos = currentEnemyObject.getInt("startingX");
+		int yStartPos = currentEnemyObject.getInt("startingY");
 		JsonValue aiType = currentEnemyObject.get("AI Type");
-		currentEnemyBlueprint = new EnemyBlueprint(
-				new Position(
-						StringToInt(xStartPos.toString()), 
-						StringToInt(yStartPos.toString())
-				), 
-				aiType.toString()
-		);
-		enemiesArrayList.add(currentEnemyBlueprint);
+		int tickSpeed = currentEnemyObject.getInt("Tick Speed");
+		JsonValue movement = currentEnemyObject.get("Movement String");
+		System.out.println("AI type: " + aiType.toString()) ;
+		
+		Position aiStartPos = new Position(xStartPos, yStartPos);
+		
+		String aiTypeString = aiType.toString();
+		String movementString = movement.toString();
+		aiTypeString = aiTypeString.substring(1, aiTypeString.length()-1);
+		movementString = movementString.substring(1, movementString.length()-1);
+		
+		if(aiTypeString == "PatternEnemy") {
+			currentEnemy = new PatternEnemy(aiStartPos, tickSpeed, movementString);
+			enemiesArrayList.add(currentEnemy);
+		}
+		else if(aiTypeString == "StalkerEnemy") {
+			currentEnemy = new StalkerEnemy(aiStartPos, tickSpeed);
+		}
 		
 	}
 	
-	returnLevel = new Level(maxTime, playerStart, tileArray, enemiesArrayList);
+	Player returnPlayer = new Player(playerStart);
+	
+	returnLevel = new Level(maxTime, returnPlayer, tileArray, enemiesArrayList);
 	return returnLevel;
 	
   

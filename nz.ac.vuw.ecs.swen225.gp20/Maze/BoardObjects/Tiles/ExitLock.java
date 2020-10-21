@@ -40,6 +40,14 @@ public class ExitLock extends AbstractTile {
         unlock();
     }
 
+    @Override
+    public void unChange() {
+        super.unChange();
+        locked = true;
+        if(rotated) currentImage = images.get("ExitLockHorizontal");
+        else currentImage = images.get("ExitLockVertical");
+    }
+
     public void unlock(){
         locked = false;
         currentImage = images.get("FloorTile");

@@ -12,6 +12,8 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 
 import Maze.Position;
+import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.ExitLock;
 import Maze.BoardObjects.Tiles.ExitPortal;
@@ -27,105 +29,118 @@ public class SaveJSONReader {
   /**
    * @param jsonName -  The name of the JSON file to use.
    */
-  public Level readJSON(String jsonName) {
+  public static Level readJSON(String jsonName, Level loadedLevel) {
+	ArrayList<AbstractActor> enemiesUpdated = new ArrayList<AbstractActor>();
+	
+	AbstractTile[][] tileArray = loadedLevel.getTileArray();
 	Level returnLevel;
+	
 	InputStream levelInputStream;
 	 System.out.println("Working Directory = " + System.getProperty("user.dir"));
 	try {
 		levelInputStream = new FileInputStream(jsonName);
 	} catch (FileNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
 		return null;
 	}
-	JsonReader levelReader = Json.createReader(levelInputStream);
+	JsonReader saveReader = Json.createReader(levelInputStream);
 	
-	JsonObject fileObject = levelReader.readObject();
-	JsonObject levelInfo = fileObject.getJsonObject("Level Info");
-	JsonObject tiles = fileObject.getJsonObject("Tiles");
-	JsonArray rows = (JsonArray) tiles.get("rows");
+	JsonObject fileObject = saveReader.readObject();
+	JsonObject gameplayVariables = fileObject.getJsonObject("Gameplay variables");
+	JsonArray changedTiles = (JsonArray) fileObject.get("Changed Tiles");
+	JsonArray keysInHand = (JsonArray) gameplayVariables.get("Keys on hand");
+	JsonArray treasureInHand = (JsonArray) gameplayVariables.get("Treasure on hand");
+	JsonArray enemyLocations = (JsonArray) gameplayVariables.get("Enemy locations");
 	
-	int rowCount = levelInfo.getInt("rowCount");
-	int colCount = levelInfo.getInt("columnCount");
-	int maxTime = levelInfo.getInt("timeLimit");
-	Position playerStart = new Position(levelInfo.getInt("playerX"), levelInfo.getInt("playerY"));
+	int startingTime = gameplayVariables.getInt("time remaining");
+	Position playerStart = new Position(gameplayVariables.getInt("playerX"), gameplayVariables.getInt("playerY"));
 	
-	AbstractTile[][] tileArray = new AbstractTile[colCount][rowCount];
 	
-	Iterator<JsonValue> rowsIterator = rows.iterator();
 	
-	while(rowsIterator.hasNext()) {
-		//Convert from jsonValue to jsonObject, then get the array of tiles
-		JsonObject currentRowObject = (JsonObject) rowsIterator.next();
-		JsonArray currentRow = (JsonArray) currentRowObject.get("objects");
+	Iterator<JsonValue> tilesIterator = changedTiles.iterator();
+	
+	
+	while(tilesIterator.hasNext()) {	
+		JsonObject currentTileJSON = (JsonObject) tilesIterator.next();
+		int tileX = currentTileJSON.getInt("xPos");
+		int tileY = currentTileJSON.getInt("yPos");
+		AbstractTile currentTileObject;
+		currentTileObject = tileArray[tileX][tileY];
+		if(currentTileObject.isChanged()) {
+			currentTileObject.setChangedTile();
+		}
 		
-		//Iterate through each row of tiles
-		Iterator<JsonValue> currentRowIterator = currentRow.iterator();
-		while(currentRowIterator.hasNext()) {
-			JsonObject currentTile = (JsonObject) currentRowIterator.next();
-			JsonValue type = currentTile.get("Tile Type");
-			JsonValue row = currentTile.get("row");
-			JsonValue column = currentTile.get("column");
-			JsonValue rotated = currentTile.get("Rotation");
-			boolean isRotated = false;
-			if(rotated.toString().equals("Horizontal")) {
-				isRotated = false;
-			}
-			else if(rotated.toString().equals("Vertical")) {
-				isRotated = true;
-			}
-			String tileName = type.toString();
-			int tileRow = StringToInt(row.toString());
-			int tileColumn = StringToInt(column.toString());
-			AbstractTile tileObject;
-			if(tileName.equals("\"Key\"")) {
-				JsonValue colour = currentTile.get("Colour");
-				String tileColour = colour.toString();
-				tileColour = tileColour.substring(1, tileColour.length()-1);
-				tileObject = new Key(tileColour);
-			}
-			else if(tileName.equals("\"ExitPortal\"")) {
-				tileObject = new ExitPortal();
-			}
-			else if(tileName.equals("\"ExitLock\"")) {
-				tileObject = new ExitLock(isRotated);
-			}
-			else if(tileName.equals("\"InfoField\"")) {
-				JsonValue infoText = currentTile.get("InfoText");
-				String tileInfoText = infoText.toString();
-				tileObject = new InfoField(tileInfoText);
-			}
-			else if(tileName.equals("\"LockedDoor\"")) {
-				JsonValue colour = currentTile.get("Colour");
-				String tileColour = colour.toString();
-				tileColour = tileColour.substring(1, tileColour.length()-1);
-				tileObject = new LockedDoor(isRotated, tileColour);
-			}
-			else if(tileName.equals("\"Treasure\"")) {
-				tileObject = new Treasure();
-			}
-			else if(tileName.equals("\"Wall\"")) {
-				tileObject = new Wall();
-			}
-			//Free tile
-			else{
-				tileObject = new FreeTile();
-			}
-			tileArray[tileColumn][tileRow] = tileObject;
+	}
+	
+	//Iterate through all the enemies
+	Iterator<JsonValue> enemiesIterator = enemyLocations.iterator();
+	//With each enemy, get its new position and retrieve the AI type to ensure it is the same type of enemy as when saved
+	while(enemiesIterator.hasNext()) {	
+		JsonObject currentEnemyJSON = (JsonObject) enemiesIterator.next();
+		int startingX = currentEnemyJSON.getInt("startingX");
+		int startingY = currentEnemyJSON.getInt("startingY");
+		int newX = currentEnemyJSON.getInt("startingX");
+		int newY = currentEnemyJSON.getInt("startingX");
+		
+		Position newPos = new Position(newX, newY);
+		Position startingPos = new Position(startingX, startingY);
+		
+		AbstractActor currentEnemy = findEnemy(startingPos, loadedLevel.getEnemies());
+		
+		if(currentEnemy == null) {
+			System.out.println("ORIGINAL ENEMY NOT FOUND");
+		}
+		else {
+			currentEnemy.setPos(newPos);
 		}
 	}
-	returnLevel = new Level(maxTime, playerStart, tileArray, new ArrayList<EnemyBlueprint>());
-	return returnLevel;
 	
+	//Iterate through all keys in hand
+	Iterator<JsonValue> keysIterator = keysInHand.iterator();
+	//With key, 
+	while(keysIterator.hasNext()) {	
+		JsonObject currentKeyJSON = (JsonObject) keysIterator.next();
+		int keyX = currentKeyJSON.getInt("xPos");
+		int keyY = currentKeyJSON.getInt("yPos");
+		if(tileArray[keyX][keyY] instanceof Key) {
+			Key keyObject = (Key) tileArray[keyX][keyY];
+			loadedLevel.getPlayer().pickupKey(keyObject);
+		}
+		else {
+			System.out.println("ERROR - KEY IN HAND NOT LOADED ON MAP");
+		}
+	}
+	
+	//Iterate through all treasure in hand
+	Iterator<JsonValue> treasureIterator = treasureInHand.iterator();
+	//With key, 
+	while(keysIterator.hasNext()) {	
+		JsonObject currentTreasureJSON = (JsonObject) treasureIterator.next();
+		int treasureX = currentTreasureJSON.getInt("xPos");
+		int treasureY = currentTreasureJSON.getInt("yPos");
+		if(tileArray[treasureX][treasureY] instanceof Treasure) {
+			Treasure treasureObject = (Treasure) tileArray[treasureX][treasureY];
+			loadedLevel.getPlayer().pickupTreasure(treasureObject);
+		}
+		else {
+			System.out.println("ERROR - TREASURE IN HAND NOT LOADED ON MAP");
+		}
+	}
+	
+	//Make a revised level object that accounts for new enemy and player positions
+	//as well as changed tile state.
+	returnLevel = new Level(startingTime, loadedLevel.getPlayer(), tileArray, loadedLevel.getEnemies());
+	return returnLevel;
   
   }
 
-  private int StringToInt(String intString) {
-	  int charInt = 0;
-	  for(int i = 0; i < intString.length(); i++) {
-		  charInt = charInt*10;
-		  charInt += intString.charAt(i) - '0';
+  private static AbstractActor findEnemy(Position pos, ArrayList<AbstractActor> passedArray) {
+	  for(AbstractActor aA : passedArray) {
+		 if(aA.getPos().getX() == pos.getX() && aA.getPos().getY() == pos.getY()){
+			 return aA;
+		 }
 	  }
-	  return charInt;
+	  return null;
   }
+  
+  
 }

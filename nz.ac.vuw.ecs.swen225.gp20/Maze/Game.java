@@ -19,6 +19,7 @@ public class Game {
     private Board board;
     private Player player;
     private Set<AbstractActor> computerPlayers;
+    private List<Integer> tickTiming = new ArrayList<>();
 
     private boolean levelCompleted = false;
 
@@ -27,13 +28,14 @@ public class Game {
         this.board = board;
         this.player = player;
         this.computerPlayers = computerPlayers;
+
+        for(int i = 0; i < this.computerPlayers.size(); i++){
+            tickTiming.add(0);
+        }
     }
 
     public void moveEnemies() {
-        List<Integer> tickTiming = new ArrayList<>();
-        for(int i = 0; i < computerPlayers.size(); i++){
-            tickTiming.add(0);
-        }
+        if(computerPlayers.isEmpty()) return;
 
         int count = 0;
         for(AbstractActor c : computerPlayers) {
@@ -87,6 +89,8 @@ public class Game {
             //Unlock the exit lock if all treasures have been collected
             if (allTreasuresCollected()){
                 unlockExitLock();
+            } else {
+                lockExitLock();
             }
 
             player.getPos().move(direction);    //Move the player
@@ -96,6 +100,7 @@ public class Game {
             levelCompleted = true;
         }
 
+        /**
         ////////TEST CODE
         int count = 0;
         for(AbstractActor a : computerPlayers) {
@@ -107,7 +112,19 @@ public class Game {
             count++;
         }
         //////
+         **/
 
+    }
+
+    private void lockExitLock(){
+        for (int i = 0; i < board.getMap().length; i++) {
+            for (int j = 0; j < board.getMap()[0].length; j++) {
+                if(board.getMap()[i][j] instanceof ExitLock){
+                    ExitLock tile = (ExitLock) board.getMap()[i][j];
+                    tile.unChange();
+                }
+            }
+        }
     }
 
     private void unlockExitLock() {
