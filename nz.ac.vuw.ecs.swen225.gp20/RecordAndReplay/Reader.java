@@ -1,8 +1,10 @@
 package RecordAndReplay;
 
+import Maze.Game;
 import Maze.Position;
 import Persistence.EnemyBlueprint;
 import RecordAndReplay.Actions.Action;
+import RecordAndReplay.Actions.PlayerMove;
 
 import javax.json.*;
 import java.io.*;
@@ -45,7 +47,7 @@ public class Reader {
         //empty constructor
     }
 
-    public void readJson(File file) {
+    public void readJson(File file) throws Exception {
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
@@ -74,16 +76,59 @@ public class Reader {
             ArrayList<Action> actions = new ArrayList<Action>();
             for(int j = 0; j < changeList.size()-1; j++) {
                 //FIRST get object
-                JsonObject action = changeList.getJsonObject("" + j);
+                JsonObject jsonAction = changeList.getJsonObject("" + j);
 
                 //SECOND check type (brute force)
-                if(action.get("PlayerMove") == null) System.out.println("works");
-                else System.out.println("also works");
+                Action action = null;
+                if(jsonAction.get("PlayerMove") != null) {
+                    System.out.println(jsonAction.get("PlayerMove").toString());
+                    if(("" + jsonAction.get("PlayerMove")).equals("UP")) {
+                        action = new PlayerMove(Game.DIRECTION.UP);
+                    } else if(("" + jsonAction.get("PlayerMove")).equals("DOWN")) {
+                        action = new PlayerMove(Game.DIRECTION.DOWN);
+                    } else if(("" + jsonAction.get("PlayerMove")).equals("LEFT")) {
+                        action = new PlayerMove(Game.DIRECTION.LEFT);
+                    } else if(("" + jsonAction.get("PlayerMove")).equals("RIGHT")) {
+                        action = new PlayerMove(Game.DIRECTION.RIGHT);
+                    } else {
+                        //should NEVER get to this point.
+                        throw new Exception("PlayerMove has no direction value.");
+                    }
+                } /*else if(jsonAction.get("PlayerTileInteract") != null) {
+                    System.out.println(jsonAction.get("PlayerTileInteract").toString());  // Might not even be nessercary
+                }*/
+                //Add to array of actions
+                actions.add(action);
             }
+
+            //Use array of actions and time stamp to create a "change" object
+            Recorder.Change c = new Recorder.Change(actions, timeStamp);
+            recordedChanges.add(c);
 
             //Recorder.Change c = new Recorder.Change();
         }
     }
+
+    /** GETTERS **/
+    public ArrayList<Recorder.Change> getRecordedChanges() {
+        return recordedChanges;
+    }
+    public int getLevel() {
+        return level;
+    }
+    public int getStartRecordingTimeStamp() {
+        return startRecordingTimeStamp;
+    }
+    public int getPlayerStartX() {
+        return playerStartX;
+    }
+    public int getPlayerStartY() {
+        return playerStartY;
+    }
+    public ArrayList<EnemyBlueprint> getEnemies() {
+        return enemies;
+    }
+
 
     /** HELPER METHODS **/
 }

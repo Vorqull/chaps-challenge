@@ -127,6 +127,10 @@ public class RecordAndReplay<E> {
         else return false;
     }
 
+    /**
+     * Allows the player to select a save file and immediately loads it upon selection.
+     * @param frame The parent frame for the dialog box.
+     */
     public void selectSaveFile(JFrame frame) {
         JFileChooser jfc = new JFileChooser(System.getProperty("user.dir") + "/nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves");
 
@@ -134,12 +138,25 @@ public class RecordAndReplay<E> {
         if(returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedSaveFile = jfc.getSelectedFile();
             System.out.println(selectedSaveFile.getAbsolutePath());
-            reader.readJson(selectedSaveFile);
+            try {
+                reader.readJson(selectedSaveFile);
+                prepReplayer();
+            } catch (Exception e) {
+                System.out.println("Error reading Json save file: " + e);
+            }
         }
     }
 
     //=====PLAYING=====//
     //All functions to do with replaying, forward or backwards.
+    public void prepReplayer() {
+        replayer.setRecordedChanges(reader.getRecordedChanges());
+        replayer.setLevel(reader.getLevel());
+        replayer.setStartRecordingTimeStamp(reader.getStartRecordingTimeStamp());
+        replayer.setPlayerStartX(reader.getPlayerStartX());
+        replayer.setPlayerStartY(reader.getPlayerStartY());
+        replayer.setEnemies(reader.getEnemies());
+    }
 
     //=====GETTERS/SETTERS=====//
 

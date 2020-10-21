@@ -77,7 +77,7 @@ public class Recorder {
      * Private nested class object stores both the list of actions
      * AND a time stamp to associate itself with.
      */
-    public class Change {
+    public static class Change {
         public final ArrayList<Action> actions;
         public final int timestamp;
 
