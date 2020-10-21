@@ -1,7 +1,6 @@
 package Maze;
 
 import Maze.BoardObjects.Tiles.AbstractTile;
-import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
 
 public class Board {
 

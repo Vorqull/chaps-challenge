@@ -148,7 +148,8 @@ public class Renderer extends JComponent {
         for (int y = -4; y <= 4; y++) {
             for (int x = -4; x <= 4; x++) {
                 //If in board bounds
-                if (playerX + x >= 0 && playerY + y >= 0 && playerX + x < board.length && playerY + y < board[0].length){
+                if (playerX + x >= 0 && playerY + y >= 0 && playerX + x < board.length && playerY + y < board[0].length
+                    && board[playerX + x][playerY + y] != null){
                     g2.drawImage(board[playerX + x][playerY + y].getCurrentImage(),
                             (x+4) * IMAGE_SIZE, (y+4) * IMAGE_SIZE, this);
                 }
@@ -267,9 +268,10 @@ public class Renderer extends JComponent {
                 }
             }
         }
+        board[0][0] = null;
         board[13][1] = new ExitPortal();
-        board[12][1] = new ExitLock(false);
-        board[13][2] = new ExitLock(true);
+        board[12][1] = new ExitLock(true);
+        board[13][2] = new ExitLock(false);
         board[12][2] = new Wall();
         board[6][6] = new Key("Blue");
         board[1][7] = new LockedDoor(false, "Blue");

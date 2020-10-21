@@ -1,0 +1,16 @@
+
+{
+    "Changed Tiles": [
+    ],
+    "Gameplay variables": {
+        "playerX": 1,
+        "playerY": 1,
+        "Keys on hand": [
+        ],
+        "Treasure on hand": [
+        ],
+        "time remaining": 91,
+        "Enemy locations": [
+        ]
+    }
+}

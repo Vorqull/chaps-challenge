@@ -3,10 +3,8 @@ package Maze;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.*;
-import RecordAndReplay.RecordAndReplay;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

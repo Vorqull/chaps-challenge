@@ -1,10 +1,8 @@
 package Maze.BoardObjects.Tiles;
 
 import Maze.BoardObjects.Actors.Player;
-import Maze.Position;
 
 import java.awt.*;
-import java.util.Objects;
 
 public class Key extends AbstractTile {
 

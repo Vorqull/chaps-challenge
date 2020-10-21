@@ -1,11 +1,8 @@
 package Maze;
 
-import Maze.Board;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.*;
-import Maze.Game;
-import Maze.Position;
 import org.junit.Test;
 
 import java.util.HashSet;
