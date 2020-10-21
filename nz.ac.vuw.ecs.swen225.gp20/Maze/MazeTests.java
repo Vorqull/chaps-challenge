@@ -21,7 +21,7 @@ public class MazeTests {
      */
 
     /**
-     * Testing Free tiles, infofields, and wall interactions
+     * Testing Free tiles, infofields, and wall interactions.
      */
     @Test
     public void test1(){
@@ -43,7 +43,7 @@ public class MazeTests {
     }
 
     /**
-     * Testing Keys and doors 1
+     * Testing Keys and doors 1.
      */
     @Test
     public void test2(){
@@ -64,6 +64,99 @@ public class MazeTests {
         game.movePlayer(Game.DIRECTION.RIGHT);
         game.movePlayer(Game.DIRECTION.UP);
         assert player.getPos().equals(new Position(3, 1));
+        assert map[3][1].isChanged();
+    }
+
+    /**
+     * Testing multiple Keys and doors.
+     */
+    @Test
+    public void test3(){
+        AbstractTile[][] map = makeMap();
+        map[3][1] = new LockedDoor(true, "Red");
+        map[2][1] = new Key("Blue");
+        map[3][2] = new LockedDoor(true, "Blue");
+        map[2][2] = new Key("Green");
+        map[3][3] = new LockedDoor(true, "Green");
+        map[2][3] = new Key("Red");
+
+        Player player = new Player(new Position(1, 1));
+        Set<AbstractActor> enemies = new HashSet<>();
+        Game game = new Game(new Board(map), player, enemies);
+
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        assert player.getPos().equals(new Position(2, 1));
+
+        game.movePlayer(Game.DIRECTION.DOWN);
+        game.movePlayer(Game.DIRECTION.DOWN);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        game.movePlayer(Game.DIRECTION.UP);
+        game.movePlayer(Game.DIRECTION.UP);
+        assert player.getPos().equals(new Position(3, 1));
+        assert map[3][1].isChanged();
+        assert map[3][2].isChanged();
+        assert map[3][3].isChanged();
+    }
+
+    /**
+     * Testing multiple Keys and doors of the same Colour.
+     */
+    @Test
+    public void test4(){
+        AbstractTile[][] map = makeMap();
+        map[3][1] = new LockedDoor(true, "Blue");
+        map[2][1] = new Key("Blue");
+        map[3][2] = new LockedDoor(true, "Blue");
+        map[2][2] = new Key("Blue");
+
+        Player player = new Player(new Position(1, 1));
+        Set<AbstractActor> enemies = new HashSet<>();
+        Game game = new Game(new Board(map), player, enemies);
+
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        assert player.getPos().equals(new Position(3, 1));
+
+        game.movePlayer(Game.DIRECTION.DOWN);
+        assert player.getPos().equals(new Position(3, 1));
+        assert !map[3][2].isChanged();
+
+        game.movePlayer(Game.DIRECTION.LEFT);
+        game.movePlayer(Game.DIRECTION.DOWN);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        assert player.getPos().equals(new Position(3, 2));
+        assert map[3][2].isChanged();
+    }
+
+    /**
+     * Testing Treasures, ExitLock and ExitPortal.
+     */
+    @Test
+    public void test5(){
+        AbstractTile[][] map = makeMap();
+        map[3][1] = new LockedDoor(true, "Blue");
+        map[2][1] = new Key("Blue");
+        map[3][2] = new LockedDoor(true, "Blue");
+        map[2][2] = new Key("Blue");
+
+        Player player = new Player(new Position(1, 1));
+        Set<AbstractActor> enemies = new HashSet<>();
+        Game game = new Game(new Board(map), player, enemies);
+
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        assert player.getPos().equals(new Position(3, 1));
+
+        game.movePlayer(Game.DIRECTION.DOWN);
+        assert player.getPos().equals(new Position(3, 1));
+        assert !map[3][2].isChanged();
+
+        game.movePlayer(Game.DIRECTION.LEFT);
+        game.movePlayer(Game.DIRECTION.DOWN);
+        game.movePlayer(Game.DIRECTION.RIGHT);
+        assert player.getPos().equals(new Position(3, 2));
+        assert map[3][2].isChanged();
     }
 
 

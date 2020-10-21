@@ -37,6 +37,7 @@ public class StalkerEnemy extends AbstractActor {
         //If path's previous node is null then the enemy is on top of the player
         if(path.getPrevious() == null || path.getPrevious().getPrevious() == null) {
             interact(player); //Interact with the player
+            this.position = startingPos;
             return;
         }
         //Getting the second to last tile before current position to move to

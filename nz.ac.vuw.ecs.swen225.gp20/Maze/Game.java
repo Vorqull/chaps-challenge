@@ -29,7 +29,7 @@ public class Game {
         this.computerPlayers = computerPlayers;
     }
 
-    public void moveEnemy() {
+    public void moveEnemies() {
         List<Integer> tickTiming = new ArrayList<>();
         for(int i = 0; i < computerPlayers.size(); i++){
             tickTiming.add(0);
