@@ -7,6 +7,7 @@ import RecordAndReplay.Actions.Action;
 import RecordAndReplay.Actions.PlayerMove;
 
 import javax.json.*;
+import javax.print.DocFlavor;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -79,26 +80,26 @@ public class Reader {
                 JsonObject jsonAction = changeList.getJsonObject("" + j);
 
                 //SECOND check type (brute force)
-                Action action = null;
+                Action action;
                 if(jsonAction.get("PlayerMove") != null) {
                     System.out.println(jsonAction.get("PlayerMove").toString());
-                    if(("" + jsonAction.get("PlayerMove")).equals("UP")) {
+                    if(jsonAction.get("PlayerMove").equals(Json.createValue("UP"))) {
                         action = new PlayerMove(Game.DIRECTION.UP);
-                    } else if(("" + jsonAction.get("PlayerMove")).equals("DOWN")) {
+                    } else if(jsonAction.get("PlayerMove").equals(Json.createValue("DOWN"))) {
                         action = new PlayerMove(Game.DIRECTION.DOWN);
-                    } else if(("" + jsonAction.get("PlayerMove")).equals("LEFT")) {
+                    } else if(jsonAction.get("PlayerMove").equals(Json.createValue("LEFT"))) {
                         action = new PlayerMove(Game.DIRECTION.LEFT);
-                    } else if(("" + jsonAction.get("PlayerMove")).equals("RIGHT")) {
+                    } else if(jsonAction.get("PlayerMove").equals(Json.createValue("RIGHT"))) {
                         action = new PlayerMove(Game.DIRECTION.RIGHT);
                     } else {
                         //should NEVER get to this point.
-                        throw new Exception("PlayerMove has no direction value.");
+                        throw new Exception("PlayerMove has no direction value: " + jsonAction.get("PlayerMove").toString() + ": " + (jsonAction.get("PlayerMove").toString()=="UP"));
                     }
+                    //Add to array of actions
+                    actions.add(action);
                 } /*else if(jsonAction.get("PlayerTileInteract") != null) {
                     System.out.println(jsonAction.get("PlayerTileInteract").toString());  // Might not even be nessercary
                 }*/
-                //Add to array of actions
-                actions.add(action);
             }
 
             //Use array of actions and time stamp to create a "change" object

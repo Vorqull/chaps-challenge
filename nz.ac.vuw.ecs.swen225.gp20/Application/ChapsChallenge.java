@@ -43,9 +43,14 @@ import javax.swing.border.EmptyBorder;
  */
 public class ChapsChallenge extends JFrame {
 
+    public static final int INFO_WIDTH = 240;
     //Panels
     private JPanel gameplayPanel;
     private JPanel infoPanel;
+
+    //Recording JMenuItems
+    private JMenuItem recordItem;
+    private JMenuItem replayItem;
 
     private Game game;
 
@@ -159,15 +164,15 @@ public class ChapsChallenge extends JFrame {
 
         //SELECTIONS
         //1: Recording
-        JMenuItem RecordTrigger = new JMenuItem("Start Recording");
-        RecordTrigger.addActionListener((e) -> recordTrigger(RecordTrigger));
+        recordItem = new JMenuItem("Start Recording");
+        recordItem.addActionListener((e) -> recordTrigger());
         //2: Replaying
-        JMenuItem ReplayTrigger = new JMenuItem("Replay");
-        ReplayTrigger.addActionListener((e) -> replayTrigger(ReplayTrigger));
+        replayItem = new JMenuItem("Replay");
+        replayItem.addActionListener((e) -> replayTrigger());
 
         //Add selections to RecordAndReplay Menu.
-        recordAndReplay.add(RecordTrigger);
-        recordAndReplay.add(ReplayTrigger);
+        recordAndReplay.add(recordItem);
+        recordAndReplay.add(replayItem);
 
         //Add RecordAndReplay to MenuBar
         menuBar.add(recordAndReplay);
@@ -244,7 +249,8 @@ public class ChapsChallenge extends JFrame {
                 }
                 recordAndReplayer.clearRecorderBuffer(timeRemaining);
                 if(game.isLevelCompleted()) {
-                    haltRecording();
+                    //haltRecording();
+                    if(recordAndReplayer.getRecordingBoolean()) recordTrigger();
                 }
             }
         });
@@ -396,36 +402,25 @@ public class ChapsChallenge extends JFrame {
      * During it's activated state, it records all movement into the recordbuffer.
      * During it's deactivated state, it saves everything on the recordbuffer and stops recording.
      */
-    public void recordTrigger(JMenuItem menuItem) {
+    public void recordTrigger() {
         if(recordAndReplayer.getRecordingBoolean()) {
             //if it's true right now. Save gameplay, and switch it to false.
             recordAndReplayer.saveGameplay();
 
             recordAndReplayer.setRecordingBoolean(false);
-            menuItem.setText("Start Recording");
+            recordItem.setText("Start Recording");
         } else {
             //if it's false right now. Switch it to true. gameplay should start being recorded
             recordAndReplayer.setStartingPosition(game.getPlayer().getPos());
             recordAndReplayer.setRecordingBoolean(true);
             recordAndReplayer.setStartedRecording(timeRemaining);
-            menuItem.setText("Stop Recording");
+            recordItem.setText("Stop Recording");
         }
-    }
-
-    /**
-     * TEMP change later after negotiations
-     * FORCE the recording to stop.
-     * WARNING: doesn't change the menu text back to normal. The menuItem must be a class variable inorder to do so.
-     */
-    public void haltRecording() {
-        recordAndReplayer.saveGameplay();
-
-        recordAndReplayer.setRecordingBoolean(false);
     }
     /**
      * Initiate replay mode
      */
-    public void replayTrigger(JMenuItem menuItem) {
+    public void replayTrigger() {
         if(recordAndReplayer.getRecordingBoolean()) {
             JOptionPane.showMessageDialog(this, "ERROR: Cannot load replay while recording", "ERROR", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -433,6 +428,7 @@ public class ChapsChallenge extends JFrame {
                 return;
             }
             recordAndReplayer.selectSaveFile(this);
+            recordAndReplayer.displayControlWindow(this);
         }
     }
 }

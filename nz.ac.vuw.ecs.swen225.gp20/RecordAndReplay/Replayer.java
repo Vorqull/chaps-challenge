@@ -43,9 +43,6 @@ public class Replayer {
         controlsWindow.setAlwaysOnTop(true);
     }
 
-
-
-
     /** PREPS **/
 
     /**
