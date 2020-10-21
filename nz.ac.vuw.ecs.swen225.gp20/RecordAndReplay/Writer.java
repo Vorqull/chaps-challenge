@@ -28,7 +28,7 @@ public class Writer {
     /**
      * WRITES EVERYTHING IN JSON
      */
-    public void writeRecording(List<Recorder.Change> gameplay, Position pos, int level, int startRecordingTimeStamp, EnemyBlueprint[] enemies) {
+    public void writeRecording(List<Recorder.Change> gameplay, Position pos, int level, int startRecordingTimeStamp, ArrayList<EnemyBlueprint> enemies) {
         //All actions that take place, in Json.
         JsonObjectBuilder gameplayInJson = Json.createObjectBuilder();
 

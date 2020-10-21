@@ -52,14 +52,14 @@ public class RecordAndReplay<E> {
     private Reader reader;
     private boolean recordingSwitch;
     private int startedRecording;
-    private EnemyBlueprint[] enemies;
+    private ArrayList<EnemyBlueprint> enemies;
 
     /**
      * Constructor with level parameter
      * @param level The level number which is associated with the RecordAndReplayer
      * @param enemies The list of enemies in this level
      */
-    public RecordAndReplay(int level, EnemyBlueprint[] enemies) {
+    public RecordAndReplay(int level, ArrayList<EnemyBlueprint> enemies) {
         recorder = new Recorder();
         writer = new Writer();
         replayer = new Replayer();
@@ -93,7 +93,7 @@ public class RecordAndReplay<E> {
     }
 
     //Effectively relays all the recorder's functions here. Doing this to save me from headache.
-    public void capturePlayerMove(Game.DIRECTION direction) {
+    public void capturePlayerMove(DIRECTION direction) {
         recorder.capturePlayerMove(direction);
     }
     public void captureTileInteraction(AbstractTile tile) {
@@ -156,6 +156,12 @@ public class RecordAndReplay<E> {
         replayer.setPlayerStartX(reader.getPlayerStartX());
         replayer.setPlayerStartY(reader.getPlayerStartY());
         replayer.setEnemies(reader.getEnemies());
+
+        replayer.prepRecordedChanges();
+    }
+
+    public void displayControlWindow(JFrame frame) {
+        replayer.controlsWindow(frame);
     }
 
     //=====GETTERS/SETTERS=====//

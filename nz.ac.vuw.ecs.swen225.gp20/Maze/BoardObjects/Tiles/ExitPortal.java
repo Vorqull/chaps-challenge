@@ -1,7 +1,6 @@
 package Maze.BoardObjects.Tiles;
 
 import Maze.BoardObjects.Actors.Player;
-import Maze.Position;
 
 import java.awt.*;
 

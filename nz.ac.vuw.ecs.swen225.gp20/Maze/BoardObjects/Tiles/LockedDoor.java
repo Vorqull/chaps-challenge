@@ -45,8 +45,16 @@ public class LockedDoor extends AbstractTile {
             locked = false;
             currentImage = images.get("FloorTile");
             player.getKeys().remove(player.getKey(colour));
+            changed = true;
             return true;
         }
+    }
+
+    @Override
+    public void setChangedTile() {
+        super.setChangedTile();
+        locked = false;
+        currentImage = images.get("FloorTile");
     }
 
     public String getDoorColour() {

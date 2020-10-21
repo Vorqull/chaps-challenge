@@ -41,6 +41,7 @@ public class Game {
      */
     public void movePlayer(DIRECTION direction) {
 
+        /**
         ////////TEST CODE
         int count = 0;
         for(AbstractActor a : computerPlayers) {
@@ -52,6 +53,7 @@ public class Game {
             count++;
         }
         //////
+         **/
 
 
         Position newPos;
@@ -104,11 +106,6 @@ public class Game {
         if(moveToTile instanceof ExitPortal) {
             levelCompleted = true;
         }
-
-        ////////// TEST CODE
-        System.out.println("Player: ");
-        System.out.println(player.getPos());
-        ////////////////
     }
 
     private void unlockExitLock() {

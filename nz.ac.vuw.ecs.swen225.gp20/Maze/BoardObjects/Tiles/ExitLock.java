@@ -1,7 +1,6 @@
 package Maze.BoardObjects.Tiles;
 
 import Maze.BoardObjects.Actors.Player;
-import Maze.Position;
 
 import java.awt.*;
 
@@ -35,8 +34,15 @@ public class ExitLock extends AbstractTile {
         return !locked;
     }
 
+    @Override
+    public void setChangedTile() {
+        super.setChangedTile();
+        unlock();
+    }
+
     public void unlock(){
         locked = false;
         currentImage = images.get("FloorTile");
+        changed = true;
     }
 }

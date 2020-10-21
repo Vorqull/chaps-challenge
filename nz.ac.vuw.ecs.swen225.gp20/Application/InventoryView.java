@@ -24,7 +24,7 @@ public class InventoryView extends JPanel {
     /**
      * Size of each item image slot
      */
-    private final int imageSize = 45;
+    private final int imageSize = 50;
 
     /**
      * Inventory height
@@ -32,9 +32,9 @@ public class InventoryView extends JPanel {
     private final int inventoryHeight = 2;
 
     /**
-     * Invetory width
+     * Inventory width
      */
-    private final int inventoryWidth = 5;
+    private final int inventoryWidth = 4;
 
     /**
      * Constructs a view of the player's inventory
@@ -49,7 +49,7 @@ public class InventoryView extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int gap = 7; //gap before drawing
+        int gap = (ChapsChallenge.INFO_WIDTH - imageSize * inventoryWidth)/2; //gap before drawing
         int x = gap;
         int y = 0;
 
@@ -61,11 +61,12 @@ public class InventoryView extends JPanel {
         }
 
         //Drawing the collected keys
-        for (Key key : player.getKeys()){
-            if (player.getKeys().size() == inventoryWidth) {
+        for (int i = 0; i < player.getKeys().size(); i++){
+            Key key = player.getKeys().get(i);
+            if (i > inventoryWidth-1) {
                 //move down a row if width exceeded
                 x = gap;
-                y += imageSize;
+                y = imageSize;
             }
             switch (key.getColour()){
                 case "Blue":

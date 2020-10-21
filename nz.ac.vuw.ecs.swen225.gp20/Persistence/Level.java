@@ -1,4 +1,6 @@
 package Persistence;
+import java.util.ArrayList;
+
 import Maze.Position;
 import Maze.BoardObjects.Tiles.AbstractTile;
 
@@ -11,9 +13,9 @@ public class Level {
 	private AbstractTile[][] levelArray;
 	private Position playerStartPos;
 	private int time;
-	private EnemyBlueprint[] enemies;
+	private ArrayList<EnemyBlueprint> enemies;
 	
-	public Level(int pTime, Position pPos, AbstractTile[][] pArray, EnemyBlueprint[] pEnemies) {
+	public Level(int pTime, Position pPos, AbstractTile[][] pArray, ArrayList<EnemyBlueprint> pEnemies) {
 		time = pTime;
 		levelArray = pArray;
 		playerStartPos = pPos;
@@ -32,7 +34,7 @@ public class Level {
 		return levelArray;
 	}
 	
-	public EnemyBlueprint[] getEnemies() {
+	public ArrayList<EnemyBlueprint> getEnemies() {
 		return enemies;
 	}
 }

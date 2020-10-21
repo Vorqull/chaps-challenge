@@ -41,8 +41,10 @@ public class Replayer {
     public void controlsWindow(JFrame frame) {
         JDialog controlsWindow = new JDialog(frame);
         controlsWindow.setAlwaysOnTop(true);
-
     }
+
+
+
 
     /** PREPS **/
 
@@ -73,10 +75,11 @@ public class Replayer {
                 int milisecond = 1000;
                 ArrayList<Recorder.Change> entry = rawFindings.get(start-i);
                 for(Recorder.Change c : entry) {
-
+                    prepedChanges.add(new Change(c.actions, i, milisecond));
+                    milisecond -= factor;
                 }
             } else {
-                Change c = new Change(null, i, 1000);
+                prepedChanges.add(new Change(null, i, 1000));
             }
         }
     }

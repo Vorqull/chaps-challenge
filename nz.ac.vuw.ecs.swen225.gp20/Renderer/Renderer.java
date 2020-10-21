@@ -19,11 +19,11 @@ import java.util.List;
  * @author Chris (ID: 300498017)
  */
 public class Renderer extends JComponent {
-    public static final int FOCUS_SIZE = 9; //The grid size of the board shown, which is 9x9 tiles
     public static final int IMAGE_SIZE = 60;
     public static final int CANVAS_SIZE = 540; //Size in pixels, 9 x 60px images
 
     private final Set<Star> stars;
+    private final Map<String, Image> images;
 
     private AudioPlayer audioPlayer;
 
@@ -42,6 +42,7 @@ public class Renderer extends JComponent {
      */
     public Renderer(Game game){
         stars = new HashSet<>();
+        images = new HashMap<>();
         audioPlayer = new AudioPlayer();
         this.game = game;
         playerPrevPos = game.getPlayer().getPos();
@@ -52,6 +53,12 @@ public class Renderer extends JComponent {
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("Resources/fonts/VCR_OSD_MONO_1.001.ttf")));
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
+        }
+
+        File[] files = new File(System.getProperty("user.dir") + "/Resources/tiles").listFiles();
+        for (File file : files){
+            String name = file.getName().substring(0,file.getName().length()-5); //removes .jpeg extension
+            images.put(name, Toolkit.getDefaultToolkit().getImage("Resources/tiles/" + file.getName()));
         }
     }
 

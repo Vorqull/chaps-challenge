@@ -32,7 +32,7 @@ import javax.json.JsonStructure;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
-public class JSONMaker {
+public class LevelJSONMaker {
 
   /**
    * @param ArrayFormat - The csv file converted to an ArrayList of ArrayLists.
@@ -44,6 +44,8 @@ public class JSONMaker {
 	int playerX = 0;
 	int playerY = 0;
 	boolean playerSet = false;
+	
+	ArrayList<Position> enemyLocations = new ArrayList<Position>();
 	JsonArrayBuilder colBuilder = Json.createArrayBuilder();
 	for(ArrayList<String> aL : ArrayFormat) {
 		colIndex = 0;
@@ -101,6 +103,12 @@ public class JSONMaker {
 			else if(tileInfo[0].equals("ep")) {
 				tileName = "ExitPortal";
 			}
+			//Enemy starting point, is fundamentally a freetile
+			else if(tileInfo[0].equals("ene")) {
+				tileName = "FreeTile";
+				enemyLocations.add(new Position(colIndex, rowIndex));
+			}
+			//Player starting point, is fundamentally a freetile
 			else if(tileInfo[0].equals("p") && playerSet == false) {
 				tileName = "FreeTile";
 				playerX = colIndex;
@@ -152,6 +160,19 @@ public class JSONMaker {
 		rowIndex++;
 	}
 	
+	//Create Json Array for enemy locations + AI
+	
+	JsonArrayBuilder enemyArrayBuilder = Json.createArrayBuilder();
+	JsonObjectBuilder enemyArrayObject;
+	for(int i = 0; i < enemyLocations.size(); i++) {
+		enemyArrayObject = Json.createObjectBuilder();
+		Position currentLoc = enemyLocations.get(i);
+		enemyArrayObject.add("startingX", currentLoc.getX());
+		enemyArrayObject.add("startingY", currentLoc.getY());
+		enemyArrayObject.add("AI Type", "PLACEHOLDER");
+		enemyArrayBuilder.add(enemyArrayObject);
+	}
+	
 	JsonObject arrayCol = Json.createObjectBuilder()
 			.add("rows", colBuilder)
 			.build();
@@ -161,6 +182,7 @@ public class JSONMaker {
 			.add("playerX", playerX)
 			.add("playerY", playerY)
 			.add("timeLimit", 100)
+			.add("Enemies", enemyArrayBuilder.build())
 			.build();
 	JsonObject mapObject = Json.createObjectBuilder()
 			.add("Tiles", arrayCol)

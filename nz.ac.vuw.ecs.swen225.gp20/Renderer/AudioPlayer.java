@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * Deals with sound aspect of the game
- * @author Chris
+ * @author Chris (ID: 300498017)
  */
 public class AudioPlayer {
     private final Map<String, Clip> sounds;
@@ -56,7 +56,7 @@ public class AudioPlayer {
             playSound("SwipeGood");
             playSound("DoorOpen");
         }
-        if (tile instanceof Key || tile instanceof InfoField){
+        if (tile instanceof Key){
             playSound("TaskOpen");
         }
         if (tile instanceof Treasure){

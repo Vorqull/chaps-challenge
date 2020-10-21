@@ -16,6 +16,7 @@ public abstract class AbstractTile {
     protected boolean rotated = false;
     protected Map<String, Image> images = new HashMap<>();
     protected Image currentImage;
+    protected boolean changed = false;
 
     /**
      * .
@@ -33,6 +34,19 @@ public abstract class AbstractTile {
      * @return Returns true if the actor can move on to this tile, false if not.
      */
     public abstract boolean interact(Player player);
+
+    /**
+     * Sets the tile to its changed state.
+     * Used for when loading in a saved level.
+     * Doesn't change state by default.
+     */
+    public void setChangedTile(){
+        changed = true;
+    }
+
+    public void unChange() {
+        changed = false;
+    }
 
     public boolean isRotated() {
         return rotated;

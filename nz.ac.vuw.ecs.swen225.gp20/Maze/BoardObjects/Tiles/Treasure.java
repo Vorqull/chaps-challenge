@@ -31,7 +31,22 @@ public class Treasure extends AbstractTile {
         pickedUp = true;
         player.getTreasures().add(this);
         currentImage = images.get("FloorTile");
+        changed = true;
         return true;
+    }
+
+    @Override
+    public void setChangedTile() {
+        super.setChangedTile();
+        pickedUp = true;
+        currentImage = images.get("FloorTile");
+    }
+
+    @Override
+    public void unChange() {
+        super.unChange();
+        pickedUp = false;
+        currentImage = images.get("Files");
     }
 
     public boolean isPickedUp() {

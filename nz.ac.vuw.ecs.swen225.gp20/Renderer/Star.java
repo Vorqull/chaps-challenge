@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * Represents a star to be drawn in the space background of
  * the rendering window.
- * @author Chris
+ * @author Chris (ID: 300498017)
  */
 public class Star {
     private double x, y;

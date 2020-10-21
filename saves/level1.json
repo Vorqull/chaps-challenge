@@ -1,0 +1,17 @@
+
+{
+    "Changed Tiles": [
+    ],
+    "Gameplay variables": {
+        "playerX": 3,
+        "playerY": 4,
+        "time remaining": 91,
+        "Enemy locations": [
+            {
+                "startingX": 2,
+                "startingY": 6,
+                "AI Type": "PLACEHOLDER"
+            }
+        ]
+    }
+}

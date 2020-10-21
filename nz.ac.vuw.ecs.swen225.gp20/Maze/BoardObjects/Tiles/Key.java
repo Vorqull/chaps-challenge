@@ -31,8 +31,23 @@ public class Key extends AbstractTile {
             player.getKeys().add(this);
             pickedUp = true;
             currentImage = images.get("FloorTile");
+            changed = true;
         }
         return true;
+    }
+
+    @Override
+    public void setChangedTile() {
+        super.setChangedTile();
+        pickedUp = true;
+        currentImage = images.get("FloorTile");
+    }
+
+    @Override
+    public void unChange() {
+        super.unChange();
+        pickedUp = false;
+        currentImage = images.get("SwipeCard" + colour);
     }
 
     public String getColour() {

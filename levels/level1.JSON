@@ -1722,6 +1722,13 @@
         "columnCount": 17,
         "playerX": 8,
         "playerY": 7,
-        "timeLimit": 100
+        "timeLimit": 100,
+        "Enemies": [
+            {
+                "startingX": 10,
+                "startingY": 5,
+                "AI Type": "PLACEHOLDER"
+            }
+        ]
     }
 }

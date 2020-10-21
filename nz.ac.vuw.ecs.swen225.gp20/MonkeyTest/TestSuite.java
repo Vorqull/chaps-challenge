@@ -2,6 +2,7 @@ package MonkeyTest;
 
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.junit.*;
 
@@ -9,7 +10,10 @@ import Application.ChapsChallenge;
 import Maze.Board;
 import Maze.Game;
 import Maze.Position;
+import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.BoardObjects.Actors.Player;
+import Maze.BoardObjects.Actors.stalker_enemy.StalkerEnemy;
 
 
 
@@ -27,9 +31,13 @@ public class TestSuite {
 	 */
 	public TestSuite(Board board) {
 		// t = new ChapsChallenge();
-		// tester = t.getGame();
+		// tester = t.getGame();	
+		Set<AbstractActor> test = new HashSet<>();
+
+        StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10), 1);
+        test.add(enemy);
 		
-		tester =  new Game(board, new Player(new Position(4, 4)), new HashSet<>()); //PLACEHOLDER, need to implement level loader
+		tester =  new Game(board, new Player(new Position(4, 4)), test); //PLACEHOLDER, need to implement level loader
 		
 	}
 	
@@ -40,10 +48,10 @@ public class TestSuite {
 		Random ran = new Random();
 		float num = ran.nextFloat();
 		
-		if(num < 0.25) {System.out.println("DEBUG - MOVE UP"); tester.movePlayer(Game.DIRECTION.UP);}
-		else if(num < 0.5) {System.out.println("DEBUG - MOVE DOWN");tester.movePlayer(Game.DIRECTION.DOWN);}
-		else if(num < 0.75) {System.out.println("DEBUG - MOVE LEFT");tester.movePlayer(Game.DIRECTION.LEFT);}
-		else {System.out.println("DEBUG - MOVE RIGHT"); tester.movePlayer(Game.DIRECTION.RIGHT);}
+		if(num < 0.25) { tester.movePlayer(Game.DIRECTION.UP);}
+		else if(num < 0.5) {tester.movePlayer(Game.DIRECTION.DOWN);}
+		else if(num < 0.75) {tester.movePlayer(Game.DIRECTION.LEFT);}
+		else { tester.movePlayer(Game.DIRECTION.RIGHT);}
 	}
 	
 	/**

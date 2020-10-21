@@ -18,9 +18,9 @@ public class PatternEnemy extends AbstractActor{
     public PatternEnemy(Position position, int tickRate, String routeStr) {
         super(position, tickRate);
         this.route = routeStr.toCharArray();
-        images.put("Astronaut", Toolkit.getDefaultToolkit().getImage("Resources/actors/Astronaut.png"));
-        images.put("AstronautFlipped", Toolkit.getDefaultToolkit().getImage("Resources/actors/AstronautFlipped.png"));
-        currentImage = images.get("Astronaut");
+        images.put("Enemy1", Toolkit.getDefaultToolkit().getImage("Resources/actors/Enemy1.png"));
+        images.put("Enemy1Flipped", Toolkit.getDefaultToolkit().getImage("Resources/actors/Enemy1Flipped.png"));
+        currentImage = images.get("Enemy1");
     }
 
     @Override
@@ -38,11 +38,11 @@ public class PatternEnemy extends AbstractActor{
                 break;
             case 'a':
                 newPos = new Position(position, Game.DIRECTION.LEFT);
-                currentImage = images.get("AstronautFlipped"); //Changes the actor image direction
+                currentImage = images.get("Enemy1Flipped"); //Changes the actor image direction
                 break;
             case 'd':
                 newPos = new Position(position, Game.DIRECTION.RIGHT);
-                currentImage = images.get("Astronaut"); //Changes the actor image direction
+                currentImage = images.get("Enemy1"); //Changes the actor image direction
                 break;
             default:
                 throw new IllegalStateException("Unexpected direction: " + direction);

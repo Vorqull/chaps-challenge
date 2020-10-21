@@ -2,6 +2,7 @@ package Persistence;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.json.Json;
@@ -21,7 +22,7 @@ import Maze.BoardObjects.Tiles.LockedDoor;
 import Maze.BoardObjects.Tiles.Treasure;
 import Maze.BoardObjects.Tiles.Wall;
 
-public class JSONReader {
+public class LevelJSONReader {
 
   /**
    * @param jsonName -  The name of the JSON file to use.
@@ -33,7 +34,6 @@ public class JSONReader {
 	try {
 		levelInputStream = new FileInputStream(jsonName);
 	} catch (FileNotFoundException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 		return null;
 	}
@@ -47,6 +47,7 @@ public class JSONReader {
 	int rowCount = levelInfo.getInt("rowCount");
 	int colCount = levelInfo.getInt("columnCount");
 	int maxTime = levelInfo.getInt("timeLimit");
+	JsonArray enemies = (JsonArray) levelInfo.get("Enemies");
 	Position playerStart = new Position(levelInfo.getInt("playerX"), levelInfo.getInt("playerY"));
 	
 	AbstractTile[][] tileArray = new AbstractTile[colCount][rowCount];
@@ -113,7 +114,30 @@ public class JSONReader {
 			tileArray[tileColumn][tileRow] = tileObject;
 		}
 	}
-	returnLevel = new Level(maxTime, playerStart, tileArray, new EnemyBlueprint[10]);
+	
+	ArrayList<EnemyBlueprint> enemiesArrayList = new ArrayList<EnemyBlueprint>();
+	
+	Iterator<JsonValue> enemiesIterator = enemies.iterator();
+	EnemyBlueprint currentEnemyBlueprint;
+	JsonObject currentEnemyObject;
+	
+	while(enemiesIterator.hasNext()) {
+		currentEnemyObject = (JsonObject) enemiesIterator.next();
+		JsonValue xStartPos = currentEnemyObject.get("startingX");
+		JsonValue yStartPos = currentEnemyObject.get("startingY");
+		JsonValue aiType = currentEnemyObject.get("AI Type");
+		currentEnemyBlueprint = new EnemyBlueprint(
+				new Position(
+						StringToInt(xStartPos.toString()), 
+						StringToInt(yStartPos.toString())
+				), 
+				aiType.toString()
+		);
+		enemiesArrayList.add(currentEnemyBlueprint);
+		
+	}
+	
+	returnLevel = new Level(maxTime, playerStart, tileArray, enemiesArrayList);
 	return returnLevel;
 	
   

@@ -3,14 +3,12 @@ package Maze.BoardObjects.Actors.stalker_enemy;
 import Maze.Board;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.Player;
-import Maze.BoardObjects.Tiles.AbstractTile;
-import Maze.BoardObjects.Tiles.ExitLock;
-import Maze.BoardObjects.Tiles.LockedDoor;
-import Maze.BoardObjects.Tiles.Wall;
+import Maze.BoardObjects.Tiles.*;
 import Maze.Position;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class StalkerEnemy extends AbstractActor {
 
@@ -19,9 +17,9 @@ public class StalkerEnemy extends AbstractActor {
      */
     public StalkerEnemy(Position position, int tickRate) {
         super(position, tickRate);
-        images.put("Astronaut", Toolkit.getDefaultToolkit().getImage("Resources/actors/Astronaut.png"));
-        images.put("AstronautFlipped", Toolkit.getDefaultToolkit().getImage("Resources/actors/AstronautFlipped.png"));
-        currentImage = images.get("Astronaut");
+        images.put("Enemy2", Toolkit.getDefaultToolkit().getImage("Resources/actors/Enemy2.png"));
+        images.put("Enemy2Flipped", Toolkit.getDefaultToolkit().getImage("Resources/actors/Enemy2Flipped.png"));
+        currentImage = images.get("Enemy2");
     }
 
     /**
@@ -50,9 +48,9 @@ public class StalkerEnemy extends AbstractActor {
 
         //Changes the actor image direction
         if(newPos.getX() >= position.getX()){
-            currentImage = images.get("Astronaut");
+            currentImage = images.get("Enemy2");
         } else {
-            currentImage = images.get("AstronautFlipped");
+            currentImage = images.get("Enemy2Flipped");
         }
 
         position = newPos;
@@ -95,12 +93,27 @@ public class StalkerEnemy extends AbstractActor {
     }
 
     /**
-     * The enemy "kills" the player and sends them back to their starting position.
+     * The enemy "robs" the player and sends their keys/treasures back to their starting position.
      * @param player The player.
      */
     @Override
     public void interact(Player player) {
-        player.getPos().setPosition(player.getStartingPos());
+        if(!player.getKeys().isEmpty()){
+            List<Key> keys = player.getKeys();
+            Key key = keys.get(0);
+            keys.remove(key);
+            key.unChange();
+        } else if(!player.getTreasures().isEmpty()){
+            Set<Treasure> treasures = player.getTreasures();
+            Treasure treasure = null;
+            for(Treasure t: treasures){
+                treasure = t;
+                break;
+            }
+            assert treasure != null:"Treasure is null! Somehow the player owns this object!?";
+            treasures.remove(treasure);
+            treasure.unChange();
+        }
     }
 
     /**

@@ -26,6 +26,7 @@ public class CSVReader {
 	    	for(String entry : data) {
 	    		currentLineList.add(entry);
 	    	}
+	    	returnList.add(currentLineList);
 	    }
 	    buffRead.close();
 	} catch (FileNotFoundException e) {
