@@ -1,5 +1,6 @@
 package RecordAndReplay;
 
+import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.Key;
 import Maze.Game;
@@ -8,6 +9,7 @@ import RecordAndReplay.Actions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This handles all the recording that needs to take place in the game.
@@ -22,6 +24,8 @@ public class Recorder {
     private List<Change> recordedChanges;
     private ArrayList<Action> changeBuffer;
     private Position startingPosition;
+    private ArrayList<AbstractActor> preMoveEnemies = new ArrayList<AbstractActor>();
+    private ArrayList<AbstractActor> postMoveEnemies = new ArrayList<AbstractActor>();
 
     public Recorder() {
         recordedChanges = new ArrayList<Change>();
@@ -43,11 +47,40 @@ public class Recorder {
     }
 
     /** Records a creature movement and stores it in the buffer. */
-    public void captureEnemyMove(Position enemyPos) {
-        //FIRST, Find the creature's position
+    public void captureEnemyPreMoves(Set<AbstractActor> enemies) {
+        for(AbstractActor e: enemies) {
+            preMoveEnemies.add(e);
+        }
+    }
+    public void captureEnemyPostMoves(Set<AbstractActor> enemies) {
+        for(AbstractActor e: enemies) {
+            postMoveEnemies.add(e);
+        }
+        for(int i = 0; i < preMoveEnemies.size(); i++) {
+            //===Calculate directions here===//
+            Game.DIRECTION direction = null;
+            //FIRST find the positions
+            Position preMovePos = preMoveEnemies.get(i).getPos();
+            int preMoveX = preMovePos.getX();
+            int preMoveY = preMovePos.getY();
 
+            Position postMovePos = postMoveEnemies.get(i).getPos();
+            int postMoveX = postMovePos.getX();
+            int postMoveY = postMovePos.getY();
 
-        //Find's the creature at (x, y) and moves it in a direction.
+            //SECOND Brute force IF statements
+            if(postMoveX < preMoveX) {
+                direction = Game.DIRECTION.LEFT;
+            } else if (preMoveX < postMoveX) {
+                direction = Game.DIRECTION.RIGHT;
+            } else if (postMoveY < preMoveY) {
+                direction = Game.DIRECTION.UP;
+            } else if (preMoveY < postMoveY) {
+                direction = Game.DIRECTION.DOWN;
+            }
+
+            changeBuffer.add(new EnemyMove(preMoveX, preMoveY, direction));
+        }
     }
 
     //Add moves as needed

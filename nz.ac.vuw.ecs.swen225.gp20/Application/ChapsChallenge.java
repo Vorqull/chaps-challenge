@@ -209,10 +209,13 @@ public class ChapsChallenge extends JFrame {
                         renderer.repaint();
                         inventoryView.revalidate();
                         inventoryView.repaint();
+                        recordAndReplayer.captureEnemyPreMoves(game.getComputerPlayers());
                         game.moveEnemies();
+                        recordAndReplayer.captureEnemyPostMoves(game.getComputerPlayers());
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    recordAndReplayer.clearRecorderBuffer(timeRemaining);
                 }
             }
         };

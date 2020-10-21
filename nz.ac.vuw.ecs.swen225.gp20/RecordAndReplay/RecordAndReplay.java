@@ -1,6 +1,7 @@
 package RecordAndReplay;
 
 import Maze.Board;
+import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.Key;
 import Maze.Game;
@@ -13,6 +14,7 @@ import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Records gameplay.
@@ -98,6 +100,15 @@ public class RecordAndReplay<E> {
     }
     public void captureTileInteraction(AbstractTile tile) {
         recorder.captureTileInteraction(tile);
+    }
+
+    //Finds ALL the enemies current positions.
+    public void captureEnemyPreMoves(Set<AbstractActor> enemies) {
+        recorder.captureEnemyPreMoves(enemies);
+    }
+
+    public void captureEnemyPostMoves(Set<AbstractActor> enemies) {
+        recorder.captureEnemyPostMoves(enemies);
     }
 
     //Note when recording started
