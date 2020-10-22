@@ -27,6 +27,10 @@ public class StalkerEnemy extends AbstractActor {
      */
     @Override
     public void move(Player player, Board board) {
+        if(!player.getKeys().isEmpty() && !player.getTreasures().isEmpty()){
+            return;
+        }
+
         Fringe path = findPath(player, board);
         //If path is null then there is no path current available path to the player
         if(path == null) {
