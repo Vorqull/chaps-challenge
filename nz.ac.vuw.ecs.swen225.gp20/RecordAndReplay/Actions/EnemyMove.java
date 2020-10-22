@@ -8,6 +8,8 @@ public class EnemyMove extends Action{
 
     public EnemyMove(int x, int y, Game.DIRECTION direction) {
         super(ActionType.ENEMYACTION);
+        this.x = x;
+        this.y = y;
         this.direction = direction;
     }
 

@@ -7,7 +7,6 @@ import Maze.BoardObjects.Tiles.Key;
 import Maze.Game;
 import Maze.Game.DIRECTION;
 import Maze.Position;
-import Persistence.EnemyBlueprint;
 import Persistence.Level;
 
 import javax.swing.*;
@@ -54,14 +53,13 @@ public class RecordAndReplay<E> {
     private Reader reader;
     private boolean recordingSwitch;
     private int startedRecording;
-    private ArrayList<EnemyBlueprint> enemies;
+    private ArrayList<AbstractActor> enemies;
 
     /**
      * Constructor with level parameter
      * @param level The level number which is associated with the RecordAndReplayer
-     * @param enemies The list of enemies in this level
      */
-    public RecordAndReplay(int level, ArrayList<EnemyBlueprint> enemies) {
+    public RecordAndReplay(int level, ArrayList<AbstractActor> enemies) {
         recorder = new Recorder();
         writer = new Writer();
         replayer = new Replayer();
@@ -148,13 +146,9 @@ public class RecordAndReplay<E> {
         int returnValue = jfc.showOpenDialog(frame);
         if(returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedSaveFile = jfc.getSelectedFile();
-            System.out.println(selectedSaveFile.getAbsolutePath());
-            try {
-                reader.readJson(selectedSaveFile);
-                prepReplayer();
-            } catch (Exception e) {
-                System.out.println("Error reading Json save file: " + e);
-            }
+
+            reader.readJson(selectedSaveFile);
+            prepReplayer();
         }
     }
 
@@ -183,5 +177,18 @@ public class RecordAndReplay<E> {
      */
     public void setLevelName(int level) {
         this.level = level;
+    }
+
+    /**
+     * Set the arraylist of enemies that exist in this game.
+     * Only useful for the writing module
+     * @param enemies The set of enemies
+     */
+    public void setEnemies(Set<AbstractActor> enemies) {
+        ArrayList<AbstractActor> e = new ArrayList<AbstractActor>();
+        for(AbstractActor a : enemies) {
+            e.add(a);
+        }
+        this.enemies = e;
     }
 }

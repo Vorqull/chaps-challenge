@@ -89,7 +89,7 @@ public class ChapsChallenge extends JFrame {
         inventoryView = new InventoryView(game.getPlayer());
 
         //Record & Replay
-        recordAndReplayer = new RecordAndReplay(1, currentLevel.getEnemies());
+        recordAndReplayer = new RecordAndReplay(1, Persistence.getLevel(1).getEnemies());
 
         //GUI
         JPanel basePanel = new JPanel();
@@ -206,12 +206,12 @@ public class ChapsChallenge extends JFrame {
             public void run() {
                 while (true){
                     try {
+                        recordAndReplayer.captureEnemyPreMoves(game.getComputerPlayers());
                         Thread.sleep(1000/30); //30FPS
                         renderer.revalidate();
                         renderer.repaint();
                         inventoryView.revalidate();
                         inventoryView.repaint();
-                        recordAndReplayer.captureEnemyPreMoves(game.getComputerPlayers());
                         game.moveEnemies();
                         recordAndReplayer.captureEnemyPostMoves(game.getComputerPlayers());
                     } catch (InterruptedException e) {
@@ -411,15 +411,16 @@ public class ChapsChallenge extends JFrame {
     public void recordTrigger() {
         if(recordAndReplayer.getRecordingBoolean()) {
             //if it's true right now. Save gameplay, and switch it to false.
+            recordAndReplayer.setRecordingBoolean(false);
             recordAndReplayer.saveGameplay();
 
-            recordAndReplayer.setRecordingBoolean(false);
             recordItem.setText("Start Recording");
         } else {
             //if it's false right now. Switch it to true. gameplay should start being recorded
             recordAndReplayer.setStartingPosition(game.getPlayer().getPos());
             recordAndReplayer.setRecordingBoolean(true);
             recordAndReplayer.setStartedRecording(timeRemaining);
+            recordAndReplayer.setEnemies(game.getComputerPlayers());
             recordItem.setText("Stop Recording");
         }
     }

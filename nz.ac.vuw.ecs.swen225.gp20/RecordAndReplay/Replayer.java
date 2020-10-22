@@ -1,6 +1,6 @@
 package RecordAndReplay;
 
-import Persistence.EnemyBlueprint;
+import Maze.BoardObjects.Actors.AbstractActor;
 import RecordAndReplay.Actions.Action;
 
 import javax.swing.*;
@@ -22,7 +22,7 @@ public class Replayer {
     private int startRecordingTimeStamp;
     private int playerStartX;
     private int playerStartY;
-    private ArrayList<EnemyBlueprint> enemies; //ONLY USED FOR ENEMY LOCATIONS
+    private ArrayList<AbstractActor> enemies; //ONLY USED FOR ENEMY LOCATIONS
 
     ArrayList<Change> prepedChanges = new ArrayList<Change>();
 
@@ -102,7 +102,7 @@ public class Replayer {
         this.playerStartY = playerStartY;
     }
 
-    public void setEnemies(ArrayList<EnemyBlueprint> enemies) {
+    public void setEnemies(ArrayList<AbstractActor> enemies) {
         this.enemies = enemies;
     }
 

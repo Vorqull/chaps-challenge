@@ -24,8 +24,8 @@ public class Recorder {
     private List<Change> recordedChanges;
     private ArrayList<Action> changeBuffer;
     private Position startingPosition;
-    private ArrayList<AbstractActor> preMoveEnemies = new ArrayList<AbstractActor>();
-    private ArrayList<AbstractActor> postMoveEnemies = new ArrayList<AbstractActor>();
+    private ArrayList<PosClone> preMoveEnemies = new ArrayList<PosClone>();
+    private ArrayList<PosClone> postMoveEnemies = new ArrayList<PosClone>();
 
     public Recorder() {
         recordedChanges = new ArrayList<Change>();
@@ -48,48 +48,58 @@ public class Recorder {
 
     /** Records a creature movement and stores it in the buffer. */
     public void captureEnemyPreMoves(Set<AbstractActor> enemies) {
+        //AbstractActor enemyClone;
         for(AbstractActor e: enemies) {
-            preMoveEnemies.add(e);
+            //enemyClone = e;
+            PosClone p = new PosClone(e.getPos().getX(), e.getPos().getY());
+            preMoveEnemies.add(p);
         }
     }
     public void captureEnemyPostMoves(Set<AbstractActor> enemies) {
         for(AbstractActor e: enemies) {
-            postMoveEnemies.add(e);
+            PosClone p = new PosClone(e.getPos().getX(), e.getPos().getY());
+            postMoveEnemies.add(p);
         }
         for(int i = 0; i < preMoveEnemies.size(); i++) {
             //===Calculate directions here===//
             Game.DIRECTION direction = null;
             //FIRST find the positions
-            Position preMovePos = preMoveEnemies.get(i).getPos();
+            PosClone preMovePos = preMoveEnemies.get(i);//.getPos();
             int preMoveX = preMovePos.getX();
             int preMoveY = preMovePos.getY();
 
-            Position postMovePos = postMoveEnemies.get(i).getPos();
+            PosClone postMovePos = postMoveEnemies.get(i);//.getPos();
             int postMoveX = postMovePos.getX();
             int postMoveY = postMovePos.getY();
 
             //SECOND Brute force IF statements
             if(postMoveX < preMoveX) {
                 direction = Game.DIRECTION.LEFT;
+                changeBuffer.add(new EnemyMove(preMoveX, preMoveY, direction));
             } else if (preMoveX < postMoveX) {
                 direction = Game.DIRECTION.RIGHT;
+                changeBuffer.add(new EnemyMove(preMoveX, preMoveY, direction));
             } else if (postMoveY < preMoveY) {
                 direction = Game.DIRECTION.UP;
+                changeBuffer.add(new EnemyMove(preMoveX, preMoveY, direction));
             } else if (preMoveY < postMoveY) {
                 direction = Game.DIRECTION.DOWN;
+                changeBuffer.add(new EnemyMove(preMoveX, preMoveY, direction));
             }
-
-            changeBuffer.add(new EnemyMove(preMoveX, preMoveY, direction));
         }
+        preMoveEnemies.clear();
+        postMoveEnemies.clear();
     }
 
     //Add moves as needed
     /** Clears the buffer, stores it into the recordedChanges array. */
     public void storeBuffer(int timestamp) {
-        Change c = new Change(changeBuffer, timestamp);
+        if(changeBuffer.size() != 0) {
+            Change c = new Change(changeBuffer, timestamp);
 
-        recordedChanges.add(c);
-        changeBuffer = new ArrayList<Action>();
+            recordedChanges.add(c);
+            changeBuffer = new ArrayList<Action>();
+        }
     }
 
     /** Clears the buffer, does NOT add it into the recordedChanges array. */
@@ -117,6 +127,29 @@ public class Recorder {
         public Change(ArrayList<Action> actions, int timestamp) {
             this.actions = actions;
             this.timestamp = timestamp;
+        }
+    }
+
+    /**
+     * Private nested class object that stores the X and Y.
+     * Effectively the same thing as a "position" except it's a clone that copy's the primitive variables.
+     *
+     */
+    private class PosClone {
+        private int x;
+        private int y;
+
+        public PosClone(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
         }
     }
 }

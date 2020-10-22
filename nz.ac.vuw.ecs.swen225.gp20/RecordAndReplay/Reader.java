@@ -1,9 +1,10 @@
 package RecordAndReplay;
 
+import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.Game;
 import Maze.Position;
-import Persistence.EnemyBlueprint;
 import RecordAndReplay.Actions.Action;
+import RecordAndReplay.Actions.EnemyMove;
 import RecordAndReplay.Actions.PlayerMove;
 
 import javax.json.*;
@@ -42,13 +43,13 @@ public class Reader {
     private int startRecordingTimeStamp;
     private int playerStartX;
     private int playerStartY;
-    private ArrayList<EnemyBlueprint> enemies; //ONLY USED FOR ENEMY LOCATIONS
+    private ArrayList<AbstractActor> enemies; //ONLY USED FOR ENEMY LOCATIONS
 
     public Reader() {
         //empty constructor
     }
 
-    public void readJson(File file) throws Exception {
+    public void readJson(File file) {//throws Exception {
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
@@ -82,31 +83,45 @@ public class Reader {
                 //SECOND check type (brute force)
                 Action action;
                 if(jsonAction.get("PlayerMove") != null) {
-                    System.out.println(jsonAction.get("PlayerMove").toString());
                     if(jsonAction.get("PlayerMove").equals(Json.createValue("UP"))) {
                         action = new PlayerMove(Game.DIRECTION.UP);
+                        actions.add(action);
                     } else if(jsonAction.get("PlayerMove").equals(Json.createValue("DOWN"))) {
                         action = new PlayerMove(Game.DIRECTION.DOWN);
+                        actions.add(action);
                     } else if(jsonAction.get("PlayerMove").equals(Json.createValue("LEFT"))) {
                         action = new PlayerMove(Game.DIRECTION.LEFT);
+                        actions.add(action);
                     } else if(jsonAction.get("PlayerMove").equals(Json.createValue("RIGHT"))) {
                         action = new PlayerMove(Game.DIRECTION.RIGHT);
+                        actions.add(action);
                     } else {
                         //should NEVER get to this point.
-                        throw new Exception("PlayerMove has no direction value: " + jsonAction.get("PlayerMove").toString() + ": " + (jsonAction.get("PlayerMove").toString()=="UP"));
                     }
+                    System.out.println("normtest: " + i + "/" + noChanges);
                     //Add to array of actions
-                    actions.add(action);
-                } /*else if(jsonAction.get("PlayerTileInteract") != null) {
-                    System.out.println(jsonAction.get("PlayerTileInteract").toString());  // Might not even be nessercary
-                }*/
+                } else if(jsonAction.get("EnemyMove") != null) {
+                    int x = jsonAction.getInt("x");
+                    int y = jsonAction.getInt("y");
+                    if(jsonAction.get("EnemyMove").equals(Json.createValue("UP"))) {
+                        action = new EnemyMove(x, y, Game.DIRECTION.UP);
+                        actions.add(action);
+                    } else if(jsonAction.get("EnemyMove").equals(Json.createValue("DOWN"))) {
+                        action = new EnemyMove(x, y, Game.DIRECTION.DOWN);
+                        actions.add(action);
+                    } else if(jsonAction.get("EnemyMove").equals(Json.createValue("LEFT"))) {
+                        action = new EnemyMove(x, y, Game.DIRECTION.LEFT);
+                        actions.add(action);
+                    } else if(jsonAction.get("EnemyMove").equals(Json.createValue("RIGHT"))) {
+                        action = new EnemyMove(x, y, Game.DIRECTION.RIGHT);
+                        actions.add(action);
+                    } else {
+                        //should NEVER get to this point.
+                    }
+                }
             }
-
-            //Use array of actions and time stamp to create a "change" object
             Recorder.Change c = new Recorder.Change(actions, timeStamp);
             recordedChanges.add(c);
-
-            //Recorder.Change c = new Recorder.Change();
         }
     }
 
@@ -126,7 +141,7 @@ public class Reader {
     public int getPlayerStartY() {
         return playerStartY;
     }
-    public ArrayList<EnemyBlueprint> getEnemies() {
+    public ArrayList<AbstractActor> getEnemies() {
         return enemies;
     }
 
