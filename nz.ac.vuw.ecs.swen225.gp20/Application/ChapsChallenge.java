@@ -226,9 +226,12 @@ public class ChapsChallenge extends JFrame {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        recordAndReplayer.captureEnemyPreMoves(game.getComputerPlayers());
                         game.moveEnemies();
+                        recordAndReplayer.captureEnemyPostMoves(game.getComputerPlayers());
                         repaint();
                     }
+                    recordAndReplayer.clearRecorderBuffer(timeRemaining);
                 }
             }
         });
@@ -560,6 +563,8 @@ public class ChapsChallenge extends JFrame {
             recordAndReplayer.setRecordingBoolean(true);
             recordAndReplayer.setStartedRecording(timeRemaining);
             recordAndReplayer.setEnemies(game.getComputerPlayers());
+            recordAndReplayer.setLevelName(levelCount);
+
             recordItem.setText("Stop Recording");
         }
     }
@@ -579,6 +584,30 @@ public class ChapsChallenge extends JFrame {
         }
     }
 
-    //REPLAYING:
+    //REPLAYING HELPERS:
+    public void movePlayer(Game.DIRECTION direction) {
+
+    }
+
+    /*public void moveEnemy(Position pos, Game.DIRECTION direction) {
+        //game.getBoard().findPosInBoard()
+        game.getComputerPlayers().contains();
+    }*/
+    public void moveEnemy(AbstractActor enemy, Game.DIRECTION direction) {
+        /* Try this:
+        enemy.move
+         */
+
+    }
+
+    public void setTimeRemaining() {
+
+    }
+
+    //INCREASE FROM 30 FPS TO 60 FPS
+    public void doubleSpeed() {
+
+    }
+
 }
 

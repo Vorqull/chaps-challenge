@@ -56,8 +56,6 @@ public class RecordAndReplay<E> {
     private boolean recordingSwitch;
     private int startedRecording;
     private ArrayList<AbstractActor> enemies;
-    private Player player;
-    private Board board;
 
     /**
      * Constructor with level parameter
@@ -71,8 +69,6 @@ public class RecordAndReplay<E> {
         recordingSwitch = false;
         this.level = level;
         this.enemies = new ArrayList<AbstractActor>();
-        this.player = player;
-        this.board = board;
 
         for(AbstractActor e : enemies) {
             this.enemies.add(e);
@@ -85,6 +81,8 @@ public class RecordAndReplay<E> {
     public RecordAndReplay() {
         recorder = new Recorder();
         writer = new Writer();
+        replayer = new Replayer();
+        reader = new Reader();
         recordingSwitch = false;
     }
 
