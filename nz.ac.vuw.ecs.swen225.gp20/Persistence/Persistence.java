@@ -5,6 +5,7 @@ import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Set;
 
 
 /**
@@ -33,7 +34,7 @@ public class Persistence {
    * 
    * @param remainingTime The remaining time to save.
    * @param player The player which occupies the level as it is saved.
-   * @param enemies The enemies of the current level in an ArrayList format.
+   * @param set The enemies of the current level in an ArrayList format.
    * @param levelNumber The level number which is being saved.
    * @param tiles The 2d array of tiles which comprise the level.
    * @return whether or not the save was successful.
@@ -41,12 +42,12 @@ public class Persistence {
   public static boolean saveGame(
       int remainingTime, 
       Player player, 
-      ArrayList<AbstractActor> enemies, 
+      Set<AbstractActor> set, 
       int levelNumber,
       AbstractTile[][] tiles
   ) {
     String saveString = "saves/level" + levelNumber + ".JSON";
-    SaveJsonMaker.makeJson(remainingTime, player, enemies, saveString, tiles);
+    SaveJsonMaker.makeJson(remainingTime, player, set, saveString, tiles);
     return true;
   }
 

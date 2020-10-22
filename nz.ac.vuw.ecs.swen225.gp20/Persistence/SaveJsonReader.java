@@ -38,9 +38,8 @@ public class SaveJsonReader {
 
     AbstractTile[][] tileArray = loadedLevel.getTileArray();
     
-
+    
     InputStream levelInputStream;
-    System.out.println("Working Directory = " + System.getProperty("user.dir"));
     try {
       levelInputStream = new FileInputStream(jsonName);
     } catch (FileNotFoundException e) {
@@ -66,9 +65,7 @@ public class SaveJsonReader {
       int tileY = currentTileJson.getInt("yPos");
       AbstractTile currentTileObject;
       currentTileObject = tileArray[tileX][tileY];
-      if (currentTileObject.isChanged()) {
-        currentTileObject.setChangedTile();
-      }
+      currentTileObject.setChangedTile();
 
     }
 

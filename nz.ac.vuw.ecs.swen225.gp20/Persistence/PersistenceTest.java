@@ -46,8 +46,16 @@ public class PersistenceTest {
           levelString
       );
     }
-
     
+    Level testLevel = Persistence.getLevel(1);
+    if(testLevel == null) {
+      System.out.println("WARNING!");
+    }
+    System.out.println(testLevel.getTileArray()[0][0].getClass());
+    
+    boolean testSave = Persistence.saveGame(90, testLevel.getPlayer(), testLevel.getEnemies(), 1, testLevel.getTileArray());
+    testLevel = Persistence.loadGame(1);
+    System.out.println(testLevel.getTime());
   }
 
   private static int stringToInt(String intString) {

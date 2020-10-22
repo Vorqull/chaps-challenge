@@ -61,7 +61,6 @@ public class LevelJsonReader {
 
     int rowCount = levelInfo.getInt("rowCount");
     int colCount = levelInfo.getInt("columnCount");
-    int maxTime = levelInfo.getInt("timeLimit");
     JsonArray enemies = (JsonArray) levelInfo.get("Enemies");
     Position playerStart = new Position(levelInfo.getInt("playerX"), levelInfo.getInt("playerY"));
 
@@ -158,6 +157,7 @@ public class LevelJsonReader {
     Player returnPlayer = new Player(playerStart);
     Set<AbstractActor> returnEnemies = new HashSet<AbstractActor>();
     returnEnemies.addAll(enemiesArrayList);
+    int maxTime = levelInfo.getInt("timeLimit");
     Level returnLevel = new Level(maxTime, returnPlayer, tileArray, returnEnemies);
     return returnLevel;
 

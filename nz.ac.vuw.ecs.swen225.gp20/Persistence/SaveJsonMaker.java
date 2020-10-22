@@ -13,6 +13,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
@@ -44,12 +46,12 @@ public class SaveJsonMaker {
   public static boolean makeJson(
       int remainingTime,
       Player player,
-      ArrayList<AbstractActor> enemies,
+      Set<AbstractActor> enemies,
       String jsonName,
       AbstractTile[][] tiles
   ) {
     JsonArrayBuilder keyArrayBuilder = Json.createArrayBuilder();
-    
+    JsonArrayBuilder treasureArrayBuilder = Json.createArrayBuilder();
 
     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
     for (int i = 0; i < tiles.length; i++) {
@@ -74,7 +76,7 @@ public class SaveJsonMaker {
               JsonObjectBuilder treasureArrayObjectBuilder = Json.createObjectBuilder();
               treasureArrayObjectBuilder.add("xPos", i);
               treasureArrayObjectBuilder.add("yPos", j);
-              keyArrayBuilder.add(treasureArrayObjectBuilder);
+              treasureArrayBuilder.add(treasureArrayObjectBuilder);
             }
           }
         }
@@ -85,12 +87,10 @@ public class SaveJsonMaker {
 
     JsonArrayBuilder enemyArrayBuilder = Json.createArrayBuilder();
     JsonObjectBuilder enemyArrayObject;
-    System.out.println(enemies.size());
-    for (int i = 0; i < enemies.size(); i++) {
-      System.out.println("reached here");
+    for (AbstractActor enemy : enemies) {
       enemyArrayObject = Json.createObjectBuilder();
-      Position currentLoc = enemies.get(i).getPos();
-      Position startingLoc = enemies.get(i).getStartingPos();
+      Position currentLoc = enemy.getPos();
+      Position startingLoc = enemy.getStartingPos();
       enemyArrayObject.add("startingX", startingLoc.getX());
       enemyArrayObject.add("startingY", startingLoc.getY());
       enemyArrayObject.add("currentX", currentLoc.getX());
@@ -98,7 +98,6 @@ public class SaveJsonMaker {
       enemyArrayBuilder.add(enemyArrayObject.build());
     }
     
-    JsonArrayBuilder treasureArrayBuilder = Json.createArrayBuilder();
     JsonObject levelInfo = Json.createObjectBuilder().add("playerX", player.getPos().getX())
         .add("playerY", player.getPos().getY()).add("Keys on hand", keyArrayBuilder.build())
         .add("Treasure on hand", treasureArrayBuilder.build()).add("time remaining", remainingTime)

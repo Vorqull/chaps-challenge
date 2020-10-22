@@ -74,9 +74,6 @@ public class ChapsChallenge extends JFrame {
         // Initialize modules
         initModules();
 
-        // Initialize panels
-        initPanels();
-
         // Initialize hotkeys
         addHotKeys();
 
@@ -104,7 +101,6 @@ public class ChapsChallenge extends JFrame {
         int verticalGap = 85;
         int horizontalGap = 65;
         basePanel.setBorder(new EmptyBorder(new Insets(verticalGap, horizontalGap, verticalGap, horizontalGap)));
-
 
         // Gameplay panel
         gameplayPanel = createGamePanel();
@@ -146,13 +142,34 @@ public class ChapsChallenge extends JFrame {
 
         //selections
         JMenuItem level1 = new JMenuItem("Level 1");
-        level1.addActionListener((e) -> loadLevel(1)); //TODO: add functionality
+        level1.addActionListener((e) -> loadLevel(1));
+
+        JMenuItem level2 = new JMenuItem("Level 2");
+        level2.addActionListener((e) -> loadLevel(2));
 
         JMenuItem saveItem = new JMenuItem("Save");
-        saveItem.addActionListener((e) -> System.out.println("save"));
+        saveItem.addActionListener((e) -> Persistence.saveGame(timeRemaining, game.getPlayer(), currentLevel.getEnemies(), levelCount, currentLevel.getTileArray()));
 
         JMenuItem loadSaved = new JMenuItem("Load Saved Game");
-        loadSaved.addActionListener((e) -> System.out.println("load"));
+        loadSaved.addActionListener((e) -> {
+            String[] possibleValues = { "Level 1", "Level 2"};
+            Object selectedValue = JOptionPane.showInputDialog(null,
+                    "Choose a saved level to load (if it exists)", "Load Game",
+                    JOptionPane.INFORMATION_MESSAGE, null,
+                    possibleValues, possibleValues[0]);
+
+            if (selectedValue.equals("Level 1")){
+                loadLevel(Persistence.loadGame(1), 1);
+            }
+            else if (selectedValue.equals("Level 2")){
+                loadLevel(Persistence.loadGame(2), 2);
+            }
+            else {
+                //we're not supposed to be here
+                System.out.println("Selected level not found: " + selectedValue.toString());
+            }
+
+        });
 
         JMenuItem pauseItem = new JMenuItem("Pause");
         pauseItem.addActionListener(e -> {
@@ -171,6 +188,7 @@ public class ChapsChallenge extends JFrame {
         gameMenu.add(saveItem);
         gameMenu.add(loadSaved);
         gameMenu.add(level1);
+        gameMenu.add(level2);
         gameMenu.add(pauseItem);
         gameMenu.add(resumeItem);
         gameMenu.add(exitItem);
@@ -353,8 +371,6 @@ public class ChapsChallenge extends JFrame {
         super.repaint();
         renderer.revalidate();
         renderer.repaint();
-        inventoryView.revalidate();
-        inventoryView.repaint();
     }
 
 
@@ -362,8 +378,17 @@ public class ChapsChallenge extends JFrame {
     // Controlling Game Status
     // ===========================================
 
+    /**
+     * Loads a level from a specified integer
+     * @param level Level number
+     */
     public void loadLevel(int level){
+        levelCount = level;
         isPaused = false; //make sure the game starts in an un-paused state
+        if (paintThread != null && timer != null){
+            paintThread.stop();
+            timer.stop();
+        }
 
         // Persistence and Levels module
         currentLevel =  Persistence.getLevel(level);
@@ -381,6 +406,48 @@ public class ChapsChallenge extends JFrame {
         //Reset this JFrame and reinitialize panels
         this.getContentPane().removeAll();
         initPanels();
+        addHotKeys();
+
+        //reset focus in case this method was called from the menu bar
+        gameplayPanel.setFocusable(true);
+        gameplayPanel.requestFocusInWindow();
+        gameplayPanel.requestFocus();
+    }
+
+    /**
+     * Loads a level specified by a Level object
+     * @param level Level object
+     */
+    public void loadLevel(Level level, int levelCount){
+        this.levelCount = levelCount;
+        isPaused = false; //make sure the game starts in an un-paused state
+        if (paintThread != null && timer != null){
+            paintThread.stop();
+            timer.stop();
+        }
+
+        // Persistence and Levels module
+        currentLevel =  level;
+        timeRemaining = currentLevel.getTime();
+
+        // Maze module
+        game = new Game(new Board(currentLevel.getTileArray()), currentLevel.getPlayer(), currentLevel.getEnemies());
+
+        // Initialize the player inventory
+        inventoryView = new InventoryView(game.getPlayer()); //adding inventory view (Application)
+
+        // Renderer module
+        renderer = new Renderer(game);
+
+        //Reset this JFrame and reinitialize panels
+        this.getContentPane().removeAll();
+        initPanels();
+        addHotKeys();
+
+        //reset focus in case this method was called from the menu bar
+        gameplayPanel.setFocusable(true);
+        gameplayPanel.requestFocusInWindow();
+        gameplayPanel.requestFocus();
     }
 
     /**
