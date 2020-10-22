@@ -137,7 +137,6 @@ public class ChapsChallenge extends JFrame {
      */
     public void createMenuBar(){
         JMenuBar menuBar = new JMenuBar();
-        //=====Game Menu=====//
         JMenu gameMenu = new JMenu("Game");
 
         //selections
@@ -651,7 +650,7 @@ public class ChapsChallenge extends JFrame {
         }
     }
 
-    //REPLAYING HELPERS:
+    //====REPLAYING HELPERS====//
     public void movePlayer(Game.DIRECTION direction) {
 
     }

@@ -1,23 +1,15 @@
 
 {
     "Changed Tiles": [
-        {
-            "xPos": 8,
-            "yPos": 9
-        }
     ],
     "Gameplay variables": {
         "playerX": 7,
-        "playerY": 8,
+        "playerY": 7,
         "Keys on hand": [
-            {
-                "xPos": 8,
-                "yPos": 9
-            }
         ],
         "Treasure on hand": [
         ],
-        "time remaining": 56,
+        "time remaining": 88,
         "Enemy locations": [
         ]
     }
