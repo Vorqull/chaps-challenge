@@ -63,16 +63,20 @@ public class RecordAndReplay<E> {
      * Constructor with level parameter
      * @param level The level number which is associated with the RecordAndReplayer
      */
-    public RecordAndReplay(int level, ArrayList<AbstractActor> enemies) {
+    public RecordAndReplay(int level, Set<AbstractActor> enemies) {
         recorder = new Recorder();
         writer = new Writer();
         replayer = new Replayer();
         reader = new Reader();
         recordingSwitch = false;
         this.level = level;
-        this.enemies = enemies;
+        this.enemies = new ArrayList<AbstractActor>();
         this.player = player;
         this.board = board;
+
+        for(AbstractActor e : enemies) {
+            this.enemies.add(e);
+        }
     }
 
     /**
@@ -174,6 +178,7 @@ public class RecordAndReplay<E> {
         replayer.setPlayerStartX(reader.getPlayerStartX());
         replayer.setPlayerStartY(reader.getPlayerStartY());
         replayer.setEnemies(reader.getEnemies());
+        replayer.setLoadState(reader.getLevel());
 
         replayer.prepRecordedChanges();
         replayer.loadToStart();

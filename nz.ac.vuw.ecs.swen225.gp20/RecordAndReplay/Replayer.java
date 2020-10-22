@@ -2,6 +2,7 @@ package RecordAndReplay;
 
 import Application.ChapsChallenge;
 import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.Game;
 import Persistence.Persistence;
 import RecordAndReplay.Actions.Action;
 
@@ -27,7 +28,7 @@ public class Replayer {
     private int playerStartY;
     private ArrayList<AbstractActor> enemies; //ONLY USED FOR ENEMY LOCATIONS
 
-    private String loadStateLocation;
+    private int loadStateLocation;
 
     private boolean pause = false;
     private boolean doubleSpeed = false;
@@ -78,6 +79,7 @@ public class Replayer {
         controlWindow.setLocation(500, 300);
         controlWindow.pack();
 
+        controlWindow.setFocusable(false);
         controlWindow.setVisible(true);
     }
 
@@ -92,7 +94,7 @@ public class Replayer {
     }
 
     public void loadToStart() {
-        Persistence.loadGame(level);
+        Persistence.loadGame(loadStateLocation);
     }
 
 
@@ -160,7 +162,7 @@ public class Replayer {
         this.enemies = enemies;
     }
 
-    public void setLoadState(String loadStateLocation) {
+    public void setLoadState(int loadStateLocation) {
         this.loadStateLocation = loadStateLocation;
     }
 

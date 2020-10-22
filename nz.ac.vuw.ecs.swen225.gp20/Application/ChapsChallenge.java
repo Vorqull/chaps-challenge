@@ -4,7 +4,7 @@ import Maze.Board;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.BoardObjects.Actors.Player;
-import Maze.BoardObjects.Actors.stalker_enemy.StalkerEnemy;
+import Maze.BoardObjects.Actors.StalkerEnemy;
 import Maze.BoardObjects.Tiles.Key;
 import Maze.Game;
 import Maze.Position;
@@ -72,10 +72,10 @@ public class ChapsChallenge extends JFrame {
         Set<AbstractActor> test = new HashSet<>();
 
         StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10), 30);
-        test.add(enemy);
+        //test.add(enemy);
 
         PatternEnemy enemy1 = new PatternEnemy(new Position(2, 9), 30, "dddsssaaawww");
-        test.add(enemy1);
+        //test.add(enemy1);
         //////
 
         //Persistence and Levels
@@ -436,20 +436,6 @@ public class ChapsChallenge extends JFrame {
                 return;
             }
             recordAndReplayer.selectSaveFile(this);
-
-            /**
-             * TEMP SOLUTION, DELETE AFTER!!!
-             * @param l
-             */
-            Set<AbstractActor> test = new HashSet<>();
-
-            StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10), 30);
-            test.add(enemy);
-
-            PatternEnemy enemy1 = new PatternEnemy(new Position(2, 9), 30, "dddsssaaawww");
-            test.add(enemy1);
-
-            game = new Game(new Board(Renderer.level1()), new Player(new Position(2, 2)), test);
 
             recordAndReplayer.displayControlWindow();
         }

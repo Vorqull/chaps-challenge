@@ -146,6 +146,7 @@ public class Reader {
     public ArrayList<AbstractActor> getEnemies() {
         return enemies;
     }
+    public String getLevelLocation() { return levelLocation; }
 
 
     /** HELPER METHODS **/
