@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
+
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -139,8 +141,8 @@ public class SaveJsonReader {
 
   }
 
-  private static AbstractActor findEnemy(Position pos, ArrayList<AbstractActor> passedArray) {
-    for (AbstractActor currentActor : passedArray) {
+  private static AbstractActor findEnemy(Position pos, Set<AbstractActor> passedSet) {
+    for (AbstractActor currentActor : passedSet) {
       if (currentActor.getPos().getX() == pos.getX() 
           && currentActor.getPos().getY() == pos.getY()
           ) {

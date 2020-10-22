@@ -1,8 +1,6 @@
-package Maze.BoardObjects.Actors.stalker_enemy;
+package Maze.BoardObjects.Actors;
 
 import Maze.Board;
-import Maze.BoardObjects.Actors.AbstractActor;
-import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.*;
 import Maze.Position;
 

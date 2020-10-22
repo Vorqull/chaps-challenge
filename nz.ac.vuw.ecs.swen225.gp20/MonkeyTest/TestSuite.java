@@ -6,14 +6,12 @@ import java.util.Set;
 
 import org.junit.*;
 
-import Application.ChapsChallenge;
 import Maze.Board;
 import Maze.Game;
 import Maze.Position;
 import Maze.BoardObjects.Actors.AbstractActor;
-import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.BoardObjects.Actors.Player;
-import Maze.BoardObjects.Actors.stalker_enemy.StalkerEnemy;
+import Maze.BoardObjects.Actors.StalkerEnemy;
 
 
 

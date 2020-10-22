@@ -14,8 +14,9 @@ public class PersistenceTest {
    * Run the test and create the level.
    * 
    * @param args unused, base param for main method.
+   * @throws Exception - In case of formatting issues;
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     CsvReader csvRead = new CsvReader();
 
     Scanner sc = new Scanner(System.in);
@@ -46,18 +47,7 @@ public class PersistenceTest {
       );
     }
 
-    Level testLevel = Persistence.getLevel(levelNumber);
     
-    //Generate test save file, can be deleted.
-    Persistence.saveGame(91,                    //Seconds remaining
-        testLevel.getPlayer(),
-        testLevel.getEnemies(),
-        levelNumber,
-        testLevel.getTileArray());
-    Level newLevel = Persistence.loadGame(levelNumber);
-    if (newLevel.getEnemies().size() > 0) {
-      System.out.println("Enemy count is > 0 " + newLevel.getEnemies().get(0).getPos());
-    }
   }
 
   private static int stringToInt(String intString) {

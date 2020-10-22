@@ -3,7 +3,7 @@ package Persistence;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.BoardObjects.Actors.Player;
-import Maze.BoardObjects.Actors.stalker_enemy.StalkerEnemy;
+import Maze.BoardObjects.Actors.StalkerEnemy;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.ExitLock;
 import Maze.BoardObjects.Tiles.ExitPortal;
@@ -18,7 +18,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -39,7 +42,7 @@ public class LevelJsonReader {
    * @param jsonName - The name of the JSON file to use.
    * @return The Level file as per read from the JSON file.
    */
-  public Level readJson(String jsonName) {
+  public static Level readJson(String jsonName) {
 
     InputStream levelInputStream;
     try {
@@ -150,13 +153,14 @@ public class LevelJsonReader {
     }
 
     Player returnPlayer = new Player(playerStart);
-
-    Level returnLevel = new Level(maxTime, returnPlayer, tileArray, enemiesArrayList);
+    Set<AbstractActor> returnEnemies = new HashSet<AbstractActor>();
+    returnEnemies.addAll(enemiesArrayList);
+    Level returnLevel = new Level(maxTime, returnPlayer, tileArray, returnEnemies);
     return returnLevel;
 
   }
 
-  private int stringToInt(String intString) {
+  private static int stringToInt(String intString) {
     int charInt = 0;
     for (int i = 0; i < intString.length(); i++) {
       charInt = charInt * 10;

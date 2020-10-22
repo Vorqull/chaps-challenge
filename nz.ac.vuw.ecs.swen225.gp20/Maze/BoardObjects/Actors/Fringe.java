@@ -1,4 +1,4 @@
-package Maze.BoardObjects.Actors.stalker_enemy;
+package Maze.BoardObjects.Actors;
 
 import Maze.BoardObjects.Tiles.AbstractTile;
 

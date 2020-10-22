@@ -25,14 +25,16 @@ import javax.json.stream.JsonGenerator;
  *
  */
 public class LevelJsonMaker {
-
+  
   /**
    * Makes a JSON file at the given location using a CSV file.
    * 
    * @param arrayFormat - The csv file converted to an ArrayList of ArrayLists.
    * @param jsonName    - The name of the JSON file to use.
+   * @throws Exception - If any fields were incorrectly formatted and present. 
    */
-  public static void makeJson(ArrayList<ArrayList<String>> arrayFormat, String jsonName) {
+  public static void makeJson(ArrayList<ArrayList<String>> arrayFormat, String jsonName) 
+      throws Exception {
     int rowIndex = 0;
     int colIndex = 0;
     int playerX = 0;
@@ -63,14 +65,14 @@ public class LevelJsonMaker {
           } else if (tileInfo[2].equals("b")) {
             tileColour = "Blue";
           } else {
-            arrayObjectBuilder.add(
-                "Rotation", 
-                "ERROR! value " 
-                + tileInfo[2] 
-                + " used! Can only use r b y or g! ROW: "
-                + rowIndex 
-                + " COL: " 
-                + colIndex
+            throw new Exception(
+              "X: " 
+              + colIndex 
+              + " Y: " 
+              + rowIndex 
+              + " \nERROR: " 
+              + tileInfo[2] 
+              + " is not a vaild colour"
             );
           }
         }

@@ -4,6 +4,7 @@ import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import java.util.ArrayList;
+import java.util.Set;
 
 
 /**
@@ -18,7 +19,7 @@ public class Level {
   private AbstractTile[][] levelArray;
   private Player player;
   private int time;
-  private ArrayList<AbstractActor> enemies;
+  private Set<AbstractActor> enemies;
 
   /**
    * Level Constructor.
@@ -33,7 +34,7 @@ public class Level {
       int passedTime,
       Player passedPlayer,
       AbstractTile[][] passedArray,
-      ArrayList<AbstractActor> passedEnemies
+      Set<AbstractActor> passedEnemies
   ) {
     time = passedTime;
     levelArray = passedArray;
@@ -73,7 +74,7 @@ public class Level {
    * 
    * @return ArrayList of all enemies in AbstractActor form.
    */
-  public ArrayList<AbstractActor> getEnemies() {
+  public Set<AbstractActor> getEnemies() {
     return enemies;
   }
 }
