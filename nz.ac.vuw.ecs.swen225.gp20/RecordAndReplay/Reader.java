@@ -98,7 +98,6 @@ public class Reader {
                     } else {
                         //should NEVER get to this point.
                     }
-                    System.out.println("normtest: " + i + "/" + noChanges);
                     //Add to array of actions
                 } else if(jsonAction.get("EnemyMove") != null) {
                     int x = jsonAction.getInt("x");

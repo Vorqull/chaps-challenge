@@ -4,6 +4,7 @@ import Maze.BoardObjects.Actors.AbstractActor;
 import RecordAndReplay.Actions.Action;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,9 @@ public class Replayer {
     private int playerStartY;
     private ArrayList<AbstractActor> enemies; //ONLY USED FOR ENEMY LOCATIONS
 
+    private boolean pause = false;
+    private boolean doubleSpeed = false;
+
     ArrayList<Change> prepedChanges = new ArrayList<Change>();
 
     /**
@@ -36,12 +40,44 @@ public class Replayer {
 
     /**
      * Spawns the separate window for controls
-     * @param frame Parent frame.
      */
-    public void controlsWindow(JFrame frame) {
-        JDialog controlsWindow = new JDialog(frame);
-        controlsWindow.setAlwaysOnTop(true);
+    public void controlsWindow() {
+        JFrame controlWindow = new JFrame("Replay Controls");
+
+        JPanel mainPanel = new JPanel();
+
+        Icon prevIcon = new ImageIcon(System.getProperty("user.dir") + "/Resources/replayButtons/prev.png");
+        Icon playIcon = new ImageIcon(System.getProperty("user.dir") + "/Resources/replayButtons/play.png");
+        Icon pauseIcon = new ImageIcon(System.getProperty("user.dir") + "/Resources/replayButtons/pause.png");
+        Icon forwardIcon = new ImageIcon(System.getProperty("user.dir") + "/Resources/replayButtons/next.png");
+        Icon doubleSpeedIcon = new ImageIcon(System.getProperty("user.dir") + "/Resources/replayButtons/doubleSpeed.png");
+
+        JButton prev = new JButton(prevIcon);
+        JButton play = new JButton(playIcon);
+        JButton forward = new JButton(forwardIcon);
+        JButton doubleSpeed = new JButton(doubleSpeedIcon);
+
+        prev.setPreferredSize(new Dimension(50, 50));
+        play.setPreferredSize(new Dimension(50, 50));
+        forward.setPreferredSize(new Dimension(50, 50));
+        doubleSpeed.setPreferredSize(new Dimension(50, 50));
+
+        mainPanel.add(prev);
+        mainPanel.add(play);
+        mainPanel.add(forward);
+        mainPanel.add(doubleSpeed);
+
+        controlWindow.add(mainPanel);
+        //APPLE
+        controlWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        controlWindow.setLocation(500, 300);
+        controlWindow.pack();
+
+        controlWindow.setVisible(true);
     }
+
+
+
 
     /** PREPS **/
 
@@ -65,12 +101,13 @@ public class Replayer {
         //B: SECOND, Create Replayer.Change, add to prepedChanges. Add nulls if need be.
         int start = recordedChanges.get(0).timestamp;
         int end = recordedChanges.get(recordedChanges.size()-1).timestamp;
+        //Distribute same timestamped changes.
         for(int i = start; i > end; i--) {
             if(rawFindings.containsKey(i)) {
                 int denominator = rawFindings.get(i).size();
                 int factor = 1000 / denominator;
                 int milisecond = 1000;
-                ArrayList<Recorder.Change> entry = rawFindings.get(start-i);
+                ArrayList<Recorder.Change> entry = rawFindings.get(i);
                 for(Recorder.Change c : entry) {
                     prepedChanges.add(new Change(c.actions, i, milisecond));
                     milisecond -= factor;

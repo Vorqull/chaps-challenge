@@ -435,7 +435,7 @@ public class ChapsChallenge extends JFrame {
                 return;
             }
             recordAndReplayer.selectSaveFile(this);
-            recordAndReplayer.displayControlWindow(this);
+            recordAndReplayer.displayControlWindow();
         }
     }
 }

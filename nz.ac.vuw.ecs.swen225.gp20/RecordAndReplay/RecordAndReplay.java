@@ -165,8 +165,8 @@ public class RecordAndReplay<E> {
         replayer.prepRecordedChanges();
     }
 
-    public void displayControlWindow(JFrame frame) {
-        replayer.controlsWindow(frame);
+    public void displayControlWindow() {
+        replayer.controlsWindow();
     }
 
     //=====GETTERS/SETTERS=====//

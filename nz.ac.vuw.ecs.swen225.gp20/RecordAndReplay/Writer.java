@@ -89,9 +89,9 @@ public class Writer {
                     }
                 }
                 //PLAYER INTERACTION
-                else if(a instanceof PlayerTileInteraction) {
-                    action.add("PlayerTileInteract", ((PlayerTileInteraction) a).getTileName());
-                }
+                //else if(a instanceof PlayerTileInteraction) {
+                //    action.add("PlayerTileInteract", ((PlayerTileInteraction) a).getTileName());
+                //}
                 //ENEMY MOVE
                 else if(a instanceof EnemyMove) {
                     switch (((EnemyMove) a).getDirection()) {
