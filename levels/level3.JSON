@@ -169,8 +169,9 @@
                     {
                         "column": 22,
                         "row": 3,
-                        "Tile Type": "FreeTile",
-                        "Rotation": "Horizontal"
+                        "Tile Type": "InfoField",
+                        "Rotation": "Horizontal",
+                        "InfoText": "IN THIS LEVEL THERE ARE STALKER ENEMIES. THEY WILL FOLLOW YOU AND STEAL YOUR FILES/SWIPE CARDS IF THEY TOUCH YOU"
                     },
                     {
                         "column": 23,
@@ -369,7 +370,7 @@
                     {
                         "column": 22,
                         "row": 5,
-                        "Tile Type": "Wall",
+                        "Tile Type": "FreeTile",
                         "Rotation": "Horizontal"
                     },
                     {
@@ -1881,332 +1882,12 @@
                         "Rotation": "Horizontal"
                     }
                 ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
-            },
-            {
-                "objects": [
-                ]
             }
         ]
     },
     "Level Info": {
-        "rowCount": 100,
-        "columnCount": 0,
+        "rowCount": 20,
+        "columnCount": 40,
         "playerX": 22,
         "playerY": 1,
         "timeLimit": 100,
@@ -2215,15 +1896,15 @@
                 "startingX": 1,
                 "startingY": 7,
                 "AI Type": "StalkerEnemy",
-                "Tick Speed": 8,
-                "Movement String": "N/A"
+                "Tick Speed": 10,
+                "Movement String": "PLACEHOLDER - USED FOR MOVEMENT OF PATTERNENEMY. FORMAT IS wasd eg: wassawdws"
             },
             {
                 "startingX": 38,
                 "startingY": 7,
                 "AI Type": "StalkerEnemy",
-                "Tick Speed": 8,
-                "Movement String": "N/A"
+                "Tick Speed": 10,
+                "Movement String": "PLACEHOLDER - USED FOR MOVEMENT OF PATTERNENEMY. FORMAT IS wasd eg: wassawdws"
             }
         ]
     }
