@@ -4,6 +4,7 @@ import Maze.Board;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.BoardObjects.Actors.StalkerEnemy;
+import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.Game;
 import Maze.Position;
 import Persistence.Persistence;
@@ -66,6 +67,9 @@ public class ChapsChallenge extends JFrame {
     private Renderer renderer;
     private RecordAndReplay recordAndReplayer;
 
+    private boolean replayModeActive = false;
+    private boolean replayDoubleSpeed = false;
+
     /**
      * Game instance
      */
@@ -90,7 +94,7 @@ public class ChapsChallenge extends JFrame {
         loadLevel(levelCount);
 
         // Record & Replay module
-        recordAndReplayer = new RecordAndReplay();
+        recordAndReplayer = new RecordAndReplay(this);
     }
 
     public void initPanels(){
@@ -263,12 +267,14 @@ public class ChapsChallenge extends JFrame {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        recordAndReplayer.captureEnemyPreMoves(game.getComputerPlayers());
-                        game.moveEnemies();
-                        recordAndReplayer.captureEnemyPostMoves(game.getComputerPlayers());
+                        if(!replayModeActive) {
+                            recordAndReplayer.captureEnemyPreMoves(game.getComputerPlayers());
+                            game.moveEnemies();
+                            recordAndReplayer.captureEnemyPostMoves(game.getComputerPlayers());
+                        }
                         repaint();
                     }
-                    recordAndReplayer.clearRecorderBuffer(timeRemaining);
+                    if(!replayModeActive) recordAndReplayer.clearRecorderBuffer(timeRemaining);
                 }
             }
         });
@@ -278,7 +284,7 @@ public class ChapsChallenge extends JFrame {
         gamePanel.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (!isPaused) {
+                if (!isPaused && !replayModeActive) {
                     if (!e.isControlDown()) {
                         //up
                         if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
@@ -307,7 +313,7 @@ public class ChapsChallenge extends JFrame {
                             //dead code
                         }
                         nextLevel(); //check if the player is on the vent
-                        //recordAndReplayer.storeRecorderBuffer();
+                        recordAndReplayer.clearRecorderBuffer(timeRemaining);
                     }
                 }
             }
@@ -341,7 +347,10 @@ public class ChapsChallenge extends JFrame {
         inventoryLabel.setForeground(Color.RED);
         inventoryLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        timer = new Timer(1000, new ActionListener() {
+        int delay = 1000;
+        if(replayDoubleSpeed && replayModeActive) delay = 500;
+        else delay = 1000;
+        timer = new Timer(delay, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //Time remaining
@@ -361,8 +370,11 @@ public class ChapsChallenge extends JFrame {
                     timer.stop();
                     outOfTime();
                 }
-                if (!isPaused) {
+                if (!isPaused && !replayModeActive) {
                     timeRemaining--;
+                } else if (replayModeActive) {
+                    if(!recordAndReplayer.getPaused())
+                        recordAndReplayer.tick();
                 }
 
             }
@@ -473,79 +485,81 @@ public class ChapsChallenge extends JFrame {
      * Adds different keybindings that controls the state of the game
      */
     public void addHotKeys() {
-        //CTRL + X: exit the game, the current game state will be lost, the next time the game is started, it will resume from the last unfinished level
-        KeyStroke exitGame = KeyStroke.getKeyStroke('X', InputEvent.CTRL_DOWN_MASK);
-        gameplayPanel.getInputMap().put(exitGame, "exit_game");
-        gameplayPanel.getActionMap().put("exit_game", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("EXIT CALLED");
-            }
-        });
+        if(!replayModeActive) {
+            //CTRL + X: exit the game, the current game state will be lost, the next time the game is started, it will resume from the last unfinished level
+            KeyStroke exitGame = KeyStroke.getKeyStroke('X', InputEvent.CTRL_DOWN_MASK);
+            gameplayPanel.getInputMap().put(exitGame, "exit_game");
+            gameplayPanel.getActionMap().put("exit_game", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    System.out.println("EXIT CALLED");
+                }
+            });
 
-        //CTRL + S: exit the game, saves the game state, game will resume next time the application will be started
-        KeyStroke saveGame = KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK);
-        gameplayPanel.getInputMap().put(saveGame, "save_game");
-        gameplayPanel.getActionMap().put("save_game", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("SAVE CALLED");
-            }
-        });
+            //CTRL + S: exit the game, saves the game state, game will resume next time the application will be started
+            KeyStroke saveGame = KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK);
+            gameplayPanel.getInputMap().put(saveGame, "save_game");
+            gameplayPanel.getActionMap().put("save_game", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    System.out.println("SAVE CALLED");
+                }
+            });
 
-        //CTRL + R: resume a saved game
-        KeyStroke resumeSavedGame = KeyStroke.getKeyStroke('R', InputEvent.CTRL_DOWN_MASK);
-        gameplayPanel.getInputMap().put(resumeSavedGame, "resume_saved_game");
-        gameplayPanel.getActionMap().put("resume_saved_game", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("RESUME SAVED GAME");
-            }
-        });
+            //CTRL + R: resume a saved game
+            KeyStroke resumeSavedGame = KeyStroke.getKeyStroke('R', InputEvent.CTRL_DOWN_MASK);
+            gameplayPanel.getInputMap().put(resumeSavedGame, "resume_saved_game");
+            gameplayPanel.getActionMap().put("resume_saved_game", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    System.out.println("RESUME SAVED GAME");
+                }
+            });
 
-        //CTRL + P: start a new game at the last unfinished level
-        KeyStroke newGameLastLevel = KeyStroke.getKeyStroke('P', InputEvent.CTRL_DOWN_MASK);
-        gameplayPanel.getInputMap().put(newGameLastLevel, "new_game_last_level");
-        gameplayPanel.getActionMap().put("new_game_last_level", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("NEW GAME LAST LEVEL");
-            }
-        });
+            //CTRL + P: start a new game at the last unfinished level
+            KeyStroke newGameLastLevel = KeyStroke.getKeyStroke('P', InputEvent.CTRL_DOWN_MASK);
+            gameplayPanel.getInputMap().put(newGameLastLevel, "new_game_last_level");
+            gameplayPanel.getActionMap().put("new_game_last_level", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    System.out.println("NEW GAME LAST LEVEL");
+                }
+            });
 
-        //CTRL + 1: start a new game at level 1
-        KeyStroke newLevel1 = KeyStroke.getKeyStroke('1', InputEvent.CTRL_DOWN_MASK);
-        gameplayPanel.getInputMap().put(newLevel1, "new_game_level_1");
-        gameplayPanel.getActionMap().put("new_game_level_1", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("NEW GAME LEVEL 1");
-            }
-        });
+            //CTRL + 1: start a new game at level 1
+            KeyStroke newLevel1 = KeyStroke.getKeyStroke('1', InputEvent.CTRL_DOWN_MASK);
+            gameplayPanel.getInputMap().put(newLevel1, "new_game_level_1");
+            gameplayPanel.getActionMap().put("new_game_level_1", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    System.out.println("NEW GAME LEVEL 1");
+                }
+            });
 
-        //SPACEBAR: pause the game and display a “game is paused” dialog
-        KeyStroke pauseGame = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
-        gameplayPanel.getInputMap().put(pauseGame, "pause");
-        gameplayPanel.getActionMap().put("pause", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("PAUSE CALLED");
-                if (!isPaused) {
+            //SPACEBAR: pause the game and display a “game is paused” dialog
+            KeyStroke pauseGame = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0);
+            gameplayPanel.getInputMap().put(pauseGame, "pause");
+            gameplayPanel.getActionMap().put("pause", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    System.out.println("PAUSE CALLED");
+                    if (!isPaused) {
+                        pauseResume();
+                    }
+                }
+            });
+
+            //ESC: pause the game and display a “game is paused” dialog
+            KeyStroke resumeGame = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+            gameplayPanel.getInputMap().put(resumeGame, "resume");
+            gameplayPanel.getActionMap().put("resume", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    System.out.println("RESUME CALLED");
                     pauseResume();
                 }
-            }
-        });
-
-        //ESC: pause the game and display a “game is paused” dialog
-        KeyStroke resumeGame = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        gameplayPanel.getInputMap().put(resumeGame, "resume");
-        gameplayPanel.getActionMap().put("resume", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("RESUME CALLED");
-                pauseResume();
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -658,7 +672,9 @@ public class ChapsChallenge extends JFrame {
             recordAndReplayer.setRecordingBoolean(true);
             recordAndReplayer.setStartedRecording(timeRemaining);
             recordAndReplayer.setEnemies(game.getComputerPlayers());
-            recordAndReplayer.setLevelName(levelCount);
+            recordAndReplayer.setLevelCount(levelCount);
+
+            Persistence.saveGame(timeRemaining, game.getPlayer(), game.getComputerPlayers(), levelCount, game.getBoard().getMap());
 
             recordItem.setText("Stop Recording");
         }
@@ -671,17 +687,18 @@ public class ChapsChallenge extends JFrame {
             JOptionPane.showMessageDialog(this, "ERROR: Cannot load replay while recording", "ERROR", JOptionPane.ERROR_MESSAGE);
         } else {
             if(!recordAndReplayer.loadConfirmation(this)) {
-                return;
+                return; //for some reason doesnt exit out of this method as intended...
+            } else {
+                recordAndReplayer.selectSaveFile(this);
+                recordAndReplayer.displayControlWindow();
+                replayModeActive = true;
             }
-            recordAndReplayer.selectSaveFile(this);
-
-            recordAndReplayer.displayControlWindow();
         }
     }
 
-    //====REPLAYING HELPERS====//
+    //====REPLAYING HELPERS====// <--- None of this
     public void movePlayer(Game.DIRECTION direction) {
-
+        game.movePlayer(direction);
     }
 
     /*public void moveEnemy(Position pos, Game.DIRECTION direction) {
@@ -689,20 +706,59 @@ public class ChapsChallenge extends JFrame {
         game.getComputerPlayers().contains();
     }*/
     public void moveEnemy(AbstractActor enemy, Game.DIRECTION direction) {
-        /* Try this:
-        enemy.move
-         */
+        //FIRST: find new position
+        Position oldPos = enemy.getPos();
+        Position newPos = null;
+        switch(direction) {
+            case UP:
+                newPos = new Position(oldPos, Game.DIRECTION.UP);
+                break;
+            case DOWN:
+                newPos = new Position(oldPos, Game.DIRECTION.DOWN);
+                break;
+            case LEFT:
+                newPos = new Position(oldPos, Game.DIRECTION.LEFT);
+                break;
+            case RIGHT:
+                newPos = new Position(oldPos, Game.DIRECTION.RIGHT);
+                break;
+        }
 
+        //SECOND: set enemy in new position
+        if(game.getPlayer().getPos().equals(oldPos) || game.getPlayer().getPos().equals(newPos)) {
+            game.getPlayer().getPos().setPosition(game.getPlayer().getStartingPos());
+        }
+        enemy.setPos(newPos);
     }
 
-    public void setTimeRemaining() {
-
+    public void setTimeRemaining(int timeRemaining) {
+        this.timeRemaining = timeRemaining;
     }
 
     //INCREASE FROM 30 FPS TO 60 FPS
-    public void doubleSpeed() {
-
+    public void setDoubleSpeed(boolean t) {
+        replayDoubleSpeed = t;
     }
 
+    public void setReplayMoveActive(boolean b) {
+        replayModeActive = b;
+    }
+
+    public int getCurrentLevelCount() {
+        return levelCount;
+    }
+
+    public AbstractActor findEnemyAtPos(Position pos) {
+        for(AbstractActor a : game.getComputerPlayers()) {
+            if(a.getPos().equals(pos)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public void teleportEnemy(Position pos) {
+
+    }
 }
 

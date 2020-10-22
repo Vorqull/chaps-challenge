@@ -1,5 +1,6 @@
 package RecordAndReplay;
 
+import Application.ChapsChallenge;
 import Maze.Board;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.Player;
@@ -14,6 +15,7 @@ import Persistence.*;
 import javax.swing.*;
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -60,8 +62,8 @@ public class RecordAndReplay<E> {
     /**
      * Constructor with level parameter
      * @param level The level number which is associated with the RecordAndReplayer
-     */
-    public RecordAndReplay(int level, Set<AbstractActor> enemies) {
+
+    public RecordAndReplay(int level, Set<AbstractActor> enemies, int j) {
         recorder = new Recorder();
         writer = new Writer();
         replayer = new Replayer();
@@ -73,15 +75,15 @@ public class RecordAndReplay<E> {
         for(AbstractActor e : enemies) {
             this.enemies.add(e);
         }
-    }
+    }*/
 
     /**
      * Parameterless constructor.
      */
-    public RecordAndReplay() {
+    public RecordAndReplay(ChapsChallenge application) {
         recorder = new Recorder();
         writer = new Writer();
-        replayer = new Replayer();
+        replayer = new Replayer(application);
         reader = new Reader();
         recordingSwitch = false;
     }
@@ -135,9 +137,7 @@ public class RecordAndReplay<E> {
         ArrayList<AbstractActor> enemyList = new ArrayList<AbstractActor>();
         for(AbstractActor e : enemies) {
             enemyList.add(e);
-        }
-
-        Persistence.saveGame(remainingTime, player, enemies, level, tiles);
+        };
 
         writer.writeRecording(recorder.getRecordedChanges(), recorder.getStartingPosition(), level, startedRecording, enemyList);
     }
@@ -172,18 +172,22 @@ public class RecordAndReplay<E> {
     public void prepReplayer() {
         replayer.setRecordedChanges(reader.getRecordedChanges());
         replayer.setLevel(reader.getLevel());
-        replayer.setStartRecordingTimeStamp(reader.getStartRecordingTimeStamp());
-        replayer.setPlayerStartX(reader.getPlayerStartX());
-        replayer.setPlayerStartY(reader.getPlayerStartY());
-        replayer.setEnemies(reader.getEnemies());
         replayer.setLoadState(reader.getLevel());
 
         replayer.prepRecordedChanges();
         replayer.loadToStart();
     }
 
+    public void tick() {
+        replayer.tick();
+    }
+
     public void displayControlWindow() {
         replayer.controlsWindow();
+    }
+
+    public boolean getPaused() {
+        return replayer.isPaused();
     }
 
     //=====GETTERS/SETTERS=====//
@@ -192,7 +196,7 @@ public class RecordAndReplay<E> {
      * Set the name of the json file this recorded session will be associated with.
      * @param level
      */
-    public void setLevelName(int level) {
+    public void setLevelCount(int level) {
         this.level = level;
     }
 

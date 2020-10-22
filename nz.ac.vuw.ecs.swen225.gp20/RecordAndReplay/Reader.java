@@ -44,7 +44,7 @@ public class Reader {
     private int playerStartX;
     private int playerStartY;
     private ArrayList<AbstractActor> enemies; //ONLY USED FOR ENEMY LOCATIONS
-    private String levelLocation;
+    private int levelLocation;
 
     public Reader() {
         //empty constructor
@@ -124,7 +124,7 @@ public class Reader {
             recordedChanges.add(c);
         }
 
-        levelLocation = String.valueOf(obj.get("loadState"));
+        levelLocation = obj.getInt("loadState");
     }
 
     /** GETTERS **/
@@ -146,7 +146,7 @@ public class Reader {
     public ArrayList<AbstractActor> getEnemies() {
         return enemies;
     }
-    public String getLevelLocation() { return levelLocation; }
+    public int getLevelLocation() { return levelLocation; }
 
 
     /** HELPER METHODS **/

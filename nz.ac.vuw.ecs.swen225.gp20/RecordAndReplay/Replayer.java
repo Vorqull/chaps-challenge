@@ -3,11 +3,16 @@ package RecordAndReplay;
 import Application.ChapsChallenge;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.Game;
+import Maze.Position;
 import Persistence.Persistence;
 import RecordAndReplay.Actions.Action;
+import RecordAndReplay.Actions.EnemyMove;
+import RecordAndReplay.Actions.PlayerMove;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,26 +27,32 @@ import java.util.Map;
  */
 public class Replayer {
     private ArrayList<Recorder.Change> recordedChanges = new ArrayList<Recorder.Change>();
+
+    private ChapsChallenge application;
+
     private int level;
-    private int startRecordingTimeStamp;
-    private int playerStartX;
-    private int playerStartY;
-    private ArrayList<AbstractActor> enemies; //ONLY USED FOR ENEMY LOCATIONS
+
+    private JButton prev;
+    private JButton next;
 
     private int loadStateLocation;
 
-    private boolean pause = false;
+    private boolean pause = true;
     private boolean doubleSpeed = false;
     private int location = 0; //The location in the playback
 
-    ArrayList<Change> prepedChanges = new ArrayList<Change>();
+    private ArrayList<Change> prepedChanges = new ArrayList<Change>();
+
+    private ArrayList<AbstractActor> enemies = new ArrayList<>();
+
+    private boolean teleport = true;
 
     /**
      * Used by Record and Replay.
      * The complicated json file reading stuff should be done in Reader.
      */
-    public Replayer() {
-
+    public Replayer(ChapsChallenge application) {
+        this.application = application;
     }
 
     /**
@@ -59,9 +70,9 @@ public class Replayer {
         Icon doubleSpeedIcon = new ImageIcon(System.getProperty("user.dir") + "/Resources/replayButtons/doubleSpeed.png");
         Icon doubleSpeedActiveIcon = new ImageIcon(System.getProperty("user.dir") + "/Resources/replayButtons/doubleSpeedActive.png");
 
-        JButton prev = new JButton(prevIcon);
+        prev = new JButton(prevIcon);
         JButton play = new JButton(playIcon);
-        JButton next = new JButton(nextIcon);
+        next = new JButton(nextIcon);
         JButton doubleSpeed = new JButton(doubleSpeedIcon);
 
         prev.addActionListener(e -> {
@@ -88,62 +99,114 @@ public class Replayer {
         mainPanel.add(doubleSpeed);
 
         controlWindow.add(mainPanel);
-        //APPLE
-        controlWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        controlWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        controlWindow.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                int selection = JOptionPane.showConfirmDialog(controlWindow, "Are you sure you wanna quit replay mode?", "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION);
+                if(selection == 0) {
+                    application.loadLevel(application.getCurrentLevelCount());
+                    application.setReplayMoveActive(false);
+                    controlWindow.dispose();
+                }
+            }
+        });
         controlWindow.setLocation(500, 300);
         controlWindow.pack();
 
+        controlWindow.setAlwaysOnTop(true);
+        controlWindow.setResizable(false);
         controlWindow.setFocusable(false);
+
         controlWindow.setVisible(true);
     }
 
     //Button functions
     public void prevButton() {
-        if(location > 0 && pause) {
-            location--;
-            System.out.println("Location: " + location);
+        teleport = true;
+
+        if(location > 0) {
             int timeStamp = prepedChanges.get(location).timestamp;
             ArrayList<Action> actions = prepedChanges.get(location).actions;
             if(actions != null) {
                 for (int i = 0; i < actions.size(); i++) {
                     //Do stuff in here using Chaps Challenge's helper methods
-                    System.out.println("action: " + actions.get(i));
+                    Action a = actions.get(i);
+                    if(a instanceof PlayerMove) {
+                        if(((PlayerMove) a).getDirection() == Game.DIRECTION.UP) application.movePlayer(Game.DIRECTION.DOWN);
+                        else if(((PlayerMove) a).getDirection() == Game.DIRECTION.DOWN) application.movePlayer(Game.DIRECTION.UP);
+                        else if(((PlayerMove) a).getDirection() == Game.DIRECTION.LEFT) application.movePlayer(Game.DIRECTION.RIGHT);
+                        else if(((PlayerMove) a).getDirection() == Game.DIRECTION.RIGHT) application.movePlayer(Game.DIRECTION.LEFT);
+                    } else if (a instanceof EnemyMove) {
+                        int x = ((EnemyMove) a).getX();
+                        int y = ((EnemyMove) a).getY();
+                        AbstractActor enemy = application.findEnemyAtPos(new Position(x, y));
+
+                        if(((EnemyMove) a).getDirection() == Game.DIRECTION.UP) application.moveEnemy(enemy, Game.DIRECTION.DOWN);
+                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.DOWN) application.moveEnemy(enemy, Game.DIRECTION.UP);
+                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.LEFT) application.moveEnemy(enemy, Game.DIRECTION.RIGHT);
+                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.RIGHT) application.moveEnemy(enemy, Game.DIRECTION.LEFT);
+                    }
 
                 }
             }
             //Change the time remaining
+            application.setTimeRemaining(timeStamp);
+            location--;
         } else {
             System.out.println("min");
-        }
-    }
-
-    public void nextButton() {
-        if(location < prepedChanges.size()-1 && pause) {
-            location++;
-            System.out.println("Location: " + location);
-            int timeStamp = prepedChanges.get(location).timestamp;
-            ArrayList<Action> actions = prepedChanges.get(location).actions;
-            if(actions != null) {
-                for (int i = 0; i < actions.size(); i++) {
-                    //Do stuff in here using Chaps Challenge's helper methods
-                    System.out.println("action: " + actions.get(i));
-
-                }
-            }
-            //Change the time remaining
-        } else {
-            System.out.println("max");
         }
     }
 
     public void pausePlayButton(JButton button, Icon playIcon, Icon pauseIcon) {
         pause = !pause;
         if(pause) {
-            button.setIcon(pauseIcon);
+            //JUST paused
+            prev.setEnabled(true);
+            next.setEnabled(true);
+            button.setIcon(playIcon);
             System.out.println("paused");
         } else {
-            button.setIcon(playIcon);
+            //JUST unpaused
+            prev.setEnabled(false);
+            next.setEnabled(false);
+            button.setIcon(pauseIcon);
             System.out.println("play");
+        }
+    }
+
+    public void nextButton() {
+//        System.out.println("Location: " + location);
+        if(location < prepedChanges.size()-1) {
+            location++;
+            int timeStamp = prepedChanges.get(location).timestamp;
+            ArrayList<Action> actions = prepedChanges.get(location).actions;
+            if(actions != null) {
+                for (int i = 0; i < actions.size(); i++) {
+                    //Do stuff in here using Chaps Challenge's helper methods
+                    Action a = actions.get(i);
+                    if(a instanceof PlayerMove) {
+                        application.movePlayer(((PlayerMove) a).getDirection());
+                    } else if (a instanceof EnemyMove) {
+                        int x = ((EnemyMove) a).getX();
+                        int y = ((EnemyMove) a).getY();
+                        Position pos = new Position(x, y);
+                        if(teleport) {
+                            pos = new Position(pos, ((EnemyMove) a).getDirection());
+                            enemies.get(i).setPos(pos);
+                        } else {
+                            AbstractActor enemy = application.findEnemyAtPos(pos);
+                            application.moveEnemy(enemy,((EnemyMove) a).getDirection());
+                        }
+                    }
+                }
+            }
+            if(teleport) teleport = false;
+            //Change the time remaining
+            application.setTimeRemaining(timeStamp);
+        } else {
+            System.out.println("max");
         }
     }
 
@@ -171,12 +234,11 @@ public class Replayer {
     }
 
     public void loadToStart() {
-        Persistence.loadGame(loadStateLocation);
+        application.loadLevel(Persistence.loadGame(loadStateLocation), level);
     }
 
 
     /** PREPS **/
-
     /**
      * Distributes same ticks across a 1000 milisecond tick evenly.
      * Adds additional "null" changes for ticks with nothing in 'em.
@@ -212,6 +274,11 @@ public class Replayer {
                 prepedChanges.add(new Change(null, i, 1000));
             }
         }
+
+        //GET ALL ENEMIES
+        for(AbstractActor a : application.getGame().getComputerPlayers()) {
+            enemies.add(a);
+        }
     }
 
     /** SETTERS **/
@@ -223,24 +290,16 @@ public class Replayer {
         this.level = level;
     }
 
-    public void setStartRecordingTimeStamp(int startRecordingTimeStamp) {
-        this.startRecordingTimeStamp = startRecordingTimeStamp;
-    }
-
-    public void setPlayerStartX(int playerStartX) {
-        this.playerStartX = playerStartX;
-    }
-
-    public void setPlayerStartY(int playerStartY) {
-        this.playerStartY = playerStartY;
-    }
-
-    public void setEnemies(ArrayList<AbstractActor> enemies) {
-        this.enemies = enemies;
-    }
-
     public void setLoadState(int loadStateLocation) {
         this.loadStateLocation = loadStateLocation;
+    }
+
+    /** GETTERS **/
+    public boolean isPaused() {
+        return pause;
+    }
+    public boolean isDoubleSpeed() {
+        return doubleSpeed;
     }
 
     /** NESTED CLASSES **/
