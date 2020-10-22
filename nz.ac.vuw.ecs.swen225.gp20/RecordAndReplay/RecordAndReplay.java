@@ -179,6 +179,7 @@ public class RecordAndReplay<E> {
         replayer.setEnemies(reader.getEnemies());
 
         replayer.prepRecordedChanges();
+        replayer.loadToStart();
     }
 
     public void displayControlWindow() {
