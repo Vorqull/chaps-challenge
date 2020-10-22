@@ -3,11 +3,13 @@ package RecordAndReplay;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.Key;
+import Maze.BoardObjects.Tiles.Treasure;
 import Maze.Game;
 import Maze.Position;
 import RecordAndReplay.Actions.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +28,9 @@ public class Recorder {
     private Position startingPosition;
     private ArrayList<PosClone> preMoveEnemies = new ArrayList<PosClone>();
     private ArrayList<PosClone> postMoveEnemies = new ArrayList<PosClone>();
+
+    private List<Key> playerKeySet = new ArrayList<Key>();
+    private Set<Treasure> playerTreasureSet = new HashSet<Treasure>();
 
     public Recorder() {
         recordedChanges = new ArrayList<Change>();

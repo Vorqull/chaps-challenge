@@ -1,6 +1,7 @@
 package RecordAndReplay;
 
 import Maze.BoardObjects.Actors.AbstractActor;
+import Persistence.Persistence;
 import RecordAndReplay.Actions.Action;
 
 import javax.swing.*;
@@ -25,8 +26,11 @@ public class Replayer {
     private int playerStartY;
     private ArrayList<AbstractActor> enemies; //ONLY USED FOR ENEMY LOCATIONS
 
+    private String loadStateLocation;
+
     private boolean pause = false;
     private boolean doubleSpeed = false;
+    private int location = 0; //The location in the playback
 
     ArrayList<Change> prepedChanges = new ArrayList<Change>();
 
@@ -76,7 +80,19 @@ public class Replayer {
         controlWindow.setVisible(true);
     }
 
+    //apply an action every time a tick happens
+    public void tick() {
+        Change current = prepedChanges.get(location);
+        //current
+    }
 
+    public void doubleTickSpeed(boolean t) {
+        doubleSpeed = t;
+    }
+
+    public void loadToStart() {
+        Persistence.loadGame(level);
+    }
 
 
     /** PREPS **/
@@ -141,6 +157,10 @@ public class Replayer {
 
     public void setEnemies(ArrayList<AbstractActor> enemies) {
         this.enemies = enemies;
+    }
+
+    public void setLoadState(String loadStateLocation) {
+        this.loadStateLocation = loadStateLocation;
     }
 
     /** NESTED CLASSES **/

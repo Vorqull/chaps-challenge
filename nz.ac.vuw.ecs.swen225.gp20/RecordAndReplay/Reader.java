@@ -44,12 +44,13 @@ public class Reader {
     private int playerStartX;
     private int playerStartY;
     private ArrayList<AbstractActor> enemies; //ONLY USED FOR ENEMY LOCATIONS
+    private String levelLocation;
 
     public Reader() {
         //empty constructor
     }
 
-    public void readJson(File file) {//throws Exception {
+    public void readJson(File file) {
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
@@ -122,6 +123,8 @@ public class Reader {
             Recorder.Change c = new Recorder.Change(actions, timeStamp);
             recordedChanges.add(c);
         }
+
+        levelLocation = String.valueOf(obj.get("loadState"));
     }
 
     /** GETTERS **/

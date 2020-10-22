@@ -1,6 +1,9 @@
 package RecordAndReplay;
 
+import Maze.Board;
 import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.BoardObjects.Actors.Player;
+import Maze.BoardObjects.Tiles.Key;
 import Maze.Position;
 import RecordAndReplay.Actions.Action;
 import RecordAndReplay.Actions.EnemyMove;
@@ -88,10 +91,6 @@ public class Writer {
                             break;
                     }
                 }
-                //PLAYER INTERACTION
-                //else if(a instanceof PlayerTileInteraction) {
-                //    action.add("PlayerTileInteract", ((PlayerTileInteraction) a).getTileName());
-                //}
                 //ENEMY MOVE
                 else if(a instanceof EnemyMove) {
                     switch (((EnemyMove) a).getDirection()) {
@@ -122,14 +121,14 @@ public class Writer {
             changesCounter++;
             gameplayInJson.add("change" + changesCounter, changes);
         }
-        System.out.println("Changes: " + changesCounter);
-        gameplayInJson.add("noChanges", changesCounter);
 
         //Write to file
         try {
             Date date = Calendar.getInstance().getTime();
             DateFormat dtf = new SimpleDateFormat("yyyyMMddHHmmss");
             String saveFileName = dtf.format(date) + "savedReplay.JSON";
+
+            gameplayInJson.add("loadState", "saves/level" + level + ".JSON");
 
             OutputStream os = new FileOutputStream("nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves/" + saveFileName);
             JsonWriter jsonWriter = Json.createWriter(os);

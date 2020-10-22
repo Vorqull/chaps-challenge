@@ -2,18 +2,20 @@ package RecordAndReplay;
 
 import Maze.Board;
 import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import Maze.BoardObjects.Tiles.Key;
+import Maze.BoardObjects.Tiles.Treasure;
 import Maze.Game;
 import Maze.Game.DIRECTION;
 import Maze.Position;
-import Persistence.Level;
+import Persistence.*;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Records gameplay.
@@ -54,6 +56,8 @@ public class RecordAndReplay<E> {
     private boolean recordingSwitch;
     private int startedRecording;
     private ArrayList<AbstractActor> enemies;
+    private Player player;
+    private Board board;
 
     /**
      * Constructor with level parameter
@@ -67,6 +71,8 @@ public class RecordAndReplay<E> {
         recordingSwitch = false;
         this.level = level;
         this.enemies = enemies;
+        this.player = player;
+        this.board = board;
     }
 
     /**
@@ -123,8 +129,18 @@ public class RecordAndReplay<E> {
 
     //=====SAVING=====//  AKA WRITING
     //All functions to do with creating a save via JSON is here.
-    public void saveGameplay() {
-        writer.writeRecording(recorder.getRecordedChanges(), recorder.getStartingPosition(), level, startedRecording, enemies);
+    public void saveGameplay(int remainingTime, Player player, Set<AbstractActor> enemies, AbstractTile[][] tiles) {
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dtf = new SimpleDateFormat("yyyyMMddHHmm");
+
+        ArrayList<AbstractActor> enemyList = new ArrayList<AbstractActor>();
+        for(AbstractActor e : enemies) {
+            enemyList.add(e);
+        }
+
+        Persistence.saveGame(remainingTime, player, enemyList, level, tiles);
+
+        writer.writeRecording(recorder.getRecordedChanges(), recorder.getStartingPosition(), level, startedRecording, enemyList);
     }
 
     //=====LOADING=====//
