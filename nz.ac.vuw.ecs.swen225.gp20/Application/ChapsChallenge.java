@@ -53,6 +53,7 @@ public class ChapsChallenge extends JFrame {
     private Game game;
     private Level currentLevel;
     private int levelCount = 1;
+    private final int maxLevel = 3;
     private volatile boolean isPaused = false;
     private volatile Thread paintThread;
 
@@ -138,6 +139,7 @@ public class ChapsChallenge extends JFrame {
     public void createMenuBar(){
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Game");
+        JMenu levelMenu = new JMenu("Select Level");
 
         //selections
         JMenuItem level1 = new JMenuItem("Level 1");
@@ -146,22 +148,36 @@ public class ChapsChallenge extends JFrame {
         JMenuItem level2 = new JMenuItem("Level 2");
         level2.addActionListener((e) -> loadLevel(2));
 
+        JMenuItem level3 = new JMenuItem("Level 3");
+        level3.addActionListener((e) -> loadLevel(3));
+
         JMenuItem saveItem = new JMenuItem("Save");
-        saveItem.addActionListener((e) -> Persistence.saveGame(timeRemaining, game.getPlayer(), currentLevel.getEnemies(), levelCount, currentLevel.getTileArray()));
+        saveItem.addActionListener((e) -> {
+            //show a message dialog when the player saves the game
+            JOptionPane.showMessageDialog(null, "Saved current game at level " + levelCount + ".", "Game Saved!", JOptionPane.INFORMATION_MESSAGE);
+            Persistence.saveGame(timeRemaining, game.getPlayer(), currentLevel.getEnemies(), levelCount, currentLevel.getTileArray());
+        });
 
         JMenuItem loadSaved = new JMenuItem("Load Saved Game");
         loadSaved.addActionListener((e) -> {
-            String[] possibleValues = { "Level 1", "Level 2"};
+            //give the user a dropdown menu of which level to load their saved game from
+            String[] possibleValues = { "Level 1", "Level 2", "Level 3"};
             Object selectedValue = JOptionPane.showInputDialog(null,
                     "Choose a saved level to load (if it exists)", "Load Game",
                     JOptionPane.INFORMATION_MESSAGE, null,
                     possibleValues, possibleValues[0]);
 
-            if (selectedValue.equals("Level 1")){
+            if (selectedValue == null){
+                return; //dead code that prevents the NullPointerException
+            }
+            else if (selectedValue.equals("Level 1")){
                 loadLevel(Persistence.loadGame(1), 1);
             }
             else if (selectedValue.equals("Level 2")){
                 loadLevel(Persistence.loadGame(2), 2);
+            }
+            else if (selectedValue.equals("Level 3")){
+                loadLevel(Persistence.loadGame(3), 3);
             }
             else {
                 //we're not supposed to be here
@@ -186,12 +202,16 @@ public class ChapsChallenge extends JFrame {
         //adding menu selections to the menu
         gameMenu.add(saveItem);
         gameMenu.add(loadSaved);
-        gameMenu.add(level1);
-        gameMenu.add(level2);
         gameMenu.add(pauseItem);
         gameMenu.add(resumeItem);
         gameMenu.add(exitItem);
+
+        levelMenu.add(level1);
+        levelMenu.add(level2);
+        levelMenu.add(level3);
+
         menuBar.add(gameMenu);
+        menuBar.add(levelMenu);
 
         //=====Record And Replay=====//
         JMenu recordAndReplay = new JMenu("Record And Replay");
@@ -542,12 +562,21 @@ public class ChapsChallenge extends JFrame {
     public void nextLevel(){
         if (game.isLevelCompleted()) {
             isPaused = true; //stop the game
-            int options = JOptionPane.showConfirmDialog(null, "Continue to next level?", "Level 1 Completed!",
-                    JOptionPane.YES_NO_OPTION);
-            if (options == 0) {
-                levelCount++;
-                loadLevel(levelCount);
-            } else {
+
+            //if the final level hasn't been reached
+            if (levelCount != maxLevel) {
+                int options = JOptionPane.showConfirmDialog(null, "Continue to next level?", "Level " + currentLevel + " Completed!",
+                                JOptionPane.YES_NO_OPTION);
+                if (options == 0) {
+                    levelCount++;
+                    loadLevel(levelCount);
+                } else {
+                    System.exit(0);
+                }
+            }
+            //player completes final level
+            else {
+                JOptionPane.showMessageDialog(null, "You have successfully completed all levels!", "Game Completed", JOptionPane.INFORMATION_MESSAGE);
                 System.exit(0);
             }
         }
