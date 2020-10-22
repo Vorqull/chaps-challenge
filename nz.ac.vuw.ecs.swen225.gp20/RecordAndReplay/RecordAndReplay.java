@@ -137,7 +137,7 @@ public class RecordAndReplay<E> {
             enemyList.add(e);
         }
 
-        Persistence.saveGame(remainingTime, player, enemyList, level, tiles);
+        Persistence.saveGame(remainingTime, player, enemies, level, tiles);
 
         writer.writeRecording(recorder.getRecordedChanges(), recorder.getStartingPosition(), level, startedRecording, enemyList);
     }
