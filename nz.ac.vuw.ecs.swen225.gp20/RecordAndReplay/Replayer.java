@@ -1,5 +1,6 @@
 package RecordAndReplay;
 
+import Application.ChapsChallenge;
 import Maze.BoardObjects.Actors.AbstractActor;
 import Persistence.Persistence;
 import RecordAndReplay.Actions.Action;

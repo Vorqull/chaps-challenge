@@ -121,12 +121,14 @@ public class Writer {
             changesCounter++;
             gameplayInJson.add("change" + changesCounter, changes);
         }
+        gameplayInJson.add("noChanges", changesCounter);
 
         //Write to file
         try {
-            Date date = Calendar.getInstance().getTime();
-            DateFormat dtf = new SimpleDateFormat("yyyyMMddHHmmss");
-            String saveFileName = dtf.format(date) + "savedReplay.JSON";
+            //Date date = Calendar.getInstance().getTime();
+            //DateFormat dtf = new SimpleDateFormat("yyyyMMddHHmmss");
+            //String saveFileName = dtf.format(date) + "savedReplay.JSON";
+            String saveFileName = level + "savedReplay.JSON";
 
             gameplayInJson.add("loadState", "saves/level" + level + ".JSON");
 

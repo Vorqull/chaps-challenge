@@ -388,6 +388,7 @@ public class ChapsChallenge extends JFrame {
         return infoPanel;
     }
 
+
     // ===========================================
     // RecordAndReplay Helpers
     // ===========================================
@@ -435,6 +436,21 @@ public class ChapsChallenge extends JFrame {
                 return;
             }
             recordAndReplayer.selectSaveFile(this);
+
+            /**
+             * TEMP SOLUTION, DELETE AFTER!!!
+             * @param l
+             */
+            Set<AbstractActor> test = new HashSet<>();
+
+            StalkerEnemy enemy = new StalkerEnemy(new Position(10, 10), 30);
+            test.add(enemy);
+
+            PatternEnemy enemy1 = new PatternEnemy(new Position(2, 9), 30, "dddsssaaawww");
+            test.add(enemy1);
+
+            game = new Game(new Board(Renderer.level1()), new Player(new Position(2, 2)), test);
+
             recordAndReplayer.displayControlWindow();
         }
     }

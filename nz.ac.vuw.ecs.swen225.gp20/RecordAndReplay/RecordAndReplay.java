@@ -130,9 +130,6 @@ public class RecordAndReplay<E> {
     //=====SAVING=====//  AKA WRITING
     //All functions to do with creating a save via JSON is here.
     public void saveGameplay(int remainingTime, Player player, Set<AbstractActor> enemies, AbstractTile[][] tiles) {
-        Date date = Calendar.getInstance().getTime();
-        DateFormat dtf = new SimpleDateFormat("yyyyMMddHHmm");
-
         ArrayList<AbstractActor> enemyList = new ArrayList<AbstractActor>();
         for(AbstractActor e : enemies) {
             enemyList.add(e);
