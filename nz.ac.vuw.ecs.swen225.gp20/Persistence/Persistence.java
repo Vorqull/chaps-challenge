@@ -24,8 +24,7 @@ public class Persistence {
    */
   public static Level getLevel(int levelNumber) {
     String levelString = "levels/level" + levelNumber + ".JSON";
-    LevelJsonReader readJson = new LevelJsonReader();
-    Level returnLevel = readJson.readJson(levelString);
+    Level returnLevel = LevelJsonReader.readJson(levelString);
     return returnLevel;
   }
 

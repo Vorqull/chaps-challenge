@@ -43,7 +43,7 @@ public class StalkerEnemy extends AbstractActor {
             path = path.getPrevious();
         }
 
-        Position newPos = board.findPosInBoard(path.getCurrent()); //Move the the position
+        Position newPos = board.findPosInBoard(path.getCurrent()); //Move to the position
 
         //Changes the actor image direction
         if(newPos.getX() >= position.getX()){

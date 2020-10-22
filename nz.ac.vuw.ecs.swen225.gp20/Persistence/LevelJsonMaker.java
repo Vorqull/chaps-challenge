@@ -91,6 +91,8 @@ public class LevelJsonMaker {
           tileName = "FreeTile";
         } else if (tileInfo[0].equals("el")) {
           tileName = "ExitLock";
+        } else if (tileInfo[0].equals("dt")) {
+          tileName = "DeathTile";
         } else if (tileInfo[0].equals("ep")) {
           tileName = "ExitPortal";
           // Enemy starting point, is fundamentally a freetile
@@ -115,13 +117,14 @@ public class LevelJsonMaker {
           } else if (tileInfo[1].equals("1")) {
             arrayObjectBuilder.add("Rotation", "Vertical");
           } else {
-            arrayObjectBuilder.add(
-                "Rotation", "ERROR! value " 
-                + tileInfo[1]
-                + " used! Can only use 1 or 0 for rotation! ROW: " 
+            throw new Exception(
+                "X: " 
+                + colIndex 
+                + " Y: " 
                 + rowIndex 
-                + " COL: " 
-                + colIndex
+                + " \nERROR: " 
+                + tileInfo[1] 
+                + " is not a vaild rotation!"
             );
           }
         } else {

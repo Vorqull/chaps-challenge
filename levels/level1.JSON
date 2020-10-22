@@ -5,10 +5,10 @@
             {
                 "objects": [
                     {
-                        "Rotation": "Horizontal",
                         "column": 0,
                         "row": 0,
-                        "Tile Type": "ERROR!"
+                        "Tile Type": "FreeTile",
+                        "Rotation": "Horizontal"
                     },
                     {
                         "column": 1,

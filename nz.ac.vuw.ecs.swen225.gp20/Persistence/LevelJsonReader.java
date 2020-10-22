@@ -5,6 +5,7 @@ import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Actors.StalkerEnemy;
 import Maze.BoardObjects.Tiles.AbstractTile;
+import Maze.BoardObjects.Tiles.DeathTile;
 import Maze.BoardObjects.Tiles.ExitLock;
 import Maze.BoardObjects.Tiles.ExitPortal;
 import Maze.BoardObjects.Tiles.FreeTile;
@@ -111,6 +112,8 @@ public class LevelJsonReader {
           tileObject = new LockedDoor(isRotated, tileColour);
         } else if (tileName.equals("\"Treasure\"")) {
           tileObject = new Treasure();
+        } else if (tileName.equals("\"DeathTile\"")) {
+          tileObject = new DeathTile();
         } else if (tileName.equals("\"Wall\"")) {
           tileObject = new Wall();
           // Free tile
