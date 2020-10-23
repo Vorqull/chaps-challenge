@@ -17,7 +17,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;
@@ -69,9 +68,7 @@ public class ChapsChallenge extends JFrame {
     private RecordAndReplay recordAndReplayer;
 
     private boolean replayModeActive = false;
-
-    //for the timer.
-    int delay = 1000;
+    private boolean replayDoubleSpeed = false;
 
     /**
      * Game instance
@@ -350,7 +347,9 @@ public class ChapsChallenge extends JFrame {
         inventoryLabel.setForeground(Color.RED);
         inventoryLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        delay = 1000;
+        int delay = 1000;
+        if(replayDoubleSpeed && replayModeActive) delay = 500;
+        else delay = 1000;
         timer = new Timer(delay, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -702,6 +701,10 @@ public class ChapsChallenge extends JFrame {
         game.movePlayer(direction);
     }
 
+    /*public void moveEnemy(Position pos, Game.DIRECTION direction) {
+        //game.getBoard().findPosInBoard()
+        game.getComputerPlayers().contains();
+    }*/
     public void moveEnemy(AbstractActor enemy, Game.DIRECTION direction) {
         //FIRST: find new position
         Position oldPos = enemy.getPos();
@@ -725,21 +728,16 @@ public class ChapsChallenge extends JFrame {
         if(game.getPlayer().getPos().equals(oldPos) || game.getPlayer().getPos().equals(newPos)) {
             game.getPlayer().getPos().setPosition(game.getPlayer().getStartingPos());
         }
-
         enemy.setPos(newPos);
-        repaint();
     }
 
     public void setTimeRemaining(int timeRemaining) {
         this.timeRemaining = timeRemaining;
     }
 
+    //INCREASE FROM 30 FPS TO 60 FPS
     public void setDoubleSpeed(boolean t) {
-        if(t) {
-            delay = 200;
-        } else {
-            delay = 1000;
-        }
+        replayDoubleSpeed = t;
     }
 
     public void setReplayMoveActive(boolean b) {
@@ -759,18 +757,8 @@ public class ChapsChallenge extends JFrame {
         return null;
     }
 
-    public void teleportEnemies(ArrayList<Position> pos) {
-        //GET ALL ENEMIES
-        ArrayList<AbstractActor> enemies = new ArrayList<>();
-        for(AbstractActor a : game.getComputerPlayers()) {
-            enemies.add(a);
-        }
+    public void teleportEnemy(Position pos) {
 
-        //teleport enemies to their starting positions
-        for(int i = 0; i < pos.size(); i++) {
-            System.out.println("teleporting: " + pos.get(i).getX() + ", " + pos.get(i).getY());
-            enemies.get(i).setPos(pos.get(i));
-        }
     }
 }
 
