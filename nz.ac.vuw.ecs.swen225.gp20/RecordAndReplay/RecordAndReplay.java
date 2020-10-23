@@ -156,7 +156,7 @@ public class RecordAndReplay<E> {
      * @param frame The parent frame for the dialog box.
      */
     public void selectSaveFile(JFrame frame) {
-        JFileChooser jfc = new JFileChooser(System.getProperty("user.dir") + "SavedReplay");
+        JFileChooser jfc = new JFileChooser(System.getProperty("user.dir") + "/SavedReplay");
 
         int returnValue = jfc.showOpenDialog(frame);
         if(returnValue == JFileChooser.APPROVE_OPTION) {
