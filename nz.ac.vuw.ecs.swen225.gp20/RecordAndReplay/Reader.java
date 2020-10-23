@@ -1,6 +1,7 @@
 package RecordAndReplay;
 
 import Maze.BoardObjects.Actors.AbstractActor;
+import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.Game;
 import Maze.Position;
 import RecordAndReplay.Actions.Action;
@@ -43,7 +44,7 @@ public class Reader {
     private int startRecordingTimeStamp;
     private int playerStartX;
     private int playerStartY;
-    private ArrayList<AbstractActor> enemies; //ONLY USED FOR ENEMY LOCATIONS
+    private ArrayList<Position> enemyStartPositions = new ArrayList<>(); //ONLY USED FOR ENEMY LOCATIONS
     private int levelLocation;
 
     public Reader() {
@@ -64,7 +65,14 @@ public class Reader {
         JsonObject playerPos = obj.getJsonObject("playerPos");
         playerStartX = playerPos.getInt("startX");
         playerStartY = playerPos.getInt("startY");
+
         //Insert something to do with enemies HERE
+        JsonObject enemyStartPos = obj.getJsonObject("enemies");
+        for(int i = 0; i < enemyStartPos.size(); i++) {
+            JsonObject pos = enemyStartPos.getJsonObject("" + i);
+            Position p = new Position(pos.getInt("startX"), pos.getInt("startY"));
+            enemyStartPositions.add(p);
+        }
 
         //CHANGE ARRAY!!!
         int noChanges = obj.getInt("noChanges");
@@ -143,8 +151,8 @@ public class Reader {
     public int getPlayerStartY() {
         return playerStartY;
     }
-    public ArrayList<AbstractActor> getEnemies() {
-        return enemies;
+    public ArrayList<Position> getEnemies() {
+        return enemyStartPositions;
     }
     public int getLevelLocation() { return levelLocation; }
 

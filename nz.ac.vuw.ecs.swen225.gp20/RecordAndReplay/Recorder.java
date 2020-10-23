@@ -26,8 +26,8 @@ public class Recorder {
     private List<Change> recordedChanges;
     private ArrayList<Action> changeBuffer;
     private Position startingPosition;
-    private ArrayList<PosClone> preMoveEnemies = new ArrayList<PosClone>();
-    private ArrayList<PosClone> postMoveEnemies = new ArrayList<PosClone>();
+    private ArrayList<Position> preMoveEnemies = new ArrayList<Position>();
+    private ArrayList<Position> postMoveEnemies = new ArrayList<Position>();
 
     private List<Key> playerKeySet = new ArrayList<Key>();
     private Set<Treasure> playerTreasureSet = new HashSet<Treasure>();
@@ -53,27 +53,26 @@ public class Recorder {
 
     /** Records a creature movement and stores it in the buffer. */
     public void captureEnemyPreMoves(Set<AbstractActor> enemies) {
-        //AbstractActor enemyClone;
         for(AbstractActor e: enemies) {
-            //enemyClone = e;
-            PosClone p = new PosClone(e.getPos().getX(), e.getPos().getY());
+            Position p = new Position(e.getPos().getX(), e.getPos().getY());
             preMoveEnemies.add(p);
         }
     }
     public void captureEnemyPostMoves(Set<AbstractActor> enemies) {
         for(AbstractActor e: enemies) {
-            PosClone p = new PosClone(e.getPos().getX(), e.getPos().getY());
+            Position p = new Position(e.getPos().getX(), e.getPos().getY());
             postMoveEnemies.add(p);
         }
+
         for(int i = 0; i < preMoveEnemies.size(); i++) {
             //===Calculate directions here===//
             Game.DIRECTION direction = null;
             //FIRST find the positions
-            PosClone preMovePos = preMoveEnemies.get(i);//.getPos();
+            Position preMovePos = preMoveEnemies.get(i);//.getPos();
             int preMoveX = preMovePos.getX();
             int preMoveY = preMovePos.getY();
 
-            PosClone postMovePos = postMoveEnemies.get(i);//.getPos();
+            Position postMovePos = postMoveEnemies.get(i);//.getPos();
             int postMoveX = postMovePos.getX();
             int postMoveY = postMovePos.getY();
 
@@ -132,29 +131,6 @@ public class Recorder {
         public Change(ArrayList<Action> actions, int timestamp) {
             this.actions = actions;
             this.timestamp = timestamp;
-        }
-    }
-
-    /**
-     * Private nested class object that stores the X and Y.
-     * Effectively the same thing as a "position" except it's a clone that copy's the primitive variables.
-     *
-     */
-    private class PosClone {
-        private int x;
-        private int y;
-
-        public PosClone(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
         }
     }
 }

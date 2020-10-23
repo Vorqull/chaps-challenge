@@ -43,9 +43,8 @@ public class Replayer {
 
     private ArrayList<Change> prepedChanges = new ArrayList<Change>();
 
+    private ArrayList<Position> enemyStartPos = new ArrayList<>();
     private ArrayList<AbstractActor> enemies = new ArrayList<>();
-
-    private boolean teleport = true;
 
     /**
      * Used by Record and Replay.
@@ -124,8 +123,6 @@ public class Replayer {
 
     //Button functions
     public void prevButton() {
-        teleport = true;
-
         if(location > 0) {
             int timeStamp = prepedChanges.get(location).timestamp;
             ArrayList<Action> actions = prepedChanges.get(location).actions;
@@ -141,12 +138,30 @@ public class Replayer {
                     } else if (a instanceof EnemyMove) {
                         int x = ((EnemyMove) a).getX();
                         int y = ((EnemyMove) a).getY();
-                        AbstractActor enemy = application.findEnemyAtPos(new Position(x, y));
+                        AbstractActor enemy;
 
-                        if(((EnemyMove) a).getDirection() == Game.DIRECTION.UP) application.moveEnemy(enemy, Game.DIRECTION.DOWN);
-                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.DOWN) application.moveEnemy(enemy, Game.DIRECTION.UP);
-                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.LEFT) application.moveEnemy(enemy, Game.DIRECTION.RIGHT);
-                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.RIGHT) application.moveEnemy(enemy, Game.DIRECTION.LEFT);
+                        if(((EnemyMove) a).getDirection() == Game.DIRECTION.UP) {
+                            y--;
+                            enemy = application.findEnemyAtPos(new Position(x, y));
+                            application.moveEnemy(enemy, Game.DIRECTION.DOWN);
+                        }
+                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.DOWN) {
+                            y++;
+                            enemy = application.findEnemyAtPos(new Position(x, y));
+                            application.moveEnemy(enemy, Game.DIRECTION.UP);
+                        }
+                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.LEFT) {
+                            x--;
+                            enemy = application.findEnemyAtPos(new Position(x, y));
+                            application.moveEnemy(enemy, Game.DIRECTION.RIGHT);
+                        }
+                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.RIGHT) {
+                            x++;
+                            enemy = application.findEnemyAtPos(new Position(x, y));
+                            application.moveEnemy(enemy, Game.DIRECTION.LEFT);
+                        }
+
+
                     }
 
                 }
@@ -177,7 +192,6 @@ public class Replayer {
     }
 
     public void nextButton() {
-//        System.out.println("Location: " + location);
         if(location < prepedChanges.size()-1) {
             location++;
             int timeStamp = prepedChanges.get(location).timestamp;
@@ -192,17 +206,11 @@ public class Replayer {
                         int x = ((EnemyMove) a).getX();
                         int y = ((EnemyMove) a).getY();
                         Position pos = new Position(x, y);
-                        if(teleport) {
-                            pos = new Position(pos, ((EnemyMove) a).getDirection());
-                            enemies.get(i).setPos(pos);
-                        } else {
-                            AbstractActor enemy = application.findEnemyAtPos(pos);
-                            application.moveEnemy(enemy,((EnemyMove) a).getDirection());
-                        }
+                        AbstractActor enemy = application.findEnemyAtPos(pos);
+                        application.moveEnemy(enemy,((EnemyMove) a).getDirection());
                     }
                 }
             }
-            if(teleport) teleport = false;
             //Change the time remaining
             application.setTimeRemaining(timeStamp);
         } else {
@@ -212,6 +220,7 @@ public class Replayer {
 
     public void doubleSpeedButton(JButton button, Icon dSpeedIcon, Icon dSpeedActiveIcon) {
         doubleSpeed = !doubleSpeed;
+        application.setDoubleSpeed(doubleSpeed);
         if(doubleSpeed) {
             button.setIcon(dSpeedActiveIcon);
         } else {
@@ -229,12 +238,9 @@ public class Replayer {
         }
     }
 
-    public void doubleTickSpeed(boolean t) {
-        doubleSpeed = t;
-    }
-
     public void loadToStart() {
         application.loadLevel(Persistence.loadGame(loadStateLocation), level);
+        application.teleportEnemies(enemyStartPos);
     }
 
 
@@ -274,11 +280,6 @@ public class Replayer {
                 prepedChanges.add(new Change(null, i, 1000));
             }
         }
-
-        //GET ALL ENEMIES
-        for(AbstractActor a : application.getGame().getComputerPlayers()) {
-            enemies.add(a);
-        }
     }
 
     /** SETTERS **/
@@ -292,6 +293,10 @@ public class Replayer {
 
     public void setLoadState(int loadStateLocation) {
         this.loadStateLocation = loadStateLocation;
+    }
+
+    public void setEnemyStartPos(ArrayList<Position> enemyStartPos) {
+        this.enemyStartPos = enemyStartPos;
     }
 
     /** GETTERS **/
