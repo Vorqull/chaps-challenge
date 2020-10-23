@@ -3,13 +3,13 @@
     "Changed Tiles": [
     ],
     "Gameplay variables": {
-        "playerX": 7,
-        "playerY": 7,
+        "playerX": 10,
+        "playerY": 5,
         "Keys on hand": [
         ],
         "Treasure on hand": [
         ],
-        "time remaining": 88,
+        "time remaining": 96,
         "Enemy locations": [
         ]
     }

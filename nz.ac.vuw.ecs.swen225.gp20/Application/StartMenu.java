@@ -93,13 +93,13 @@ public class StartMenu extends JFrame {
                     dispose();
                     switch(startMode){
                         case 0:
-                            EventQueue.invokeLater(() -> new ChapsChallenge(1));
+                            EventQueue.invokeLater(() -> new ChapsChallenge());
                             break;
                         case 1:
-                            EventQueue.invokeLater(() -> new ChapsChallenge(lastLevel));
+                            EventQueue.invokeLater(() -> new ChapsChallenge());
                             break;
                         case 2:
-                            EventQueue.invokeLater(() -> new ChapsChallenge(lastSavedLevel));
+                            EventQueue.invokeLater(() -> new ChapsChallenge());
                             break;
                         default:
                             System.out.println("error start mode = " + startMode);

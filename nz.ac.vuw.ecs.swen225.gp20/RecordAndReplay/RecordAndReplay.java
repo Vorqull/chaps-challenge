@@ -173,8 +173,6 @@ public class RecordAndReplay<E> {
         replayer.setRecordedChanges(reader.getRecordedChanges());
         replayer.setLevel(reader.getLevel());
         replayer.setLoadState(reader.getLevel());
-
-        replayer.prepRecordedChanges();
         replayer.loadToStart();
     }
 

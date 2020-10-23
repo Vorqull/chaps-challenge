@@ -92,6 +92,10 @@ public class Writer {
                             break;
                     }
                 }
+                //PLAYER TILE INTERACTION
+//                if(a instanceof PlayerTileInteraction) {
+//                    action.add("PlayerTileInteraction", );
+//                }
                 //ENEMY MOVE
                 else if(a instanceof EnemyMove) {
                     switch (((EnemyMove) a).getDirection()) {

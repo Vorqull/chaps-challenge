@@ -28,8 +28,6 @@ import java.util.Map;
  *
  */
 public class Replayer {
-    private ArrayList<Recorder.Change> recordedChanges = new ArrayList<Recorder.Change>();
-
     private ChapsChallenge application;
 
     private int level;
@@ -43,8 +41,9 @@ public class Replayer {
     private boolean doubleSpeed = false;
     private int location = 0; //The location in the playback
 
-    private ArrayList<Change> prepedChanges = new ArrayList<Change>();
+    private ArrayList<Recorder.Change> prepedChanges = new ArrayList<Recorder.Change>();
 
+    private ArrayList<Position> enemyStartPos = new ArrayList<>();
     private ArrayList<AbstractActor> enemies = new ArrayList<>();
 
     private boolean teleport = true;
@@ -127,8 +126,15 @@ public class Replayer {
     //Button functions
     public void prevButton() {
         teleport = true;
+        System.out.println("location:" + location + "of" + prepedChanges.size());
 
-        if(location > 0) {
+        /*if(location == prepedChanges.size()) {
+            System.out.println("I break down too often");
+            location--;
+        }*/
+
+        if(location >= 0) {
+            location--;
             int timeStamp = prepedChanges.get(location).timestamp;
             ArrayList<Action> actions = prepedChanges.get(location).actions;
             if(actions != null) {
@@ -136,26 +142,51 @@ public class Replayer {
                     //Do stuff in here using Chaps Challenge's helper methods
                     Action a = actions.get(i);
                     if(a instanceof PlayerMove) {
-                        if(((PlayerMove) a).getDirection() == Game.DIRECTION.UP) application.movePlayer(Game.DIRECTION.DOWN);
-                        else if(((PlayerMove) a).getDirection() == Game.DIRECTION.DOWN) application.movePlayer(Game.DIRECTION.UP);
-                        else if(((PlayerMove) a).getDirection() == Game.DIRECTION.LEFT) application.movePlayer(Game.DIRECTION.RIGHT);
-                        else if(((PlayerMove) a).getDirection() == Game.DIRECTION.RIGHT) application.movePlayer(Game.DIRECTION.LEFT);
+                        if(((PlayerMove) a).getDirection() == Game.DIRECTION.UP){
+                                application.movePlayer(Game.DIRECTION.DOWN);
+                        }
+                        else if(((PlayerMove) a).getDirection() == Game.DIRECTION.DOWN) {
+                                application.movePlayer(Game.DIRECTION.UP);
+                        }
+                        else if(((PlayerMove) a).getDirection() == Game.DIRECTION.LEFT) {
+                                application.movePlayer(Game.DIRECTION.RIGHT);
+                        }
+                        else if(((PlayerMove) a).getDirection() == Game.DIRECTION.RIGHT) {
+                                application.movePlayer(Game.DIRECTION.LEFT);
+                        }
+                        System.out.println("applying backward move changes: " + ((PlayerMove) a).getDirection());
+
                     } else if (a instanceof EnemyMove) {
                         int x = ((EnemyMove) a).getX();
                         int y = ((EnemyMove) a).getY();
-                        AbstractActor enemy = application.findEnemyAtPos(new Position(x, y));
+                        AbstractActor enemy;
 
-                        if(((EnemyMove) a).getDirection() == Game.DIRECTION.UP) application.moveEnemy(enemy, Game.DIRECTION.DOWN);
-                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.DOWN) application.moveEnemy(enemy, Game.DIRECTION.UP);
-                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.LEFT) application.moveEnemy(enemy, Game.DIRECTION.RIGHT);
-                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.RIGHT) application.moveEnemy(enemy, Game.DIRECTION.LEFT);
+                        if(((EnemyMove) a).getDirection() == Game.DIRECTION.UP) {
+                            y--;
+                            enemy = application.findEnemyAtPos(new Position(x, y));
+                            application.moveEnemy(enemy, Game.DIRECTION.DOWN);
+                        }
+                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.DOWN) {
+                            y++;
+                            enemy = application.findEnemyAtPos(new Position(x, y));
+                            application.moveEnemy(enemy, Game.DIRECTION.UP);
+                        }
+                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.LEFT) {
+                            x--;
+                            enemy = application.findEnemyAtPos(new Position(x, y));
+                            application.moveEnemy(enemy, Game.DIRECTION.RIGHT);
+                        }
+                        else if(((EnemyMove) a).getDirection() == Game.DIRECTION.RIGHT) {
+                            x++;
+                            enemy = application.findEnemyAtPos(new Position(x, y));
+                            application.moveEnemy(enemy, Game.DIRECTION.LEFT);
+                        }
                     }
 
                 }
             }
             //Change the time remaining
             application.setTimeRemaining(timeStamp);
-            location--;
         } else {
             System.out.println("min");
         }
@@ -179,9 +210,13 @@ public class Replayer {
     }
 
     public void nextButton() {
-//        System.out.println("Location: " + location);
-        if(location < prepedChanges.size()-1) {
-            location++;
+        System.out.println("Location: " + location + "of" + prepedChanges.size());
+
+        if(location < 0) {
+            location = 0;
+        }
+
+        if(location < prepedChanges.size()) {
             int timeStamp = prepedChanges.get(location).timestamp;
             ArrayList<Action> actions = prepedChanges.get(location).actions;
             if(actions != null) {
@@ -194,17 +229,13 @@ public class Replayer {
                         int x = ((EnemyMove) a).getX();
                         int y = ((EnemyMove) a).getY();
                         Position pos = new Position(x, y);
-                        if(teleport) {
-                            pos = new Position(pos, ((EnemyMove) a).getDirection());
-                            enemies.get(i).setPos(pos);
-                        } else {
-                            AbstractActor enemy = application.findEnemyAtPos(pos);
-                            application.moveEnemy(enemy,((EnemyMove) a).getDirection());
+                        AbstractActor enemy = application.findEnemyAtPos(pos);
+                        application.moveEnemy(enemy,((EnemyMove) a).getDirection());
                         }
                     }
                 }
-            }
             if(teleport) teleport = false;
+            location++;
             //Change the time remaining
             application.setTimeRemaining(timeStamp);
         } else {
@@ -236,56 +267,14 @@ public class Replayer {
     }
 
     public void loadToStart() {
+        location = 0;
         application.loadLevel(Persistence.loadGame(loadStateLocation), level);
-    }
-
-
-    /** PREPS **/
-    /**
-     * Distributes same ticks across a 1000 milisecond tick evenly.
-     * Adds additional "null" changes for ticks with nothing in 'em.
-     */
-    public void prepRecordedChanges() {
-        Map<Integer, ArrayList<Recorder.Change>> rawFindings = new HashMap<Integer, ArrayList<Recorder.Change>>();
-        //A: FIRST, Find ALL the same actions
-        for(Recorder.Change c : recordedChanges) {
-            if(!rawFindings.containsKey(c.timestamp)) {
-                ArrayList<Recorder.Change> subjectList = new ArrayList<Recorder.Change>();
-                subjectList.add(c);
-                rawFindings.put(c.timestamp, subjectList);
-            } else {
-                ArrayList<Recorder.Change> subjectList = rawFindings.get(c.timestamp);
-                subjectList.add(c);
-            }
-        }
-        //B: SECOND, Create Replayer.Change, add to prepedChanges. Add nulls if need be.
-        int start = recordedChanges.get(0).timestamp;
-        int end = recordedChanges.get(recordedChanges.size()-1).timestamp;
-        //Distribute same timestamped changes.
-        for(int i = start; i > end; i--) {
-            if(rawFindings.containsKey(i)) {
-                int denominator = rawFindings.get(i).size();
-                int factor = 1000 / denominator;
-                int milisecond = 1000;
-                ArrayList<Recorder.Change> entry = rawFindings.get(i);
-                for(Recorder.Change c : entry) {
-                    prepedChanges.add(new Change(c.actions, i, milisecond));
-                    milisecond -= factor;
-                }
-            } else {
-                prepedChanges.add(new Change(null, i, 1000));
-            }
-        }
-
-        //GET ALL ENEMIES
-        for(AbstractActor a : application.getGame().getComputerPlayers()) {
-            enemies.add(a);
-        }
+        application.teleportEnemies(enemyStartPos);
     }
 
     /** SETTERS **/
     public void setRecordedChanges(ArrayList<Recorder.Change> recordedChanges) {
-        this.recordedChanges = recordedChanges;
+        this.prepedChanges = recordedChanges;
     }
 
     public void setLevel(int level) {
@@ -296,25 +285,12 @@ public class Replayer {
         this.loadStateLocation = loadStateLocation;
     }
 
+    public void setEnemyStartPos(ArrayList<Position> enemyStartPos) {
+        this.enemyStartPos = enemyStartPos;
+    }
+
     /** GETTERS **/
     public boolean isPaused() {
         return pause;
-    }
-
-    /** NESTED CLASSES **/
-    /**
-     * Almost exactly like Recorder's "Change" class.
-     * Only this one has it's own milisecond tick variable.
-     */
-    private class Change {
-        public final ArrayList<Action> actions;
-        public final int timestamp;
-        public final int milisecondTick;
-
-        public Change(ArrayList<Action> actions, int timestamp, int milisecondTick) {
-            this.actions = actions; //can be null
-            this.timestamp = timestamp;
-            this.milisecondTick = milisecondTick;
-        }
     }
 }
