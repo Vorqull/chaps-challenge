@@ -91,7 +91,7 @@ public class SaveJsonReader {
         currentEnemy.setPos(newPos);
       }
     }
-    
+   
     JsonArray keysInHand = (JsonArray) gameplayVariables.get("Keys on hand");
     // Iterate through all keys in hand
     Iterator<JsonValue> keysIterator = keysInHand.iterator();
@@ -112,7 +112,7 @@ public class SaveJsonReader {
     // Iterate through all treasure in hand
     Iterator<JsonValue> treasureIterator = treasureInHand.iterator();
     // With key,
-    while (keysIterator.hasNext()) {
+    while (treasureIterator.hasNext()) {
       JsonObject currentTreasureJson = (JsonObject) treasureIterator.next();
       int treasureX = currentTreasureJson.getInt("xPos");
       int treasureY = currentTreasureJson.getInt("yPos");

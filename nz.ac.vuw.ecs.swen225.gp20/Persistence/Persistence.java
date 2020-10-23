@@ -4,7 +4,6 @@ import Maze.BoardObjects.Actors.AbstractActor;
 import Maze.BoardObjects.Actors.Player;
 import Maze.BoardObjects.Tiles.AbstractTile;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Set;
 
 
@@ -81,6 +80,7 @@ public class Persistence {
         return false;
       }
     } catch (Exception e) {
+      System.out.println(e);
       return false;
     }
   }

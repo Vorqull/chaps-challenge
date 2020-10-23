@@ -5,6 +5,8 @@ import java.util.Scanner;
 
 /**
  * Utility class that can be used to turn persistence/level.csv into a level JSON file.
+ * Also used to test basic functionality of program.
+ * NOT PART OF ACTUAL PROGRAM. UTILITY ONLY. DOES NOT REQUIRE TESTS.
  * 
  * @author Lukas Stanley
  *
@@ -12,6 +14,7 @@ import java.util.Scanner;
 public class PersistenceTest {
   /**
    * Run the test and create the level.
+   * NOT PART OF ACTUAL PROGRAM. UTILITY ONLY. DOES NOT REQUIRE TESTS.
    * 
    * @param args unused, base param for main method.
    * @throws Exception - In case of formatting issues;

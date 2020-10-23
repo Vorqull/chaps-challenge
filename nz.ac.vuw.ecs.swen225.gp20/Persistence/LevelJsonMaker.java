@@ -190,9 +190,9 @@ public class LevelJsonMaker {
     try {
       File jsonFile = new File(jsonName);
       if (jsonFile.createNewFile()) {
-        System.out.println("File created: " + jsonFile.getName());
+        //System.out.println("File created: " + jsonFile.getName());
       } else {
-        System.out.println("File already exists.");
+        //System.out.println("File already exists.");
       }
     } catch (IOException e) {
       System.out.println("An error occurred.");

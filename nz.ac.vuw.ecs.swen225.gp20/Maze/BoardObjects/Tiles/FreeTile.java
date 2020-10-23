@@ -6,10 +6,13 @@ import java.awt.*;
 
 /**
  * The "empty" tile on the board, any actor can move freely onto this tile.
+ * @author michael tang 300490290
  */
 public class FreeTile extends AbstractTile {
 
-
+    /**
+     * The constructor of the free tile.
+     */
     public FreeTile() {
         super(false);
         images.put("FloorTile", Toolkit.getDefaultToolkit().getImage("Resources/tiles/FloorTile.jpeg"));

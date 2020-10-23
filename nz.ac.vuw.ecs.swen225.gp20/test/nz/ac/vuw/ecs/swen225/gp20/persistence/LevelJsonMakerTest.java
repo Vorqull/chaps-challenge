@@ -84,7 +84,7 @@ public class LevelJsonMakerTest {
   public void testMakeJson4() throws Exception {
     String[][] testArray = {
         {"k 0 b", "k 0 y", "k 0 g"}, 
-        {"k 0 r", "f", "f"}, 
+        {"k 1 r", "f", "f"}, 
         {"f", "f", "f"}, 
     };
     
@@ -99,19 +99,71 @@ public class LevelJsonMakerTest {
    * Tests that invalidly coloured keys will have a warning written to the JSON.
    * @throws Exception - In case of formatting issues;
    */
-  @Test
+  @Test(expected = Exception.class) 
   public void testMakeJson5() throws Exception {
     String[][] testArray = {
-        {"k 0 notBlue", "k 0 y", "k 0 g"}, 
-        {"k 0 r", "f", "f"}, 
+        {"k 0 notblue", "f", "f"}, 
+        {"f", "f", "f"}, 
+        {"f", "f", "f"}, 
+    };
+    
+    //Try to turn the array into a JSON file, causing an Exception to be thrown.
+    makeJsonUtility(testArray);
+  }
+  
+  /**
+   * Tests that invalidly coloured keys will have a warning written to the JSON.
+   * @throws Exception - In case of formatting issues;
+   */
+  @Test(expected = Exception.class) 
+  public void testMakeJson6() throws Exception {
+    String[][] testArray = {
+        {"k 3 b", "f", "f"}, 
+        {"f", "f", "f"}, 
+        {"f", "f", "f"}, 
+    };
+    
+    //Try to turn the array into a JSON file, causing an Exception to be thrown.
+    makeJsonUtility(testArray);
+  }
+  
+  /**
+   * Tests that the player's starting position can be written to JSON and loaded back in.
+   * @throws Exception - In case of formatting issues;
+   */
+  @Test
+  public void testMakeJson7() throws Exception {
+    String[][] testArray = {
+        {"f", "f", "f"}, 
+        {"f", "p", "f"}, 
         {"f", "f", "f"}, 
     };
     
     //Turn the array into a JSON file, then load the JSON file into a level.
     Level testResult = makeJsonUtility(testArray);
-    Key keyColourTest = (Key) testResult.getTileArray()[0][0];
-    assertEquals("Blue", keyColourTest.getColour());
+    assertEquals(FreeTile.class, testResult.getTileArray()[1][1].getClass());
+    assertEquals(1, testResult.getPlayer().getStartingPos().getX());
+    assertEquals(1, testResult.getPlayer().getStartingPos().getY());
   }
+  
+  /**
+   * Tests that the enemy starting positions can be written to JSON,
+   *  and will be recognized as otherwise freetile..
+   * @throws Exception - In case of formatting issues;
+   */
+  @Test
+  public void testMakeJson8() throws Exception {
+    String[][] testArray = {
+        {"f", "f", "f"}, 
+        {"f", "ene", "f"}, 
+        {"f", "f", "f"}, 
+    };
+    
+    //Turn the array into a JSON file, then load the JSON file into a level.
+    Level testResult = makeJsonUtility(testArray);
+    assertEquals(FreeTile.class, testResult.getTileArray()[1][1].getClass());
+  }
+  
 
   /**
    * Tests a single line function, PrettyPrint.
@@ -132,6 +184,7 @@ public class LevelJsonMakerTest {
         + "}";
     assertEquals(expectedOutput, prettyPrinted);
   }
+  
   
   /**
    * utility function for mass calling the main function of LevelJsonMaker.

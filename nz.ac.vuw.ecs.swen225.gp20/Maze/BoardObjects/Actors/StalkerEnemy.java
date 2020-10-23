@@ -8,10 +8,16 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+/**
+ * The stalker enemy which chases the player and steals their treasures/keys.
+ * @author michael tang 300490290
+ */
 public class StalkerEnemy extends AbstractActor {
 
-    /*
+    /**
+     * The stalker enemy constructor.
      * @param position the position of the actors
+     * @param tickRate the speed of the enemy
      */
     public StalkerEnemy(Position position, int tickRate) {
         super(position, tickRate);
@@ -27,7 +33,7 @@ public class StalkerEnemy extends AbstractActor {
      */
     @Override
     public void move(Player player, Board board) {
-        if(!player.getKeys().isEmpty() && !player.getTreasures().isEmpty()){
+        if(player.getKeys().isEmpty() && player.getTreasures().isEmpty()){
             return;
         }
 
@@ -47,7 +53,7 @@ public class StalkerEnemy extends AbstractActor {
             path = path.getPrevious();
         }
 
-        Position newPos = board.findPosInBoard(path.getCurrent()); //Move to the position
+        Position newPos = board.findPosInBoard(path.getCurrent()); //Get the new position
 
         //Changes the actor image direction
         if(newPos.getX() >= position.getX()){
@@ -138,28 +144,28 @@ public class StalkerEnemy extends AbstractActor {
         if(position.getX() != 0) {
             AbstractTile left = map[position.getX() - 1][position.getY()];
             //If the tile isn't a wall, or a exit lock or locked door.
-            if(!(left instanceof Wall) && !(left instanceof ExitLock) && !(left instanceof LockedDoor && ((LockedDoor) left).isLocked()) ) {
+            if(!(left instanceof Wall) && !(left instanceof DeathTile) && !(left instanceof LockedDoor && ((LockedDoor) left).isLocked()) ) {
                 neighbours.add(left);
             }
         }
 
         if(position.getX() != map.length-1) {
             AbstractTile right = map[position.getX() + 1][position.getY()];
-            if(!(right instanceof Wall) && !(right instanceof ExitLock) && !(right instanceof LockedDoor && ((LockedDoor) right).isLocked()) ) {
+            if(!(right instanceof Wall) && !(right instanceof DeathTile) && !(right instanceof LockedDoor && ((LockedDoor) right).isLocked()) ) {
                 neighbours.add(right);
             }
         }
 
         if(position.getY() != 0) {
             AbstractTile up = map[position.getX()][position.getY() - 1];
-            if(!(up instanceof Wall) && !(up instanceof ExitLock) && !(up instanceof LockedDoor && ((LockedDoor) up).isLocked()) ) {
+            if(!(up instanceof Wall)&& !(up instanceof DeathTile) && !(up instanceof LockedDoor && ((LockedDoor) up).isLocked()) ) {
                 neighbours.add(up);
             }
         }
 
         if(position.getY() != map[position.getX()].length - 1) {
             AbstractTile down = map[position.getX()][position.getY() + 1];
-            if(!(down instanceof Wall) && !(down instanceof ExitLock) && !(down instanceof LockedDoor && ((LockedDoor) down).isLocked()) ) {
+            if(!(down instanceof Wall) && !(down instanceof DeathTile) && !(down instanceof LockedDoor && ((LockedDoor) down).isLocked()) ) {
                 neighbours.add(down);
             }
         }

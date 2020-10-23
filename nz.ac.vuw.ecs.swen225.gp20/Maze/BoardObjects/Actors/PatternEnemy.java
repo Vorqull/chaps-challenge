@@ -9,12 +9,19 @@ import java.awt.*;
 
 /**
  * An actor that follows a specific pattern/route defined by it's constructor parameter.
+ * @author michael tang 300490290
  */
 public class PatternEnemy extends AbstractActor{
 
     private final char[] route;
     private int routePos = 0;
 
+    /**
+     * THe constructor of the pattern enemy
+     * @param position The starting position of the enemy
+     * @param tickRate The tick rate of the enemy. Determines how fast the enemy is.
+     * @param routeStr The route of the enemy. Follows this string route.
+     */
     public PatternEnemy(Position position, int tickRate, String routeStr) {
         super(position, tickRate);
         this.route = routeStr.toCharArray();
@@ -61,7 +68,7 @@ public class PatternEnemy extends AbstractActor{
 
         //Don't move the actor into a wall or locked door.
         //Move the enemy to the new position
-        if (tile instanceof Wall || (!(tile instanceof LockedDoor) || ((LockedDoor) tile).isLocked())) {
+        if (!(tile instanceof Wall) && !((tile instanceof LockedDoor) && ((LockedDoor) tile).isLocked())) {
             //Interact with the player if positions are the same.
             if(player.getPos().equals(this.position) || player.getPos().equals(newPos)) {
                 interact(player);
@@ -81,6 +88,9 @@ public class PatternEnemy extends AbstractActor{
         player.getPos().setPosition(player.getStartingPos());
     }
 
+    /**
+     * Moves the route position of the route to the next iteration.
+     */
     private void nextRPos(){
         if(routePos >= route.length - 1) routePos = 0;
         else routePos++;

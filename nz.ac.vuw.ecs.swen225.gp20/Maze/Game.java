@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The Game class, which stores all of the game's information and player movement logic.
+ * @author michael tang 300490290
+ */
 public class Game {
 
     public enum DIRECTION {
@@ -21,6 +25,14 @@ public class Game {
 
     private boolean levelCompleted = false;
 
+    /**
+     * The constructor of the Game
+     * initialises the board of the game.
+     * initialises all of the board object that it stores
+     * @param board The board of the game
+     * @param player The player playing the game
+     * @param computerPlayers The enemies of the game.
+     */
     public Game(Board board, Player player, Set<AbstractActor> computerPlayers) {
         //GUI calls the persistence and sends the Game object the necessary files
         this.board = board;
@@ -32,6 +44,10 @@ public class Game {
         }
     }
 
+    /**
+     * Moves the enemies according to their tick rate.
+     * If the enemies' tick rate has been reach then allow them to move.
+     */
     public void moveEnemies() {
         if(computerPlayers.isEmpty()) return;
 
@@ -40,8 +56,9 @@ public class Game {
             if(c.getTickRate() == tickTiming.get(count)){
                 c.move(player, board);
                 tickTiming.set(count, 0);
+            } else {
+                tickTiming.set(count, tickTiming.get(count)+1);
             }
-            tickTiming.set(count, tickTiming.get(count)+1);
             count++;
         }
     }
@@ -100,6 +117,10 @@ public class Game {
 
     }
 
+    /**
+     * Locks the exit locks.
+     * Mainly used for when the stalker enemy steals the player's treasure
+     */
     private void lockExitLock(){
         for (int i = 0; i < board.getMap().length; i++) {
             for (int j = 0; j < board.getMap()[0].length; j++) {
@@ -111,6 +132,10 @@ public class Game {
         }
     }
 
+    /**
+     * Unlocks the Exit lock.
+     * Used when player collects all of their treasures.
+     */
     private void unlockExitLock() {
         for (int i = 0; i < board.getMap().length; i++) {
             for (int j = 0; j < board.getMap()[0].length; j++) {
@@ -149,18 +174,34 @@ public class Game {
         return treasuresLeft;
     }
 
+    /**
+     * Returns the board being used for the game.
+     * @return Returns the board being used for the game.
+     */
     public Board getBoard() {
         return board;
     }
 
+    /**
+     * Returns the player in the game.
+     * @return Returns the player in the game.
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Gets the enemies of the game.
+     * @return Returns the enemies of the game.
+     */
     public Set<AbstractActor> getComputerPlayers() {
         return computerPlayers;
     }
 
+    /**
+     * Tells whether or not the level has been completed.
+     * @return Returns true if the level has been completed.
+     */
     public boolean isLevelCompleted() {
         return levelCompleted;
     }

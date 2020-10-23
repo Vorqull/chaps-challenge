@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 /**
  * Read a CSV file into a 2d ArrayList of strings.
+ * NOT PART OF ACTUAL PROGRAM. UTILITY ONLY. DOES NOT REQUIRE TESTS.
  * @author Lukas Stanley
  *
  */

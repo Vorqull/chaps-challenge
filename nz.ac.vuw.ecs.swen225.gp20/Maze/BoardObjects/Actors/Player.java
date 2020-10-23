@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * The actor that the player is controlling.
+ * @author michael tang 300490290
  */
 public class Player extends AbstractActor{
 
@@ -33,6 +34,11 @@ public class Player extends AbstractActor{
         currentImage = images.get("Astronaut");
     }
 
+    /**
+     * Returns whether or not the player has a key of the specified colour.
+     * @param key The colour of the key being asked.
+     * @return Returns true if the player has a key of the colour. False if not.
+     */
     public boolean hasKey(String key) {
         for (AbstractTile k : collectibles.get("keySet")) {
             assert (k instanceof Key) : "Tiles in keySet isn't of the Key type";
@@ -41,6 +47,13 @@ public class Player extends AbstractActor{
         return false;
     }
 
+    /**
+     * Returns the a key of the specified colour that the player
+     * has picked up.
+     * @param colour THe colour of the key
+     * @return Returns the a key of the specified colour that the player
+     *         has picked up.
+     */
     public Key getKey(String colour) {
         for (AbstractTile k : collectibles.get("keySet")) {
             assert (k instanceof Key) : "Tiles in keySet isn't of the Key type";
@@ -58,6 +71,10 @@ public class Player extends AbstractActor{
         getKeys().add(key); //Adds the key to the player.
     }
 
+    /**
+     * Returns a list of the keys that the player owns.
+     * @return Returns a list of the keys that the player has.
+     */
     @SuppressWarnings("unchecked")
     public List<Key> getKeys() {
         //Making sure all tiles in keySet are Keys
@@ -67,6 +84,10 @@ public class Player extends AbstractActor{
         return (List<Key>) collectibles.get("keySet");
     }
 
+    /**
+     * Returns a set of treasures that the player has.
+     * @return Returns a set of treasures that the player has.
+     */
     @SuppressWarnings("unchecked")
     public Set<Treasure> getTreasures() {
         //Making sure all tiles in treasureSet are Treasures
@@ -102,14 +123,25 @@ public class Player extends AbstractActor{
     public void interact(Player player) {
     }
 
+    /**
+     * Returns a collection of the collectibles that the player has.
+     * Lets people create new key like tile plugins easily if needed.
+     * @return Returns a collection of the collectibles that the player has.
+     */
     public Map<String, Collection<? extends AbstractTile>> getCollectibles() {
         return collectibles;
     }
 
+    /**
+     * Changes the player's image to the right.
+     */
     public void flipRightImage(){
         currentImage = images.get("Astronaut");
     }
 
+    /**
+     * Changes the player's image to the left.
+     */
     public void flipLeftImage(){
         currentImage = images.get("AstronautFlipped");
     }

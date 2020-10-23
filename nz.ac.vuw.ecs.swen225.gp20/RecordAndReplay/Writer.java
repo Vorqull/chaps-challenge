@@ -132,7 +132,7 @@ public class Writer {
             DateFormat dtf = new SimpleDateFormat("yyyyMMddHHmmss");
             String saveFileName = dtf.format(date) + "savedReplay.JSON";
 
-            OutputStream os = new FileOutputStream("nz.ac.vuw.ecs.swen225.gp20/RecordAndReplay/Saves/" + saveFileName);
+            OutputStream os = new FileOutputStream(saveFileName);
             JsonWriter jsonWriter = Json.createWriter(os);
             jsonWriter.writeObject(gameplayInJson.build());
             jsonWriter.close();

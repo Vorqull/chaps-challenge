@@ -4,13 +4,20 @@ import Maze.BoardObjects.Actors.Player;
 
 import java.awt.*;
 
+/**
+ * THe key tile of the game. Unlocks a locked door
+ * of the matching colour.
+ * @author michael tang 300490290
+ */
 public class Key extends AbstractTile {
 
     private final String colour;
     private boolean pickedUp = false;
 
     /**
-     * .
+     * .The constructor for the key
+     * Initialises the colour of the key
+     * @param colour THe colour of the key
      */
     public Key(String colour) {
         super(false);
@@ -23,6 +30,12 @@ public class Key extends AbstractTile {
         currentImage = images.get("SwipeCard" + colour);
     }
 
+    /**
+     * Works like a free tile. Lets the player pick up the key the
+     * first time its being walked over.
+     * @param player The player that interacts with the tile.
+     * @return Returns true.
+     */
     @Override
     public boolean interact(Player player) {
         if(!pickedUp) {
@@ -33,6 +46,7 @@ public class Key extends AbstractTile {
         }
         return true;
     }
+
 
     @Override
     public void setChangedTile() {
@@ -48,6 +62,10 @@ public class Key extends AbstractTile {
         currentImage = images.get("SwipeCard" + colour);
     }
 
+    /**
+     * Returns the colour of the key
+     * @return Returns the colour of the key.
+     */
     public String getColour() {
         return colour;
     }

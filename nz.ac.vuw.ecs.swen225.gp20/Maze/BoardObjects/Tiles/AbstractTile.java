@@ -10,6 +10,7 @@ import java.util.Map;
  * An implementation of the Tile interface,
  * all other tiles object will use the methods
  * within this abstract class.
+ * @author michael tang 300490290
  */
 public abstract class AbstractTile {
 
@@ -44,18 +45,33 @@ public abstract class AbstractTile {
         changed = true;
     }
 
+    /**
+     * Change the tile back to its original state.
+     */
     public void unChange() {
         changed = false;
     }
 
+    /**
+     * Returns whether or not the state of the tile has changed.
+     * @return Returns whether or not the state of the tile has changed.
+     */
     public boolean isChanged() {
         return changed;
     }
 
+    /**
+     * Returns whether or not the image is rotated.
+     * @return Returns whether or not the image is rotated.
+     */
     public boolean isRotated() {
         return rotated;
     }
 
+    /**
+     * Returns the current Image of the tile.
+     * @return Returns the current image of the tile.
+     */
     public Image getCurrentImage() {
         return currentImage;
     }

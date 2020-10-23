@@ -3,7 +3,7 @@ package Application;
 import java.awt.EventQueue;
 
 /**
- * Runs an instance of the game
+ * Runs an instance of the game.
  *
  * @author Iqbal
  */

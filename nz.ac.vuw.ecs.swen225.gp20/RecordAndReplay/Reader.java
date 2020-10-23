@@ -1,7 +1,5 @@
 package RecordAndReplay;
 
-import Maze.BoardObjects.Actors.AbstractActor;
-import Maze.BoardObjects.Actors.PatternEnemy;
 import Maze.Game;
 import Maze.Position;
 import RecordAndReplay.Actions.Action;
@@ -9,34 +7,12 @@ import RecordAndReplay.Actions.EnemyMove;
 import RecordAndReplay.Actions.PlayerMove;
 
 import javax.json.*;
-import javax.print.DocFlavor;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Should be able to read a json file.
- * Upon bad formatting, closes with a failure state.
- * When successful, should be able to report an arraylist of arraylists of actions.
- *
- * Reminder to self:
- * So Essentially, the player should select when they wanna start a replay.
- * Warn the player: their current game session will end.
- * They proceed, All the created saves should be presented in the next alert box. (gives an error if there is none and returns to their game)
- * They select a save, The json save should be loaded, via this reader, into the recorded changes. (gives an error on bad formatting and returns to their game)
- * Immediately resets the game, and loads the player in their beginning spot OF said recording (NOTE: you'll also need to deploy creatures
- * in their beginning spots too!)
- * All this class does is return "recordedChanges" however.
- *
- * In "Replayer" (recordedChanges should be loaded in RecordAndReplay) the player may use arrow keys to go left or right in the recording.
- * (should also reveal a "controls" menu item. displays a window that lists the controls for the replayer)
- * If there is no more recording, an alert should display "END OF RECORDING".
- * If the player rewinds too far, an alert shouldn't display but the Replayer shouldn't allow it to rewind.
- * Player should also allow an "auto replay" feature. (every action now requires a time stamp which actually requires a game clock to be implemented...)
+ * Once it's done loading json, it can be used as an object for other components to retrieve data from.
  */
 public class Reader {
     private ArrayList<Recorder.Change> recordedChanges = new ArrayList<Recorder.Change>();
@@ -44,13 +20,18 @@ public class Reader {
     private int startRecordingTimeStamp;
     private int playerStartX;
     private int playerStartY;
-    private ArrayList<Position> enemyStartPositions = new ArrayList<>(); //ONLY USED FOR ENEMY LOCATIONS
+    private ArrayList<Position> enemyStartPositions = new ArrayList<>();
     private int levelLocation;
 
-    public Reader() {
-        //empty constructor
-    }
+    /**
+     * Empty constructor
+     */
+    public Reader() {}
 
+    /**
+     * Read a json file and prepare all variables.
+     * @param file
+     */
     public void readJson(File file) {
         InputStream inputStream = null;
         try {
@@ -66,7 +47,7 @@ public class Reader {
         playerStartX = playerPos.getInt("startX");
         playerStartY = playerPos.getInt("startY");
 
-        //Insert something to do with enemies HERE
+        //Get enemy starting positions
         JsonObject enemyStartPos = obj.getJsonObject("enemies");
         for(int i = 0; i < enemyStartPos.size(); i++) {
             JsonObject pos = enemyStartPos.getJsonObject("" + i);
@@ -74,7 +55,7 @@ public class Reader {
             enemyStartPositions.add(p);
         }
 
-        //CHANGE ARRAY!!!
+        //Get the array of changes.
         int noChanges = obj.getInt("noChanges");
         for(int i = 0; i < noChanges; i++) {
             int actual = i + 1;
@@ -155,7 +136,4 @@ public class Reader {
         return enemyStartPositions;
     }
     public int getLevelLocation() { return levelLocation; }
-
-
-    /** HELPER METHODS **/
 }

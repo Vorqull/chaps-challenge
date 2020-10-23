@@ -4,12 +4,22 @@ import Maze.BoardObjects.Actors.Player;
 
 import java.awt.*;
 
+/**
+ * The locked door tile of the game
+ * Unlocked with the matching key colour.
+ * @author michael tang 300490290
+ */
 public class LockedDoor extends AbstractTile {
 
     private final String colour;
     private boolean locked = true;
 
 
+    /**
+     * THe locked door constructor
+     * @param setVertical True if the locked door image is vertical
+     * @param colour The colour of the door.
+     */
     public LockedDoor(boolean setVertical, String colour) {
         super(setVertical);
         this.colour = colour;
@@ -56,10 +66,10 @@ public class LockedDoor extends AbstractTile {
         currentImage = images.get("FloorTile");
     }
 
-    public String getDoorColour() {
-        return colour;
-    }
-
+    /**
+     * Returns whether or not the door is locked
+     * @return Returns true if the door is locked
+     */
     public boolean isLocked() {
         return locked;
     }
